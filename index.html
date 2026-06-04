@@ -332,6 +332,51 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 .fc-input-row{display:flex;gap:8px;padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;}
 .fc-input-row input{flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:20px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;}
 
+
+/* ══ ADMIN ══ */
+#screen-admin{background:#0a0c10;overflow-y:auto;}
+.admin-header{background:linear-gradient(135deg,#1a0a2e,#0d1829);padding:20px 16px 16px;border-bottom:1px solid rgba(255,77,109,0.2);}
+.admin-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.4);color:#ff4d6d;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:8px;}
+.admin-title{font-size:22px;font-weight:900;color:#fff;margin-bottom:2px;}
+.admin-sub{font-size:12px;color:rgba(255,255,255,0.4);}
+.admin-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
+.admin-tab{flex:1;min-width:80px;padding:12px 8px;border:none;background:none;color:var(--muted);font-family:"Nunito",sans-serif;font-weight:700;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.admin-tab.active{color:#ff4d6d;border-bottom-color:#ff4d6d;}
+.admin-panel{display:none;padding:16px;flex-direction:column;gap:12px;}
+.admin-panel.active{display:flex;}
+.stat-card{background:var(--surface);border-radius:14px;padding:16px;border:1px solid var(--border);}
+.stat-card-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stat-big{font-size:32px;font-weight:900;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:3px;}
+.stat-card.red .stat-big{color:#ff4d6d;}
+.stat-card.blue .stat-big{color:#7b7fff;}
+.stat-card.green .stat-big{color:#06d6a0;}
+.stat-card.yellow .stat-big{color:#ffbe0b;}
+.chart-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.chart-bar-label{font-size:12px;color:var(--muted);width:60px;flex-shrink:0;text-align:right;}
+.chart-bar-track{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;}
+.chart-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#7b7fff,#00e5ff);transition:width .6s ease;}
+.chart-bar-val{font-size:11px;color:var(--muted);width:30px;flex-shrink:0;}
+.user-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface);border-radius:12px;border:1px solid var(--border);}
+.user-row-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.user-row-info{flex:1;min-width:0;}
+.user-row-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-row-meta{font-size:11px;color:var(--muted);}
+.user-row-actions{display:flex;gap:6px;flex-shrink:0;}
+.admin-btn-del{padding:6px 10px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);color:#ff4d6d;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:"Nunito",sans-serif;}
+.admin-btn-info{padding:6px 10px;background:rgba(123,127,255,0.15);border:1px solid rgba(123,127,255,0.3);color:#7b7fff;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:"Nunito",sans-serif;}
+.activity-dot{width:8px;height:8px;border-radius:50%;background:#06d6a0;display:inline-block;margin-right:4px;box-shadow:0 0 6px #06d6a0;}
+.activity-dot.offline{background:var(--muted);box-shadow:none;}
+.admin-search{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:"Nunito",sans-serif;font-size:14px;outline:none;margin-bottom:12px;box-sizing:border-box;}
+#modal-admin-user .modal-box{max-height:80vh;overflow-y:auto;}
+.modal-user-stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.modal-user-stat:last-child{border-bottom:none;}
+.modal-user-stat-label{color:var(--muted);}
+.modal-user-stat-val{font-weight:700;}
+/* Mot de passe admin */
+#screen-admin-login{background:#0a0c10;align-items:center;justify-content:center;}
+.admin-login-card{background:var(--surface);border:1px solid rgba(255,77,109,0.3);border-radius:16px;padding:28px;width:100%;max-width:360px;}
+
 </style>
 </head>
 <body>
@@ -363,7 +408,7 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
     <!-- LOGIN -->
     <div id="tab-login">
       <div class="form-group"><label>Adresse email</label>
-        <input type="email" id="login-email" placeholder="ton@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+        <input type="email" id="login-email" placeholder="ton@email.com" onkeydown="if(event.key==='Enter')doLogin()" oninput="checkAdminEmail()">
       </div>
       <div class="form-group"><label>Mot de passe</label>
         <div style="position:relative">
@@ -372,6 +417,13 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
         </div>
       </div>
       <button class="btn-primary" id="btn-login" onclick="doLogin()" disabled>⏳ Chargement...</button>
+      <div id="admin-mode-row" style="display:none;margin-top:10px;padding:10px;background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25);border-radius:10px;">
+        <div style="font-size:11px;font-weight:800;color:#ff4d6d;letter-spacing:1px;margin-bottom:8px;">⚡ COMPTE ADMINISTRATEUR DÉTECTÉ</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="doLogin('player')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">👤 Joueur</button>
+          <button onclick="doLogin('admin')" style="flex:1;padding:9px;background:rgba(255,77,109,0.2);border:1px solid rgba(255,77,109,0.4);border-radius:8px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">🛡️ Administrateur</button>
+        </div>
+      </div>
       <div id="login-error" class="error-msg"></div>
     </div>
     <!-- REGISTER -->
@@ -562,7 +614,10 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <div class="map-title">🫣 Cache Cache</div>
       <div style="font-size:10px;color:var(--muted)"><span id="gps-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:4px;"></span><span id="gps-status">GPS...</span></div>
     </div>
-    <div class="my-role-badge" id="map-role-badge">—</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="player-counter" style="background:rgba(123,127,255,0.15);border:1px solid rgba(123,127,255,0.3);color:#7b7fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;">👥 —</div>
+      <div class="my-role-badge" id="map-role-badge">—</div>
+    </div>
   </div>
   <div class="timer-bar"><div class="timer-pill" id="timer-display">00:00</div></div>
   <div class="zone-hint" id="zone-hint">📍 Clique pour placer des points — Double-clique pour terminer</div>
@@ -585,9 +640,12 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <button class="btn-ctrl green" onclick="openFoundModal()">✅ Trouvé</button>
       <button class="btn-ctrl purple" onclick="openHintModal()">💡 Indice</button>
       <button class="btn-ctrl" onclick="togglePause()" id="btn-pause" style="background:rgba(255,190,11,0.12);border-color:rgba(255,190,11,0.25);color:#ffbe0b">⏸</button>
+      <button class="btn-ctrl" id="btn-path-toggle-master" onclick="togglePathBtn()" style="background:rgba(6,214,160,0.12);border-color:rgba(6,214,160,0.3);color:#06d6a0">🏃</button>
       <button class="btn-ctrl red" onclick="endGame()">⏹</button>
     </div>
     <div class="map-controls-row" id="player-controls" style="display:none">
+      <button class="btn-ctrl purple" onclick="openHintModal()">💡 Indice</button>
+      <button class="btn-ctrl" id="btn-path-toggle" onclick="togglePathBtn()" style="background:rgba(6,214,160,0.12);border-color:rgba(6,214,160,0.3);color:#06d6a0">🏃</button>
       <button class="btn-ctrl red" onclick="leaveGame()">🚪 Quitter</button>
     </div>
   </div>
@@ -711,6 +769,112 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       </div>
     </div>
 
+  </div>
+</div>
+
+
+<!-- ══ ADMIN LOGIN ══ -->
+<div id="screen-admin-login" class="screen">
+  <div class="admin-login-card">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:36px;margin-bottom:8px;">🛡️</div>
+      <div style="font-size:18px;font-weight:900;color:#ff4d6d;">Accès Administrateur</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Confirmation requise</div>
+    </div>
+    <div class="form-group">
+      <label>Code d'accès admin</label>
+      <div style="position:relative">
+        <input type="password" id="admin-code-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkAdminCode()" style="width:100%;padding:12px 44px 12px 14px;background:var(--bg);border:1px solid rgba(255,77,109,0.3);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;">
+        <button onclick="togglePwd('admin-code-input',this)" type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+      </div>
+    </div>
+    <button onclick="checkAdminCode()" style="width:100%;padding:13px;background:linear-gradient(135deg,#ff4d6d,#c1121f);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:10px;">🛡️ Accéder au panneau admin</button>
+    <button onclick="showScreen('screen-lobby');loadLobby();" style="width:100%;padding:11px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">← Retour au jeu</button>
+    <div id="admin-code-error" class="error-msg" style="margin-top:8px;"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div id="screen-admin" class="screen">
+  <div class="admin-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div class="admin-badge">🛡️ ADMIN</div>
+      <button onclick="showScreen('screen-lobby');loadLobby();" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--muted);font-size:12px;font-family:'Nunito',sans-serif;cursor:pointer;">← Quitter</button>
+    </div>
+    <div class="admin-title">Panneau Admin</div>
+    <div class="admin-sub" id="admin-header-sub">Cache Cache • Reyrieux</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchAdminTab('overview')">📊 Vue d'ensemble</button>
+    <button class="admin-tab" onclick="switchAdminTab('users')">👥 Utilisateurs</button>
+    <button class="admin-tab" onclick="switchAdminTab('parties')">🎮 Parties</button>
+    <button class="admin-tab" onclick="switchAdminTab('activity')">📈 Activité</button>
+  </div>
+
+  <!-- Panel : Vue d'ensemble -->
+  <div class="admin-panel active" id="admin-panel-overview">
+    <div class="stat-card-row">
+      <div class="stat-card blue"><div class="stat-big" id="adm-total-users">—</div><div class="stat-lbl">Joueurs inscrits</div></div>
+      <div class="stat-card green"><div class="stat-big" id="adm-online-now">—</div><div class="stat-lbl">En ligne maintenant</div></div>
+      <div class="stat-card yellow"><div class="stat-big" id="adm-total-parties">—</div><div class="stat-lbl">Parties jouées</div></div>
+      <div class="stat-card red"><div class="stat-big" id="adm-active-parties">—</div><div class="stat-lbl">Parties actives</div></div>
+    </div>
+    <div class="stat-card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">📅 Inscriptions par jour (7 derniers jours)</div>
+      <div id="adm-chart-registrations"></div>
+    </div>
+    <div class="stat-card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">🏆 Top joueurs (parties jouées)</div>
+      <div id="adm-top-players"></div>
+    </div>
+  </div>
+
+  <!-- Panel : Utilisateurs -->
+  <div class="admin-panel" id="admin-panel-users">
+    <input type="text" class="admin-search" id="admin-user-search" placeholder="🔍 Rechercher un utilisateur..." oninput="filterAdminUsers()">
+    <div id="admin-users-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+
+  <!-- Panel : Parties -->
+  <div class="admin-panel" id="admin-panel-parties">
+    <div class="stat-card" style="margin-bottom:0;">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">🎮 Parties récentes</div>
+      <div id="admin-parties-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+  </div>
+
+  <!-- Panel : Activité -->
+  <div class="admin-panel" id="admin-panel-activity">
+    <div class="stat-card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">⏱️ Temps de jeu moyen par joueur</div>
+      <div id="adm-chart-playtime"></div>
+    </div>
+    <div class="stat-card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">📊 Répartition des rôles</div>
+      <div id="adm-roles-chart"></div>
+    </div>
+    <div class="stat-card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">🕐 Heures de pointe</div>
+      <div id="adm-hours-chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL DÉTAIL UTILISATEUR ══ -->
+<div class="modal-overlay" id="modal-admin-user">
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div id="modal-user-avatar" style="width:50px;height:50px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">👤</div>
+      <div>
+        <div id="modal-user-name" style="font-size:16px;font-weight:900;"></div>
+        <div id="modal-user-email" style="font-size:12px;color:var(--muted);"></div>
+      </div>
+    </div>
+    <div id="modal-user-stats"></div>
+    <button id="modal-user-ban-btn" onclick="confirmDeleteUser()" style="width:100%;margin-top:14px;padding:12px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🗑️ Supprimer ce compte</button>
+    <button onclick="closeModal('modal-admin-user')" style="width:100%;margin-top:8px;padding:11px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Fermer</button>
   </div>
 </div>
 
@@ -964,8 +1128,14 @@ waitForFirebase(()=>{
       S.user = user;
       // Email verification disabled
       await loadUserProfile(user);
-      showScreen('screen-lobby');
-      loadLobby();
+      if(S._pendingAdminMode){
+        S._pendingAdminMode = false;
+        showScreen('screen-admin-login');
+        setTimeout(()=>document.getElementById('admin-code-input')?.focus(), 300);
+      } else {
+        showScreen('screen-lobby');
+        loadLobby();
+      }
     } else {
       S.user = null;
       showScreen('screen-auth');
@@ -1614,7 +1784,7 @@ function clearZone(){
 }
 
 // ── GPS ──
-function startGPS(){
+function startGPS(){ requestWakeLock();
   if(!navigator.geolocation){
     document.getElementById('gps-status').textContent='GPS indispo';
     toast('❌ GPS non disponible sur cet appareil');
@@ -1690,7 +1860,10 @@ function listenGamePlayers(){
 
 function canSee(targetId,target){
   const myId=S.user?.uid;if(targetId===myId)return true;
-  if(S.role==='seeker')return target.role==='seeker'||target.found;
+  if(S.isMaster)return true;
+  // Chercheur : voit UNIQUEMENT les cacheurs déjà trouvés (pas les autres chercheurs)
+  if(S.role==='seeker')return target.role==='hider'&&target.found;
+  // Cacheur : voit uniquement ses co-cacheurs non trouvés
   if(S.role==='hider')return target.role==='hider'&&!target.found;
   return false;
 }
@@ -1740,7 +1913,7 @@ function makeIcon(color,name,role,found,isMe,avatarUrl){
   return L.divIcon({html,className:'',iconSize:[sz,sz+22],iconAnchor:[sz/2,sz]});
 }
 
-function renderPlayersStrip(){
+function renderPlayersStrip(){ updatePlayerCounter();
   const strip=document.getElementById('map-players-strip');strip.innerHTML='';
   const myId=S.user?.uid;
   for(const[id,p]of Object.entries(S.players)){
@@ -1792,7 +1965,7 @@ async function togglePause(){
 }
 
 // ── LEAVE GAME (non-master) ──
-async function leaveGame(){
+async function leaveGame(){ releaseWakeLock();
   if(!confirm('Quitter la partie en cours ?'))return;
   if(S.timerInterval)clearInterval(S.timerInterval);
   if(S.proximityInterval)clearInterval(S.proximityInterval);
@@ -1821,6 +1994,7 @@ async function markFound(id){
   const surv=Math.floor((Date.now()-(S.currentParty?.startedAt||Date.now()))/1000);
   await dbUpdate('parties/'+S.currentPartyId+'/players/'+id,{found:true,role:'seeker',survivalTime:surv});
   showFoundSplash(p.name);
+  showNotif("✅", "Joueur trouvé !", p.name + " a été trouvé !", "#06d6a0");
   await dbPush('parties/'+S.currentPartyId+'/chat/all',{senderId:'system',senderName:'Système',senderColor:'#c77dff',text:`🎯 ${p.name} a été trouvé !`,ts:Date.now()});
   const snap=await dbGet('parties/'+S.currentPartyId+'/players');
   if(!Object.values(snap.val()||{}).some(p=>p.role==='hider'&&!p.found))toast('🎉 Tous trouvés !',5000);
@@ -1835,7 +2009,8 @@ function showFoundSplash(name){
 // ── HINTS ──
 function openHintModal(){openModal('modal-hint');}
 function _hintChannel(){return S.isMaster?'all':S.role==='seeker'?'seeker':'hider';}
-async function sendHint(text){closeModal('modal-hint');await dbPush('parties/'+S.currentPartyId+'/chat/'+_hintChannel(),{senderId:'system',senderName:'💡 Indice',senderColor:'#ffbe0b',text,ts:Date.now()});toast('Indice envoyé !');}
+async function sendHint(text){closeModal('modal-hint');await dbPush('parties/'+S.currentPartyId+'/chat/'+_hintChannel(),{senderId:'system',senderName:'💡 Indice',senderColor:'#ffbe0b',text,ts:Date.now()});toast('Indice envoyé !');
+  showNotif('💡','Indice envoyé !', text, '#ffbe0b');}
 async function sendCustomHint(){const t=document.getElementById('hint-text').value.trim();if(!t)return;document.getElementById('hint-text').value='';closeModal('modal-hint');await dbPush('parties/'+S.currentPartyId+'/chat/'+_hintChannel(),{senderId:'system',senderName:'💡 Indice',senderColor:'#ffbe0b',text:t,ts:Date.now()});toast('Indice envoyé !');}
 
 function showHintAlert(text){
@@ -2314,6 +2489,398 @@ async function sendFriendMsg(){
   input.value='';
   const chatId=[S.user.uid,_fcUid].sort().join('_');
   await dbPush('friendchats/'+chatId,{sender:S.user.uid,text,ts:Date.now()});
+}
+
+
+// ═══════════════════════════════════════════
+// ADMIN SYSTEM
+// ═══════════════════════════════════════════
+const ADMIN_PASSWORD = "cachecache2024admin"; // ← Change ce mot de passe
+let _adminUsersCache = {};
+let _adminSelectedUid = null;
+
+function checkAdminEmail(){
+  const email = document.getElementById('login-email').value.trim();
+  const row = document.getElementById('admin-mode-row');
+  const btnLogin = document.getElementById('btn-login');
+  if(email === ADMIN_EMAIL){
+    row.style.display = 'block';
+    btnLogin.style.display = 'none';
+  } else {
+    row.style.display = 'none';
+    btnLogin.style.display = 'block';
+  }
+}
+
+async function doLogin(mode){
+  if(!window.firebaseReady||!window._auth){toast('⏳ Chargement en cours...');return;}
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.classList.remove('show');
+  if(!email||!pw){errEl.textContent='Remplis tous les champs.';errEl.classList.add('show');return;}
+  try{
+    await window._authSignIn(window._auth, email, pw);
+    // Si mode admin, rediriger vers écran code admin
+    if(mode === 'admin'){
+      S._pendingAdminMode = true;
+    }
+  } catch(e){
+    errEl.textContent = getFriendlyError(e.code);
+    errEl.classList.add('show');
+  }
+}
+
+function checkAdminCode(){
+  const code = document.getElementById('admin-code-input').value;
+  const errEl = document.getElementById('admin-code-error');
+  if(code === ADMIN_PASSWORD){
+    errEl.classList.remove('show');
+    document.getElementById('admin-code-input').value = '';
+    showScreen('screen-admin');
+    loadAdminPanel();
+  } else {
+    errEl.textContent = '❌ Code incorrect.';
+    errEl.classList.add('show');
+    document.getElementById('admin-code-input').value = '';
+  }
+}
+
+function switchAdminTab(tab){
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('admin-panel-'+tab).classList.add('active');
+}
+
+async function loadAdminPanel(){
+  const now = Date.now();
+  document.getElementById('admin-header-sub').textContent =
+    'Chargement... ' + new Date().toLocaleString('fr');
+
+  // Charger tous les users et parties
+  const [usersSnap, partiesSnap] = await Promise.all([
+    dbGet('users'), dbGet('parties')
+  ]);
+
+  const users = usersSnap.exists() ? usersSnap.val() : {};
+  const parties = partiesSnap.exists() ? partiesSnap.val() : {};
+  _adminUsersCache = users;
+
+  const userList = Object.entries(users);
+  const partyList = Object.entries(parties);
+
+  // ── Métriques overview ──
+  const onlineThreshold = 5 * 60 * 1000; // 5 min
+  const onlineCount = userList.filter(([,u]) =>
+    u.lastSeen && now - u.lastSeen < onlineThreshold).length;
+  const activeParties = partyList.filter(([,p]) =>
+    p.status === 'playing').length;
+  const totalParties = partyList.length;
+
+  document.getElementById('adm-total-users').textContent = userList.length;
+  document.getElementById('adm-online-now').textContent = onlineCount;
+  document.getElementById('adm-total-parties').textContent = totalParties;
+  document.getElementById('adm-active-parties').textContent = activeParties;
+  document.getElementById('admin-header-sub').textContent =
+    'Dernière màj : ' + new Date().toLocaleTimeString('fr');
+
+  // ── Graphique inscriptions 7 jours ──
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(now - i*86400000);
+    days.push({
+      label: d.toLocaleDateString('fr',{weekday:'short'}),
+      start: new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),
+      end: new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime(),
+      count: 0
+    });
+  }
+  userList.forEach(([,u]) => {
+    if(!u.createdAt) return;
+    const day = days.find(d => u.createdAt >= d.start && u.createdAt < d.end);
+    if(day) day.count++;
+  });
+  const maxReg = Math.max(...days.map(d=>d.count), 1);
+  document.getElementById('adm-chart-registrations').innerHTML = days.map(d => `
+    <div class="chart-bar-row">
+      <div class="chart-bar-label">${d.label}</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(d.count/maxReg*100)}%"></div></div>
+      <div class="chart-bar-val">${d.count}</div>
+    </div>`).join('');
+
+  // ── Top joueurs ──
+  const sorted = userList
+    .filter(([,u]) => u.stats)
+    .sort((a,b) => (b[1].stats?.parties||0) - (a[1].stats?.parties||0))
+    .slice(0,5);
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+  document.getElementById('adm-top-players').innerHTML = sorted.length ?
+    sorted.map(([,u],i) => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label" style="width:80px;font-size:12px;">${medals[i]} ${(u.pseudo||'?').substring(0,8)}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round((u.stats?.parties||0)/Math.max(sorted[0][1].stats?.parties||1,1)*100)}%;background:linear-gradient(90deg,#ffbe0b,#ff9f1c);"></div></div>
+        <div class="chart-bar-val">${u.stats?.parties||0}</div>
+      </div>`).join('') :
+    '<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px;">Pas encore de données</div>';
+
+  // ── Liste utilisateurs ──
+  renderAdminUsers(userList);
+
+  // ── Liste parties ──
+  const recentParties = partyList
+    .sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0))
+    .slice(0,20);
+  document.getElementById('admin-parties-list').innerHTML = recentParties.length ?
+    recentParties.map(([id,p]) => {
+      const playerCount = p.players ? Object.keys(p.players).length : 0;
+      const statusColor = p.status==='playing'?'#06d6a0':p.status==='ended'?'#ff4d6d':'#ffbe0b';
+      const statusLabel = p.status==='playing'?'En cours':p.status==='ended'?'Terminée':'En attente';
+      const date = p.createdAt ? new Date(p.createdAt).toLocaleString('fr',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+      return `<div style="padding:10px;background:var(--bg);border-radius:10px;border:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:13px;">${p.name||id}</div>
+          <div style="font-size:11px;color:${statusColor};font-weight:700;">${statusLabel}</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">👥 ${playerCount} joueurs • 📅 ${date}</div>
+      </div>`;
+    }).join('') :
+    '<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px;">Aucune partie</div>';
+
+  // ── Activité : temps de jeu, rôles, heures de pointe ──
+  // Temps de jeu moyen (basé sur lastSeen - createdAt approximatif)
+  const playtimes = userList
+    .filter(([,u]) => u.stats?.parties > 0)
+    .map(([,u]) => ({ pseudo: u.pseudo, parties: u.stats?.parties||0, survived: u.stats?.survived||0 }))
+    .sort((a,b) => b.parties - a.parties)
+    .slice(0,6);
+  const maxPt = Math.max(...playtimes.map(p=>p.parties),1);
+  document.getElementById('adm-chart-playtime').innerHTML = playtimes.length ?
+    playtimes.map(p => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label" style="width:70px;font-size:11px;">${(p.pseudo||'?').substring(0,7)}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(p.parties/maxPt*100)}%;background:linear-gradient(90deg,#06d6a0,#00e5ff);"></div></div>
+        <div class="chart-bar-val">${p.parties}p</div>
+      </div>`).join('') :
+    '<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px;">Pas encore de données</div>';
+
+  // Répartition rôles
+  let hiders=0, seekers=0;
+  partyList.forEach(([,p]) => {
+    if(!p.players) return;
+    Object.values(p.players).forEach(pl => {
+      if(pl.role==='hider') hiders++;
+      else if(pl.role==='seeker') seekers++;
+    });
+  });
+  const totalRoles = hiders + seekers || 1;
+  document.getElementById('adm-roles-chart').innerHTML = `
+    <div class="chart-bar-row">
+      <div class="chart-bar-label" style="width:70px;">🙈 Cachés</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(hiders/totalRoles*100)}%;background:linear-gradient(90deg,#7b7fff,#8338ec);"></div></div>
+      <div class="chart-bar-val">${hiders}</div>
+    </div>
+    <div class="chart-bar-row">
+      <div class="chart-bar-label" style="width:70px;">🔍 Cherche</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(seekers/totalRoles*100)}%;background:linear-gradient(90deg,#ff9f1c,#ffbe0b);"></div></div>
+      <div class="chart-bar-val">${seekers}</div>
+    </div>`;
+
+  // Heures de pointe (sur les 7 derniers jours basé sur createdAt des parties)
+  const hourCounts = new Array(24).fill(0);
+  partyList.forEach(([,p]) => {
+    if(p.createdAt) hourCounts[new Date(p.createdAt).getHours()]++;
+  });
+  const maxHour = Math.max(...hourCounts, 1);
+  const peakHours = [0,2,4,6,8,10,12,14,16,18,20,22].map(h => ({
+    label: h+'h', count: hourCounts[h] + (hourCounts[h+1]||0)
+  }));
+  const maxPeak = Math.max(...peakHours.map(h=>h.count),1);
+  document.getElementById('adm-hours-chart').innerHTML = peakHours.map(h => `
+    <div class="chart-bar-row">
+      <div class="chart-bar-label" style="width:30px;font-size:11px;">${h.label}</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.round(h.count/maxPeak*100)}%;background:linear-gradient(90deg,#ff4d6d,#7b7fff);"></div></div>
+      <div class="chart-bar-val">${h.count}</div>
+    </div>`).join('');
+}
+
+function renderAdminUsers(userList){
+  const search = (document.getElementById('admin-user-search')?.value||'').toLowerCase();
+  const filtered = userList.filter(([,u]) =>
+    !search || (u.pseudo||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search)
+  );
+  const now = Date.now();
+  const onlineThreshold = 5*60*1000;
+  document.getElementById('admin-users-list').innerHTML = filtered.length ?
+    filtered.map(([uid,u]) => {
+      const isOnline = u.lastSeen && now - u.lastSeen < onlineThreshold;
+      const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('fr') : '—';
+      const lastSeen = u.lastSeen ? timeAgo(u.lastSeen) : 'jamais';
+      return `<div class="user-row">
+        <div class="user-row-avatar">${u.avatarUrl?`<img src="${u.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`:'👤'}</div>
+        <div class="user-row-info">
+          <div class="user-row-name"><span class="activity-dot ${isOnline?'':'offline'}"></span>${u.pseudo||'Sans pseudo'}</div>
+          <div class="user-row-meta">${u.email||'—'} • ${u.stats?.parties||0} parties • Inscrit le ${joined}</div>
+          <div class="user-row-meta">Vu : ${lastSeen}</div>
+        </div>
+        <div class="user-row-actions">
+          <button class="admin-btn-info" onclick="openUserModal('${uid}')">👁️</button>
+          ${uid !== S.user?.uid ? `<button class="admin-btn-del" onclick="openUserModal('${uid}',true)">🗑️</button>` : ''}
+        </div>
+      </div>`;
+    }).join('') :
+    '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">Aucun utilisateur trouvé</div>';
+}
+
+function filterAdminUsers(){
+  const userList = Object.entries(_adminUsersCache);
+  renderAdminUsers(userList);
+}
+
+function openUserModal(uid, focusDelete=false){
+  _adminSelectedUid = uid;
+  const u = _adminUsersCache[uid];
+  if(!u) return;
+  const now = Date.now();
+  document.getElementById('modal-user-name').textContent = u.pseudo || 'Sans pseudo';
+  document.getElementById('modal-user-email').textContent = u.email || '—';
+  const av = document.getElementById('modal-user-avatar');
+  av.innerHTML = u.avatarUrl ? `<img src="${u.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : '👤';
+  const joined = u.createdAt ? new Date(u.createdAt).toLocaleString('fr') : '—';
+  const lastSeen = u.lastSeen ? new Date(u.lastSeen).toLocaleString('fr') : '—';
+  const isOnline = u.lastSeen && now - u.lastSeen < 5*60*1000;
+  document.getElementById('modal-user-stats').innerHTML = `
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Statut</span><span class="modal-user-stat-val">${isOnline?'🟢 En ligne':'⚫ Hors ligne'}</span></div>
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Inscrit le</span><span class="modal-user-stat-val">${joined}</span></div>
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Dernière connexion</span><span class="modal-user-stat-val">${lastSeen}</span></div>
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Parties jouées</span><span class="modal-user-stat-val">${u.stats?.parties||0}</span></div>
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Survécus</span><span class="modal-user-stat-val">${u.stats?.survived||0}</span></div>
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Trouvés</span><span class="modal-user-stat-val">${u.stats?.found||0}</span></div>
+    <div class="modal-user-stat"><span class="modal-user-stat-label">Couleur</span><span class="modal-user-stat-val"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${u.color||'#aaa'};vertical-align:middle;"></span> ${u.color||'—'}</span></div>
+  `;
+  // Cacher le bouton delete si c'est soi-même
+  document.getElementById('modal-user-ban-btn').style.display = uid===S.user?.uid ? 'none' : 'block';
+  openModal('modal-admin-user');
+  if(focusDelete) setTimeout(()=>document.getElementById('modal-user-ban-btn').focus(), 300);
+}
+
+async function confirmDeleteUser(){
+  const uid = _adminSelectedUid;
+  if(!uid) return;
+  const u = _adminUsersCache[uid];
+  if(!confirm(`Supprimer définitivement le compte de ${u?.pseudo||uid} ? Cette action est irréversible.`)) return;
+  closeModal('modal-admin-user');
+  try {
+    await window._dbRemove(dbRef('users/'+uid));
+    // Supprimer aussi ses entrées dans les parties actives
+    const snap = await dbGet('parties');
+    if(snap.exists()){
+      for(const [pid,p] of Object.entries(snap.val())){
+        if(p.players?.[uid]) await window._dbRemove(dbRef('parties/'+pid+'/players/'+uid));
+      }
+    }
+    delete _adminUsersCache[uid];
+    renderAdminUsers(Object.entries(_adminUsersCache));
+    toast('✅ Compte supprimé.');
+  } catch(e){
+    toast('❌ Erreur : '+e.message);
+  }
+}
+
+function timeAgo(ts){
+  const diff = Date.now() - ts;
+  if(diff < 60000) return `à l'instant`;
+  if(diff < 3600000) return Math.floor(diff/60000)+'min';
+  if(diff < 86400000) return Math.floor(diff/3600000)+'h';
+  return Math.floor(diff/86400000)+'j';
+}
+
+
+// ═══════════════════════════════════════════
+// BOUTON 🏃 CHEMIN PARCOURU
+// ═══════════════════════════════════════════
+function togglePathBtn(){
+  SETTINGS.showPath = !SETTINGS.showPath;
+  saveSettings();
+  if(S.myPathLine) S.myPathLine.setStyle({opacity: SETTINGS.showPath ? 0.4 : 0});
+  const btns = [document.getElementById('btn-path-toggle'), document.getElementById('btn-path-toggle-master')];
+  btns.forEach(b => {
+    if(!b) return;
+    b.style.background = SETTINGS.showPath ? 'rgba(6,214,160,0.25)' : 'rgba(100,100,100,0.12)';
+    b.style.borderColor = SETTINGS.showPath ? 'rgba(6,214,160,0.5)' : 'rgba(100,100,100,0.2)';
+    b.style.color = SETTINGS.showPath ? '#06d6a0' : 'var(--muted)';
+  });
+  toast(SETTINGS.showPath ? '🏃 Chemin visible' : '🏃 Chemin masqué');
+}
+
+// ═══════════════════════════════════════════
+// COMPTEUR JOUEURS RESTANTS
+// ═══════════════════════════════════════════
+function updatePlayerCounter(){
+  const counter = document.getElementById('player-counter');
+  if(!counter || !S.players) return;
+  const all = Object.values(S.players);
+  const total = all.length;
+  const found = all.filter(p => p.found).length;
+  const hiders = all.filter(p => p.role === 'hider').length;
+  const hidersLeft = hiders - found;
+  counter.textContent = `🙈 ${hidersLeft}/${hiders}`;
+  counter.style.color = hidersLeft === 0 ? '#ff4d6d' : '#7b7fff';
+  counter.style.borderColor = hidersLeft === 0 ? 'rgba(255,77,109,0.4)' : 'rgba(123,127,255,0.3)';
+  counter.style.background = hidersLeft === 0 ? 'rgba(255,77,109,0.15)' : 'rgba(123,127,255,0.15)';
+}
+
+// ═══════════════════════════════════════════
+// WAKE LOCK — écran allumé pendant le jeu
+// ═══════════════════════════════════════════
+let _wakeLock = null;
+async function requestWakeLock(){
+  if(!('wakeLock' in navigator)) return;
+  try{
+    _wakeLock = await navigator.wakeLock.request('screen');
+    _wakeLock.addEventListener('release', () => { _wakeLock = null; });
+  } catch(e){ console.log('WakeLock failed:', e); }
+}
+function releaseWakeLock(){
+  if(_wakeLock){ _wakeLock.release(); _wakeLock = null; }
+}
+// Réactiver si l'app revient au premier plan
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && S.currentPartyId && S.role){
+    requestWakeLock();
+  }
+});
+
+// ═══════════════════════════════════════════
+// NOTIFS IN-APP STYLE DISCORD
+// ═══════════════════════════════════════════
+let _notifQueue = [];
+let _notifShowing = false;
+
+function showNotif(icon, title, body, color='#7b7fff'){
+  _notifQueue.push({icon, title, body, color});
+  if(!_notifShowing) _processNotifQueue();
+}
+
+function _processNotifQueue(){
+  if(!_notifQueue.length){ _notifShowing = false; return; }
+  _notifShowing = true;
+  const {icon, title, body, color} = _notifQueue.shift();
+  let el = document.getElementById('app-notif');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'app-notif';
+    el.style.cssText = 'position:fixed;top:-80px;left:50%;transform:translateX(-50%);width:90%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:99999;box-shadow:0 4px 24px rgba(0,0,0,0.5);transition:top .35s cubic-bezier(.34,1.56,.64,1);';
+    document.body.appendChild(el);
+  }
+  el.style.borderColor = color + '55';
+  el.innerHTML = `<div style="font-size:26px;flex-shrink:0">${icon}</div><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13px;color:${color}">${title}</div><div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${body}</div></div>`;
+  // Slide in
+  requestAnimationFrame(() => { el.style.top = '16px'; });
+  setTimeout(() => {
+    el.style.top = '-80px';
+    setTimeout(() => _processNotifQueue(), 400);
+  }, 3000);
 }
 
 function stopMusicOnLogin() { pauseMusic(); }
