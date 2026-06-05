@@ -377,6 +377,29 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 #screen-admin-login{background:#0a0c10;align-items:center;justify-content:center;}
 .admin-login-card{background:var(--surface);border:1px solid rgba(255,77,109,0.3);border-radius:16px;padding:28px;width:100%;max-width:360px;}
 
+
+/* ── GROUPES ── */
+.group-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:12px;border:1px solid var(--border);margin-bottom:6px;}
+.group-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.group-info{flex:1;min-width:0;}
+.group-name{font-weight:800;font-size:14px;}
+.group-meta{font-size:11px;color:var(--muted);}
+.group-btn{padding:6px 11px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:"Nunito",sans-serif;}
+.group-btn.open{background:var(--primary);color:#fff;}
+.group-btn.leave{background:rgba(255,77,109,0.15);color:#ff4d6d;border:1px solid rgba(255,77,109,0.3);}
+#screen-group-chat{background:var(--bg);}
+.gc-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.gc-members-row{display:flex;gap:6px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.gc-member-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;background:var(--bg);border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.gc-messages{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.gc-msg{max-width:78%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.4;word-break:break-word;}
+.gc-msg.me{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:4px;}
+.gc-msg.them{align-self:flex-start;background:var(--surface);color:var(--text);border-bottom-left-radius:4px;}
+.gc-msg-name{font-size:10px;font-weight:800;margin-bottom:3px;opacity:.8;}
+.gc-msg-time{font-size:10px;opacity:.6;margin-top:3px;}
+.gc-input-row{display:flex;gap:8px;padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;}
+.gc-input-row input{flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:20px;color:var(--text);font-family:"Nunito",sans-serif;font-size:14px;outline:none;}
+
 </style>
 </head>
 <body>
@@ -420,10 +443,11 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <div id="admin-mode-row" style="display:none;margin-top:10px;padding:10px;background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25);border-radius:10px;">
         <div style="font-size:11px;font-weight:800;color:#ff4d6d;letter-spacing:1px;margin-bottom:8px;">⚡ COMPTE ADMINISTRATEUR DÉTECTÉ</div>
         <div style="display:flex;gap:8px;">
-          <button onclick="doLogin('player')" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">👤 Joueur</button>
-          <button onclick="doLogin('admin')" style="flex:1;padding:9px;background:rgba(255,77,109,0.2);border:1px solid rgba(255,77,109,0.4);border-radius:8px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">🛡️ Administrateur</button>
+          <button onclick="selectLoginMode('player')" id="btn-mode-player" style="flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">👤 Joueur</button>
+          <button onclick="selectLoginMode('admin')" id="btn-mode-admin" style="flex:1;padding:9px;background:rgba(255,77,109,0.2);border:1px solid rgba(255,77,109,0.4);border-radius:8px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">🛡️ Administrateur</button>
         </div>
       </div>
+      <button id="btn-login-player" onclick="doLogin('player')" style="display:none;width:100%;margin-top:8px;padding:12px;background:linear-gradient(135deg,var(--primary),var(--accent2));border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🔐 Se connecter en tant que joueur</button>
       <div id="login-error" class="error-msg"></div>
     </div>
     <!-- REGISTER -->
@@ -769,6 +793,70 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       </div>
     </div>
 
+    <!-- Groupes -->
+    <div class="section-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <h3 style="margin:0;">💬 Mes groupes</h3>
+        <button onclick="openCreateGroup()" style="padding:6px 12px;background:var(--primary);border:none;border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">+ Créer</button>
+      </div>
+      <div id="groups-list">
+        <div style="text-align:center;color:var(--muted);font-size:13px;padding:12px;">Aucun groupe pour l'instant</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL CRÉER GROUPE ══ -->
+<div class="modal-overlay" id="modal-create-group">
+  <div class="modal-box">
+    <h3>💬 Créer un groupe</h3>
+    <div class="form-group">
+      <label>Nom du groupe</label>
+      <input type="text" id="group-name-input" maxlength="30" placeholder="Ex: La bande, Cache Cache crew..." style="width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;box-sizing:border-box;">
+    </div>
+    <div class="form-group">
+      <label>Emoji du groupe</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;" id="group-emoji-picker">
+        <span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">👾</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🎮</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🏃</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🙈</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🔥</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">⚡</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🎯</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">💀</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🦊</span><span onclick="document.getElementById('group-emoji-input').value=this.textContent" style="cursor:pointer;font-size:22px;padding:4px;border-radius:6px;transition:.15s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">🐺</span>
+      </div>
+      <input type="text" id="group-emoji-input" value="👾" maxlength="2" style="width:60px;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Nunito',sans-serif;font-size:20px;text-align:center;outline:none;margin-top:8px;">
+    </div>
+    <div class="form-group">
+      <label>Ajouter des amis</label>
+      <div id="group-friends-picker" style="display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:160px;overflow-y:auto;"></div>
+    </div>
+    <button onclick="createGroup()" class="btn-primary">Créer le groupe</button>
+    <button onclick="closeModal('modal-create-group')" class="btn-cancel">Annuler</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN CHAT GROUPE ══ -->
+<div id="screen-group-chat" class="screen">
+  <div class="gc-header">
+    <button class="back-btn" onclick="showScreen('screen-friends')">←</button>
+    <div id="gc-avatar" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">👾</div>
+    <div style="flex:1;min-width:0;">
+      <div id="gc-name" style="font-weight:800;font-size:15px;">—</div>
+      <div id="gc-member-count" style="font-size:11px;color:var(--muted);">— membres</div>
+    </div>
+    <button onclick="openGroupInfo()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">ℹ️</button>
+  </div>
+  <div class="gc-members-row" id="gc-members-row"></div>
+  <div class="gc-messages" id="gc-messages"></div>
+  <div class="gc-input-row">
+    <input type="text" id="gc-input" placeholder="Message..." maxlength="300" onkeydown="if(event.key==='Enter')sendGroupMsg()">
+    <button class="btn-primary" style="padding:10px 16px;" onclick="sendGroupMsg()">➤</button>
+  </div>
+</div>
+
+<!-- ══ MODAL INFO GROUPE ══ -->
+<div class="modal-overlay" id="modal-group-info">
+  <div class="modal-box">
+    <h3 id="group-info-title">Groupe</h3>
+    <div id="group-info-members" style="margin-bottom:12px;"></div>
+    <button onclick="leaveGroup()" style="width:100%;padding:12px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🚪 Quitter le groupe</button>
+    <button onclick="closeModal('modal-group-info')" class="btn-cancel" style="margin-top:8px;">Fermer</button>
   </div>
 </div>
 
@@ -1102,7 +1190,7 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='screen-map'&&S.map)setTimeout(()=>S.map.invalidateSize(),100);
-  if(id==='screen-friends'){ loadFriends(); loadFriendRequests(); }
+  if(id==='screen-friends'){ loadFriends(); loadFriendRequests(); loadGroups(); }
 }
 function toast(msg,dur=3000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 function openModal(id){document.getElementById(id).classList.add('show');}
@@ -1221,7 +1309,7 @@ async function doLogout(){
 }
 
 function getFriendlyError(code){
-  const map={'auth/user-not-found':'Aucun compte avec cet email.','auth/wrong-password':'Mot de passe incorrect.','auth/email-already-in-use':'Cet email est déjà utilisé.','auth/invalid-email':'Email invalide.','auth/weak-password':'Mot de passe trop faible.','auth/too-many-requests':'Trop de tentatives. Réessaie plus tard.'};
+  const map={'auth/user-not-found':'Aucun compte avec cet email.','auth/wrong-password':'Mot de passe incorrect.','auth/email-already-in-use':'Cet email est déjà utilisé.','auth/invalid-email':'Email invalide.','auth/weak-password':'Mot de passe trop faible.','auth/too-many-requests':'Trop de tentatives Firebase. Attends 1 minute et réessaie.'};
   return map[code]||'Erreur : '+code;
 }
 
@@ -2495,9 +2583,32 @@ async function sendFriendMsg(){
 // ═══════════════════════════════════════════
 // ADMIN SYSTEM
 // ═══════════════════════════════════════════
-const ADMIN_PASSWORD = "cachecache2024admin"; // ← Change ce mot de passe
+const ADMIN_PASSWORD = "Rencast7274";
 let _adminUsersCache = {};
 let _adminSelectedUid = null;
+
+function selectLoginMode(mode){
+  const btnPlayer = document.getElementById('btn-mode-player');
+  const btnAdmin = document.getElementById('btn-mode-admin');
+  const btnLoginPlayer = document.getElementById('btn-login-player');
+  // Reset styles
+  btnPlayer.style.background = 'var(--surface)';
+  btnPlayer.style.borderColor = 'var(--border)';
+  btnPlayer.style.color = 'var(--text)';
+  btnAdmin.style.background = 'rgba(255,77,109,0.2)';
+  btnAdmin.style.borderColor = 'rgba(255,77,109,0.4)';
+  btnAdmin.style.color = '#ff4d6d';
+
+  if(mode === 'player'){
+    btnPlayer.style.background = 'rgba(123,127,255,0.25)';
+    btnPlayer.style.borderColor = 'rgba(123,127,255,0.5)';
+    btnPlayer.style.color = '#7b7fff';
+    btnLoginPlayer.style.display = 'block';
+  } else {
+    btnLoginPlayer.style.display = 'none';
+    doLogin('admin');
+  }
+}
 
 function checkAdminEmail(){
   const email = document.getElementById('login-email').value.trim();
@@ -2881,6 +2992,170 @@ function _processNotifQueue(){
     el.style.top = '-80px';
     setTimeout(() => _processNotifQueue(), 400);
   }, 3000);
+}
+
+
+// ═══════════════════════════════════════════
+// SYSTÈME DE GROUPES
+// ═══════════════════════════════════════════
+let _currentGroupId = null;
+let _currentGroupData = null;
+let _groupChatListener = null;
+let _groupsListener = null;
+
+function openCreateGroup(){
+  // Charger les amis dans le picker
+  const picker = document.getElementById('group-friends-picker');
+  picker.innerHTML = '';
+  const snap_cache = window._friendsCache || {};
+  if(Object.keys(snap_cache).length === 0){
+    picker.innerHTML = `<div style="color:var(--muted);font-size:13px;">Ajoute des amis d'abord</div>`;
+  } else {
+    Object.entries(snap_cache).forEach(([uid, f]) => {
+      if(f.status !== 'accepted') return;
+      const div = document.createElement('div');
+      div.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border-radius:8px;cursor:pointer;';
+      div.innerHTML = `<input type="checkbox" id="gc-pick-${uid}" value="${uid}" style="width:16px;height:16px;cursor:pointer;accent-color:var(--primary);">
+        <label for="gc-pick-${uid}" style="cursor:pointer;font-size:13px;font-weight:700;">${f.pseudo||'?'}</label>`;
+      picker.appendChild(div);
+    });
+  }
+  document.getElementById('group-name-input').value = '';
+  document.getElementById('group-emoji-input').value = '👾';
+  openModal('modal-create-group');
+}
+
+async function createGroup(){
+  const name = document.getElementById('group-name-input').value.trim();
+  const emoji = document.getElementById('group-emoji-input').value || '👾';
+  if(!name){ toast('Donne un nom au groupe !'); return; }
+
+  // Récupérer les membres cochés
+  const checkboxes = document.querySelectorAll('#group-friends-picker input[type=checkbox]:checked');
+  const memberIds = Array.from(checkboxes).map(c => c.value);
+  memberIds.push(S.user.uid); // toujours inclure soi-même
+
+  const groupData = {
+    name, emoji,
+    createdBy: S.user.uid,
+    createdAt: Date.now(),
+    members: Object.fromEntries(memberIds.map(uid => [uid, {
+      pseudo: uid === S.user.uid ? S.userProfile.pseudo : (window._friendsCache?.[uid]?.pseudo || '?'),
+      joinedAt: Date.now()
+    }]))
+  };
+
+  const groupId = 'grp_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  await dbUpdate('groups/' + groupId, groupData);
+
+  closeModal('modal-create-group');
+  toast(`💬 Groupe "${name}" créé !`);
+  loadGroups();
+  openGroupChat(groupId, groupData);
+}
+
+async function loadGroups(){
+  if(!S.user) return;
+  if(_groupsListener){ _groupsListener(); _groupsListener = null; }
+
+  _groupsListener = dbListen('groups', snap => {
+    const list = document.getElementById('groups-list');
+    if(!snap.exists()){ list.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:12px;">Aucun groupe pour l'instant</div>`; return; }
+
+    const myGroups = Object.entries(snap.val()).filter(([,g]) => g.members && g.members[S.user.uid]);
+    if(myGroups.length === 0){ list.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;padding:12px;">Aucun groupe pour l'instant</div>`; return; }
+
+    list.innerHTML = myGroups.map(([gid, g]) => {
+      const count = Object.keys(g.members || {}).length;
+      return `<div class="group-row">
+        <div class="group-avatar">${g.emoji || '👾'}</div>
+        <div class="group-info">
+          <div class="group-name">${g.name || 'Groupe'}</div>
+          <div class="group-meta">${count} membre${count>1?'s':''}</div>
+        </div>
+        <button class="group-btn open" onclick="openGroupChat('${gid}', null)">💬</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function openGroupChat(groupId, groupData){
+  _currentGroupId = groupId;
+
+  // Charger les données si pas passées
+  if(!groupData){
+    const snap = await dbGet('groups/' + groupId);
+    if(!snap.exists()) return;
+    groupData = snap.val();
+  }
+  _currentGroupData = groupData;
+
+  const memberCount = Object.keys(groupData.members || {}).length;
+  document.getElementById('gc-avatar').textContent = groupData.emoji || '👾';
+  document.getElementById('gc-name').textContent = groupData.name || 'Groupe';
+  document.getElementById('gc-member-count').textContent = memberCount + ' membre' + (memberCount>1?'s':'');
+
+  // Membres row
+  const membersRow = document.getElementById('gc-members-row');
+  membersRow.innerHTML = Object.entries(groupData.members || {}).map(([uid, m]) =>
+    `<div class="gc-member-chip">${uid===S.user.uid?'👤 Moi':('👤 '+(m.pseudo||'?'))}</div>`
+  ).join('');
+
+  showScreen('screen-group-chat');
+
+  // Listener messages
+  if(_groupChatListener){ _groupChatListener(); _groupChatListener = null; }
+  _groupChatListener = dbListen('groupchats/' + groupId, snap => {
+    const msgs = snap.exists() ? Object.values(snap.val()).sort((a,b) => a.ts - b.ts) : [];
+    const box = document.getElementById('gc-messages');
+    box.innerHTML = msgs.length ? msgs.map(m => {
+      const isMe = m.sender === S.user.uid;
+      const t = new Date(m.ts).toLocaleTimeString('fr', {hour:'2-digit', minute:'2-digit'});
+      return `<div class="gc-msg ${isMe?'me':'them'}">
+        ${!isMe ? `<div class="gc-msg-name">${m.senderName||'?'}</div>` : ''}
+        ${m.text.replace(/</g,'&lt;')}
+        <div class="gc-msg-time">${t}</div>
+      </div>`;
+    }).join('') : '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">Pas encore de messages 💬</div>';
+    box.scrollTop = box.scrollHeight;
+  });
+}
+
+async function sendGroupMsg(){
+  const input = document.getElementById('gc-input');
+  const text = input.value.trim();
+  if(!text || !_currentGroupId) return;
+  input.value = '';
+  await dbPush('groupchats/' + _currentGroupId, {
+    sender: S.user.uid,
+    senderName: S.userProfile?.pseudo || '?',
+    text, ts: Date.now()
+  });
+}
+
+function openGroupInfo(){
+  if(!_currentGroupData) return;
+  document.getElementById('group-info-title').textContent = (_currentGroupData.emoji||'👾') + ' ' + (_currentGroupData.name||'Groupe');
+  document.getElementById('group-info-members').innerHTML = Object.entries(_currentGroupData.members||{}).map(([uid,m]) =>
+    `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="font-size:20px;">👤</div>
+      <div style="font-weight:700;font-size:13px;">${uid===S.user.uid?'Moi ('+S.userProfile?.pseudo+')':m.pseudo||'?'}</div>
+      ${_currentGroupData.createdBy===uid?'<div style="font-size:10px;color:var(--primary);font-weight:800;margin-left:auto;">CRÉATEUR</div>':''}
+    </div>`
+  ).join('');
+  openModal('modal-group-info');
+}
+
+async function leaveGroup(){
+  if(!_currentGroupId) return;
+  if(!confirm('Quitter ce groupe ?')) return;
+  await window._dbRemove(dbRef('groups/' + _currentGroupId + '/members/' + S.user.uid));
+  closeModal('modal-group-info');
+  showScreen('screen-friends');
+  toast('Tu as quitté le groupe.');
+  _currentGroupId = null;
+  _currentGroupData = null;
+  if(_groupChatListener){ _groupChatListener(); _groupChatListener = null; }
 }
 
 function stopMusicOnLogin() { pauseMusic(); }
