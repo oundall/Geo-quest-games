@@ -645,7 +645,11 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
   </div>
   <div class="timer-bar"><div class="timer-pill" id="timer-display">00:00</div></div>
   <div class="zone-hint" id="zone-hint">📍 Clique pour placer des points — Double-clique pour terminer</div>
-  <div class="proximity-alert" id="prox-alert">⚠️ CHERCHEUR PROCHE !</div>
+  <div class="proximity-alert" id="prox-alert" style="display:none;flex-direction:column;align-items:center;gap:2px;padding:10px 22px;border-radius:18px;max-width:85%;text-align:center;white-space:normal;">
+    <div id="prox-alert-icon" style="font-size:22px;"></div>
+    <div id="prox-alert-title" style="font-size:14px;font-weight:900;letter-spacing:.5px;"></div>
+    <div id="prox-alert-sub" style="font-size:11px;opacity:.85;"></div>
+  </div>
   <div class="proximity-alert" id="zone-out-alert" style="top:140px;background:rgba(255,190,11,0.95);color:#000;">⚠️ Hors zone !</div>
   <div class="proximity-alert" id="hint-alert" style="top:180px;background:rgba(255,190,11,0.92);color:#000;font-size:12px;max-width:80%;text-align:center;white-space:normal;border-radius:14px;padding:8px 16px;">💡</div>
   <div id="map"></div>
@@ -1180,6 +1184,7 @@ let S = {
   // Settings toggles
   lockPseudo: false, useSlotsMode: false,
   slots: [], selectedTimer: 0, selectedProx: 0,
+  _wheelStarted: false,
 };
 
 // ════════════════════════════════════════════════════
@@ -1197,13 +1202,26 @@ function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 function randomCode(n=6){return Math.random().toString(36).slice(2,2+n).toUpperCase();}
 function waitForFirebase(cb){if(window.firebaseReady){cb();return;}document.addEventListener('firebaseReady',cb,{once:true});}
+const $=id=>document.getElementById(id);
+// Sanitize pour éviter XSS dans innerHTML
+function esc(str){
+  if(!str)return'';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+// Hash SHA-256 pour ne pas stocker le mot de passe admin en clair
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 function dbRef(p){return window._dbRef(window._db,p);}
 function dbSet(p,v){return window._dbSet(dbRef(p),v);}
 function dbUpdate(p,v){return window._dbUpdate(dbRef(p),v);}
 function dbGet(p){return window._dbGet(dbRef(p));}
 function dbPush(p,v){return window._dbPush(dbRef(p),v);}
 function dbListen(p,cb){const u=window._dbOnValue(dbRef(p),cb);S.dbListeners.push(u);return u;}
+// haversine unifié (retourne mètres)
 function haversine(lat1,lon1,lat2,lon2){const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+const haversineMeters=haversine; // alias pour compatibilité
 function formatTime(s){return`${Math.floor(s/60)}m ${s%60}s`;}
 function formatDate(ts){return new Date(ts).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});}
 
@@ -1243,21 +1261,7 @@ function togglePwd(inputId, btn){
   else{input.type='password';btn.textContent='👁️';}
 }
 
-async function doLogin(){
-  if(!window.firebaseReady||!window._auth){toast('⏳ Chargement en cours, réessaie...');return;}
-  const email=document.getElementById('login-email').value.trim();
-  const pw=document.getElementById('login-password').value;
-  const errEl=document.getElementById('login-error');
-  errEl.classList.remove('show');
-  if(!email||!pw){errEl.textContent='Remplis tous les champs.';errEl.classList.add('show');return;}
-  try{
-    document.getElementById('btn-login').disabled=true;
-    await window._authSignIn(window._auth,email,pw);
-  } catch(e){
-    errEl.textContent=getFriendlyError(e.code);errEl.classList.add('show');
-    document.getElementById('btn-login').disabled=false;
-  }
-}
+
 
 async function doRegister(){
   if(!window.firebaseReady||!window._auth){toast('⏳ Chargement en cours, réessaie...');return;}
@@ -1393,6 +1397,7 @@ async function uploadAvatar(input){
 async function saveProfile(){
   const pseudo=document.getElementById('edit-pseudo').value.trim();
   if(!pseudo){toast('Entre un pseudo.');return;}
+  if(pseudo.length>20){toast('Pseudo trop long (max 20 caractères).');return;}
   await dbUpdate('users/'+S.user.uid,{pseudo});
   await window._authUpdateProfile(S.user,{displayName:pseudo});
   S.userProfile.pseudo=pseudo;
@@ -1418,7 +1423,7 @@ function loadLobby(){
       count++;
       const playerCount=p.players?Object.keys(p.players).length:0;
       const div=document.createElement('div');div.className='party-item';
-      div.innerHTML=`<div style="width:40px;height:40px;border-radius:10px;background:rgba(255,159,28,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;">🎮</div><div class="party-item-info"><div class="party-item-name">${p.name||'Partie sans nom'}</div><div class="party-item-meta">${playerCount} joueur${playerCount>1?'s':''} • Créée par ${p.masterName||'?'}</div></div><div class="party-item-badge">${p.status==='waiting'?'En attente':p.status==='active'?'En cours':'—'}</div>`;
+      div.innerHTML=`<div style="width:40px;height:40px;border-radius:10px;background:rgba(255,159,28,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;">🎮</div><div class="party-item-info"><div class="party-item-name">${esc(p.name||'Partie sans nom')}</div><div class="party-item-meta">${playerCount} joueur${playerCount>1?'s':''} • Créée par ${esc(p.masterName||'?')}</div></div><div class="party-item-badge">${p.status==='waiting'?'En attente':p.status==='active'?'En cours':'—'}</div>`;
       div.onclick=()=>quickJoinParty(id,p);
       list.appendChild(div);
     }
@@ -1609,6 +1614,13 @@ async function joinParty(){
   if(!foundParty){errEl.textContent='Code invalide ou partie terminée.';errEl.classList.add('show');return;}
   if(foundParty.password!==pw){errEl.textContent='Mot de passe incorrect.';errEl.classList.add('show');return;}
 
+  // Vérifier limite joueurs (si pas déjà dans la partie)
+  const existingPlayers=foundParty.players||{};
+  const maxPlayers=foundParty.maxPlayers||10;
+  if(!existingPlayers[S.user.uid]&&Object.keys(existingPlayers).length>=maxPlayers){
+    errEl.textContent='La partie est complète !';errEl.classList.add('show');return;
+  }
+
   closeModal('modal-join');
   const myId=S.user.uid;
   const myColor=S.userProfile.color||PLAYER_COLORS[1];
@@ -1617,14 +1629,26 @@ async function joinParty(){
   S.currentPartyId=foundId;
   S.currentParty=foundParty;
   S.isMaster=false;
-  S.role='hider';
   S.myColor=myColor;
 
-  await dbUpdate('parties/'+foundId+'/players/'+myId,{
-    uid:myId, name:myName, color:myColor,
-    role:'hider', found:false, connected:true,
-    avatarUrl:S.userProfile.avatarUrl||null
-  });
+  // Vérifier si le joueur était déjà dans la partie (reconnexion)
+  const existingPlayer=foundParty.players?.[myId];
+  if(existingPlayer){
+    // Reconnexion : garder le rôle et les données existantes
+    S.role=existingPlayer.role||'hider';
+    await dbUpdate('parties/'+foundId+'/players/'+myId,{
+      connected:true, lastSeen:Date.now(),
+      name:myName, avatarUrl:S.userProfile.avatarUrl||null
+    });
+  } else {
+    // Nouveau joueur
+    S.role='hider';
+    await dbUpdate('parties/'+foundId+'/players/'+myId,{
+      uid:myId, name:myName, color:myColor,
+      role:'hider', found:false, connected:true,
+      avatarUrl:S.userProfile.avatarUrl||null
+    });
+  }
 
   showPartyLobby(foundId, false);
 }
@@ -1649,7 +1673,8 @@ function showPartyLobby(partyId, isMaster){
     renderWaitingPlayers(players, party.slots||{});
 
     // Listen for game start
-    if(party.status==='wheel'&&!isMaster){
+    if(party.status==='wheel'&&!isMaster&&!S._wheelStarted){
+      S._wheelStarted=true;
       S.players=players;
       showScreen('screen-wheel');
       runWheel(party);
@@ -1667,7 +1692,7 @@ function renderWaitingPlayers(players, slots){
   for(const[id,p]of Object.entries(players)){
     const div=document.createElement('div');div.className='waiting-player';
     const avatar=p.avatarUrl?`<img src="${p.avatarUrl}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`:`<div class="waiting-avatar" style="background:${p.color||'#aaa'}">${p.name?p.name[0].toUpperCase():'?'}</div>`;
-    div.innerHTML=`${avatar}<div><div class="waiting-name">${p.name}${p.isMaster?' 👑':''}</div></div><div class="waiting-status">● En ligne</div>`;
+    div.innerHTML=`${avatar}<div><div class="waiting-name">${esc(p.name)}${p.isMaster?' 👑':''}</div></div><div class="waiting-status">● En ligne</div>`;
     list.appendChild(div);
   }
 }
@@ -1688,10 +1713,15 @@ async function deleteParty(){
 }
 
 async function leavePartyLobby(){
-  if(S.currentPartyId&&S.user&&!S.isMaster){
-    await window._dbRemove(dbRef('parties/'+S.currentPartyId+'/players/'+S.user.uid));
+  if(S.currentPartyId&&S.user){
+    if(S.isMaster){
+      // Le master supprime la partie entière
+      await window._dbRemove(dbRef('parties/'+S.currentPartyId));
+    } else {
+      await window._dbRemove(dbRef('parties/'+S.currentPartyId+'/players/'+S.user.uid));
+    }
   }
-  S.currentPartyId=null;S.isMaster=false;
+  S.currentPartyId=null;S.isMaster=false;S._wheelStarted=false;
   S.dbListeners.forEach(u=>u&&u());S.dbListeners=[];
   showScreen('screen-lobby');
 }
@@ -1810,6 +1840,14 @@ function startMapScreen(){
   if(S.gameActive)return;
   S.gameActive=true;
   showScreen('screen-map');
+
+  // Récupérer le rôle depuis Firebase si on revient en cours de partie
+  const myId=S.user?.uid;
+  if(myId&&S.currentPartyId&&S.players[myId]?.role){
+    S.role=S.players[myId].role;
+    S.myColor=S.players[myId].color||S.myColor;
+  }
+
   const badge=document.getElementById('map-role-badge');
   const cb=document.getElementById('chat-role-badge');
   if(S.role==='seeker'){badge.textContent='🔍 Chercheur';badge.style.background='rgba(255,159,28,0.2)';badge.style.color='var(--seeker)';}
@@ -1823,7 +1861,12 @@ function startMapScreen(){
     L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:19}).addTo(S.map);
     L.control.zoom({position:'topright'}).addTo(S.map);
     S.map.on('click',onMapClick);S.map.on('dblclick',onMapDblClick);
-  } else setTimeout(()=>S.map.invalidateSize(),200);
+  } else {
+    // Nettoyer tous les anciens marqueurs pour éviter les doublons
+    for(const id of Object.keys(S.markers)){S.map.removeLayer(S.markers[id]);}
+    S.markers={};
+    setTimeout(()=>S.map.invalidateSize(),200);
+  }
 
   startGPS();listenGamePlayers();listenForChat();listenForHints();startTimerDisplay();
   setTimeout(()=>initWalkie(), 1500);
@@ -1901,11 +1944,8 @@ function startGPS(){ requestWakeLock();
 }
 // ── THROTTLE GPS : n'envoie à Firebase que si déplacement > 3m OU 5s écoulées ──
 let _lastSentLat=null,_lastSentLng=null,_lastSentTime=0;
-function haversineMeters(lat1,lng1,lat2,lng2){
-  const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
+
+
 function updateMyPosition(lat,lng){
   if(!S.user||!S.currentPartyId||!S.map)return;
   const now=Date.now();
@@ -2017,14 +2057,107 @@ function renderPlayersStrip(){ updatePlayerCounter();
 }
 
 // ── PROXIMITY ──
-function startProximityCheck(){if(S.proximityInterval)clearInterval(S.proximityInterval);S.proximityInterval=setInterval(checkProximityNow,5000);}
+
+// ── CALCUL AIRE ZONE (formule de Shoelace géographique) ──
+function calcZoneAreaM2(points){
+  if(!points||points.length<3)return null;
+  const R=6371000;
+  let area=0;
+  const n=points.length;
+  for(let i=0;i<n;i++){
+    const [lat1,lng1]=points[i];
+    const [lat2,lng2]=points[(i+1)%n];
+    const x1=lng1*Math.PI/180*R*Math.cos(lat1*Math.PI/180);
+    const y1=lat1*Math.PI/180*R;
+    const x2=lng2*Math.PI/180*R*Math.cos(lat2*Math.PI/180);
+    const y2=lat2*Math.PI/180*R;
+    area+=x1*y2-x2*y1;
+  }
+  return Math.abs(area/2);
+}
+
+function getProximityThresholds(){
+  const zone=S.zonePoints;
+  const area=calcZoneAreaM2(zone);
+  // Si pas de zone : seuils fixes par défaut
+  if(!area) return {veryClose:30,close:80,nearby:150,far:300,veryFar:600};
+  // Rayon équivalent du cercle de même aire
+  const R=Math.sqrt(area/Math.PI);
+  // Seuils proportionnels au rayon de la zone
+  return {
+    veryClose: Math.round(R*0.05),   // 5% du rayon
+    close:     Math.round(R*0.13),   // 13%
+    nearby:    Math.round(R*0.25),   // 25%
+    far:       Math.round(R*0.50),   // 50%
+    veryFar:   Math.round(R*1.00),   // 100% = bord de zone
+  };
+}
+
 function checkProximityNow(){
-  const radius=S.currentParty?.proximityRadius||0;if(!radius||S.role!=='hider')return;
+  if(S.role!=='hider')return;
   const myId=S.user?.uid;const me=S.players[myId];if(!me?.lat)return;
-  let close=false;
-  for(const[id,p]of Object.entries(S.players)){if(p.role!=='seeker'||!p.lat)continue;if(haversine(me.lat,me.lng,p.lat,p.lng)<=radius){close=true;break;}}
-  const alert=document.getElementById('prox-alert');
-  if(close){alert.style.display='block';if(navigator.vibrate)navigator.vibrate([200,100,200]);setTimeout(()=>alert.style.display='none',4000);}
+
+  // Trouver le chercheur le plus proche
+  let minDist=Infinity;
+  for(const[id,p]of Object.entries(S.players)){
+    if(p.role!=='seeker'||!p.lat)continue;
+    const d=haversine(me.lat,me.lng,p.lat,p.lng);
+    if(d<minDist)minDist=d;
+  }
+  if(minDist===Infinity)return;
+
+  const t=getProximityThresholds();
+  const alertEl=document.getElementById('prox-alert');
+  const icon=document.getElementById('prox-alert-icon');
+  const title=document.getElementById('prox-alert-title');
+  const sub=document.getElementById('prox-alert-sub');
+
+  let level, bg, vibPat, showAlert=true;
+
+  if(minDist<=t.veryClose){
+    level='TRÈS PROCHE !';
+    icon.textContent='🚨';
+    sub.textContent='Il est juste à côté de vous !';
+    bg='rgba(255,30,60,0.97)';
+    vibPat=[500,100,500,100,500];
+  } else if(minDist<=t.close){
+    level='PROCHE !';
+    icon.textContent='⚠️';
+    sub.textContent='Le chercheur arrive vers vous !';
+    bg='rgba(255,77,109,0.95)';
+    vibPat=[300,100,300];
+  } else if(minDist<=t.nearby){
+    level='À CÔTÉ';
+    icon.textContent='👀';
+    sub.textContent='Un chercheur est dans votre zone.';
+    bg='rgba(255,130,50,0.93)';
+    vibPat=[200,100,200];
+  } else if(minDist<=t.far){
+    level='LOIN';
+    icon.textContent='🟡';
+    sub.textContent='Chercheur repéré dans les environs.';
+    bg='rgba(255,190,11,0.92)';
+    vibPat=[150];
+  } else if(minDist<=t.veryFar){
+    level='TRÈS LOIN';
+    icon.textContent='🟢';
+    sub.textContent='Vous êtes en sécurité pour l\'instant.';
+    bg='rgba(6,214,160,0.88)';
+    vibPat=null;
+  } else {
+    showAlert=false;
+  }
+
+  if(!showAlert){alertEl.style.display='none';return;}
+
+  title.textContent=level;
+  alertEl.style.background=bg;
+  alertEl.style.display='flex';
+  if(vibPat&&navigator.vibrate)navigator.vibrate(vibPat);
+
+  const dur=minDist<=t.close?5000:3500;
+  if(S._proxAlertTimer)clearTimeout(S._proxAlertTimer);
+  S._proxAlertTimer=setTimeout(()=>alertEl.style.display='none',dur);
 }
 
 // ── TIMER ──
@@ -2059,7 +2192,8 @@ async function leaveGame(){ releaseWakeLock();
   if(S.proximityInterval)clearInterval(S.proximityInterval);
   if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
   if(S.currentPartyId&&S.user){
-    await window._dbRemove(dbRef('parties/'+S.currentPartyId+'/players/'+S.user.uid));
+    // On garde les données du joueur (rôle, position) mais on le marque déconnecté
+    await dbUpdate('parties/'+S.currentPartyId+'/players/'+S.user.uid,{connected:false,lastSeen:Date.now()});
   }
   backToLobby();
 }
@@ -2089,7 +2223,7 @@ async function markFound(id){
 }
 function showFoundSplash(name){
   const s=document.getElementById('found-splash');
-  document.getElementById('found-splash-text').innerHTML=`${name}<br>TROUVÉ ! 🎯`;
+  document.getElementById('found-splash-text').innerHTML=`${esc(name)}<br>TROUVÉ ! 🎯`;
   s.classList.add('show');if(navigator.vibrate)navigator.vibrate([300,100,300,100,500]);playSound('found');
   setTimeout(()=>s.classList.remove('show'),2500);
 }
@@ -2124,8 +2258,12 @@ function listenForHints(){
 }
 async function endGame(){
   if(!confirm('Terminer la partie ?'))return;
-  if(S.timerInterval)clearInterval(S.timerInterval);if(S.proximityInterval)clearInterval(S.proximityInterval);
-  // Save stats
+  if(S.timerInterval)clearInterval(S.timerInterval);
+  if(S.proximityInterval)clearInterval(S.proximityInterval);
+  if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
+  if(zoneWarningInterval){clearInterval(zoneWarningInterval);zoneWarningInterval=null;}
+  if(zoneWarningCountdown){clearInterval(zoneWarningCountdown);zoneWarningCountdown=null;}
+  outsideZoneStart=null;
   await saveGameStats();
   await dbUpdate('parties/'+S.currentPartyId,{status:'ended',endedAt:Date.now()});
   showEndScreen(S.currentParty||{});
@@ -2148,7 +2286,7 @@ async function saveGameStats(){
 }
 
 function showEndScreen(party){
-  if(S.watchId)navigator.geolocation.clearWatch(S.watchId);
+  if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
   showScreen('screen-end');
   const scoresList=document.getElementById('scores-list');scoresList.innerHTML='';
   const medals=['🥇','🥈','🥉'];
@@ -2167,12 +2305,23 @@ function showEndScreen(party){
 
 function backToLobby(){
   cleanupWalkie();
+  if(S.map){
+    if(S.myPathLine){S.map.removeLayer(S.myPathLine);}
+    if(S.zonePolygon){S.map.removeLayer(S.zonePolygon);}
+    S.zoneDotMarkers.forEach(m=>S.map.removeLayer(m));
+    for(const id of Object.keys(S.markers)){S.map.removeLayer(S.markers[id]);}
+  }
   S.currentPartyId=null;S.isMaster=false;S.players={};S.role=null;
   S.gameActive=false;S.markers={};S.zonePoints=[];S.zoneMode=false;
-  S.myPathCoords=[];S.myPathLine=null;S._gpsToastShown=false;S._walkieToastShown=false;
+  S._wheelStarted=false;
+  S.myPathCoords=[];S.myPathLine=null;S.zonePolygon=null;S.zoneDotMarkers=[];
+  S._gpsToastShown=false;S._walkieToastShown=false;
   if(S.timerInterval)clearInterval(S.timerInterval);
   if(S.proximityInterval)clearInterval(S.proximityInterval);
-  if(S.watchId)navigator.geolocation.clearWatch(S.watchId);
+  if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
+  if(zoneWarningInterval){clearInterval(zoneWarningInterval);zoneWarningInterval=null;}
+  if(zoneWarningCountdown){clearInterval(zoneWarningCountdown);zoneWarningCountdown=null;}
+  outsideZoneStart=null;
   S.dbListeners.forEach(u=>u&&u());S.dbListeners=[];
   showScreen('screen-lobby');
 }
@@ -2211,13 +2360,14 @@ async function renderChatMessages(){
     const div=document.createElement('div');
     div.className='chat-msg '+(isSys?'system':isMe?'me':'other');
     if(isSys)div.textContent=msg.text;
-    else div.innerHTML=(!isMe?`<div class="chat-msg-name" style="color:${msg.senderColor||'#aaa'}">${msg.senderName}</div>`:'')+`<div>${msg.text}</div><div class="chat-msg-time">${new Date(msg.ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>`;
+    else div.innerHTML=(!isMe?`<div class="chat-msg-name" style="color:${esc(msg.senderColor||'#aaa')}">${esc(msg.senderName)}</div>`:'')+`<div>${esc(msg.text)}</div><div class="chat-msg-time">${new Date(msg.ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>`;
     c.appendChild(div);
   });
   c.scrollTop=c.scrollHeight;
 }
 async function sendMessage(){
   const input=document.getElementById('chat-input');const text=input.value.trim();if(!text)return;
+  if(text.length>300){toast('Message trop long (max 300 caractères).');return;}
   const tab=S.currentChat;
   if(tab==='hider'&&S.role!=='hider'&&!S.isMaster){toast('Tu es chercheur !');return;}
   if(tab==='seeker'&&S.role!=='seeker'&&!S.isMaster){toast('Tu es cacheur !');return;}
@@ -2406,7 +2556,7 @@ function loadSettings() {
   applySettings();
 }
 
-function saveSettings() { localStorage.setItem('cc_settings', JSON.stringify(SETTINGS)); }
+function saveSettings() { try { localStorage.setItem('cc_settings', JSON.stringify(SETTINGS)); } catch(e) {} }
 
 function applySettings() {
   // GPS mode labels
@@ -2583,7 +2733,7 @@ async function sendFriendMsg(){
 // ═══════════════════════════════════════════
 // ADMIN SYSTEM
 // ═══════════════════════════════════════════
-const ADMIN_PASSWORD = "Rencast7274";
+const ADMIN_PASSWORD_HASH = "5b6ee50bf21c3d979417cde39eec2c54f962eb81f748408b6e33e6d3efb3a45d"; // SHA-256 de ton mot de passe
 let _adminUsersCache = {};
 let _adminSelectedUid = null;
 
@@ -2642,10 +2792,11 @@ async function doLogin(mode){
   }
 }
 
-function checkAdminCode(){
+async function checkAdminCode(){
   const code = document.getElementById('admin-code-input').value;
   const errEl = document.getElementById('admin-code-error');
-  if(code === ADMIN_PASSWORD){
+  const hash = await sha256(code);
+  if(hash === ADMIN_PASSWORD_HASH){
     errEl.classList.remove('show');
     document.getElementById('admin-code-input').value = '';
     showScreen('screen-admin');
