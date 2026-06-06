@@ -2392,7 +2392,7 @@ async function initWalkie() {
   if(!S.user || !S.currentPartyId) return;
   try {
     // Create peer with uid-based id
-    const safePeerId = 'cc_' + S.user.uid.replace(/[^a-zA-Z0-9]/g,'').slice(0,20) + '_' + Date.now().toString(36);
+    const safePeerId = 'cc_' + S.user.uid.replace(/[^a-zA-Z0-9]/g,'').slice(0,20) + '_' + S.currentPartyId.replace(/[^a-zA-Z0-9]/g,'').slice(0,10);
     W.myPeerId = safePeerId;
     W.peer = new Peer(safePeerId, {
       host: '0.peerjs.com', port: 443, path: '/', secure: true,
@@ -2410,15 +2410,50 @@ async function initWalkie() {
     });
 
     W.peer.on('call', call => {
-      // Answer incoming call
-      call.answer(null); // no stream back (push to talk)
+      // Répondre avec un stream silencieux (push to talk — on émet pas en retour)
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const dest = ctx.createMediaStreamDestination();
+        call.answer(dest.stream); // stream silencieux au lieu de null
+      } catch(e) {
+        call.answer(new MediaStream()); // fallback
+      }
       call.on('stream', remoteStream => {
         playRemoteStream(remoteStream, call.peer);
+      });
+      call.on('error', e => console.log('Incoming call error:', e));
+      call.on('close', () => {
+        const audio = document.getElementById('audio-' + call.peer);
+        if(audio) audio.remove();
       });
       W.calls[call.peer] = call;
     });
 
-    W.peer.on('error', e => console.log('Peer error:', e));
+    W.peer.on('error', e => {
+      console.log('Peer error:', e);
+      // Si ID déjà pris (session précédente), on détruit et on recrée avec un suffixe
+      if(e.type === 'unavailable-id'){
+        try { W.peer.destroy(); } catch(_){}
+        W.peer = null;
+        setTimeout(() => {
+          const fallbackId = 'cc_' + S.user.uid.replace(/[^a-zA-Z0-9]/g,'').slice(0,20) + '_' + S.currentPartyId.replace(/[^a-zA-Z0-9]/g,'').slice(0,10) + '_' + Math.random().toString(36).slice(2,5);
+          W.peer = new Peer(fallbackId, {
+            host:'0.peerjs.com', port:443, path:'/', secure:true,
+            config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}
+          });
+          W.peer.on('open', async id => {
+            await dbUpdate('parties/'+S.currentPartyId+'/voice/'+S.user.uid, {peerId:id, name:S.userProfile.pseudo, uid:S.user.uid, speaking:false});
+            listenForPeers();
+            toast('🎙️ Talkie reconnecté !');
+          });
+          W.peer.on('call', call => {
+            try { const ctx=new (window.AudioContext||window.webkitAudioContext)(); call.answer(ctx.createMediaStreamDestination().stream); } catch(e){ call.answer(new MediaStream()); }
+            call.on('stream', s => playRemoteStream(s, call.peer));
+          });
+        }, 1000);
+      }
+    });
 
   } catch(e) { console.log('Walkie init error:', e); }
 }
@@ -2468,14 +2503,27 @@ async function startSpeaking(e) {
     // Update Firebase speaking status
     await dbUpdate('parties/'+S.currentPartyId+'/voice/'+S.user.uid, {speaking: true});
 
-    // Call all other peers
+    // Appeler tous les autres peers
     for(const [uid, peerId] of Object.entries(W.peerIds)) {
-      if(!peerId) continue;
+      if(!peerId || uid === S.user.uid) continue;
       try {
         const call = W.peer.call(peerId, W.localStream);
         if(call) {
           W.calls[peerId] = call;
-          call.on('error', e => console.log('Call error:', e));
+          call.on('error', e => {
+            console.log('Call error:', e);
+            // Retry une fois après 800ms si erreur
+            setTimeout(async () => {
+              if(!W.isSpeaking || !W.localStream) return;
+              try {
+                const retry = W.peer.call(peerId, W.localStream);
+                if(retry) W.calls[peerId] = retry;
+              } catch(e2) {}
+            }, 800);
+          });
+          call.on('close', () => {
+            delete W.calls[peerId];
+          });
         }
       } catch(e) { console.log('Call peer error:', e); }
     }
