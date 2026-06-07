@@ -401,46 +401,17 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 .gc-input-row input{flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:20px;color:var(--text);font-family:"Nunito",sans-serif;font-size:14px;outline:none;}
 
 
-/* ══ XP & NIVEAUX ══ */
-.xp-bar-wrap{background:var(--bg);border-radius:20px;height:8px;overflow:hidden;margin:6px 0;}
-.xp-bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#7b7fff,#00e5ff);transition:width .6s ease;}
-.level-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#7b7fff,#00e5ff);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:900;letter-spacing:.5px;}
-.title-badge{display:inline-block;background:rgba(255,190,11,0.15);border:1px solid rgba(255,190,11,0.4);color:#ffbe0b;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;letter-spacing:.5px;}
-/* ══ BATTLE PASS ══ */
-#screen-battlepass{overflow-y:auto;padding-bottom:24px;}
-.bp-header{background:linear-gradient(135deg,#1a0535,#0d1829);padding:20px 16px 16px;border-bottom:1px solid rgba(123,127,255,0.2);}
-.bp-season{font-size:11px;font-weight:800;color:#7b7fff;letter-spacing:2px;margin-bottom:4px;}
-.bp-title{font-size:22px;font-weight:900;color:#fff;}
-.bp-progress-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
-.bp-track{display:flex;padding:16px;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
-.bp-node{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:72px;scroll-snap-align:start;position:relative;}
-.bp-node-circle{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bg);transition:.2s;position:relative;}
-.bp-node-circle.unlocked{border-color:#7b7fff;background:rgba(123,127,255,0.15);}
-.bp-node-circle.current{border-color:#00e5ff;background:rgba(0,229,255,0.15);box-shadow:0 0 12px rgba(0,229,255,0.3);}
-.bp-node-circle.locked{opacity:.4;}
-.bp-node-level{font-size:10px;font-weight:800;color:var(--muted);}
-.bp-node-label{font-size:9px;color:var(--muted);text-align:center;max-width:60px;}
-.bp-connector{position:absolute;top:24px;right:-12px;width:24px;height:2px;background:var(--border);}
-.bp-connector.done{background:#7b7fff;}
-/* ══ SKINS ══ */
-#screen-skins{overflow-y:auto;padding-bottom:24px;}
-.skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;}
-.skin-card{background:var(--surface);border-radius:14px;border:2px solid var(--border);padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.2s;}
-.skin-card.owned{border-color:rgba(123,127,255,0.4);}
-.skin-card.equipped{border-color:#00e5ff;background:rgba(0,229,255,0.08);}
-.skin-card.locked{opacity:.5;cursor:default;}
-.skin-preview{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;}
-.skin-name{font-size:11px;font-weight:800;text-align:center;}
-.skin-req{font-size:9px;color:var(--muted);text-align:center;}
-/* ══ STATS DÉTAILLÉES ══ */
-.stat-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0;}
-.stat-detail-box{background:var(--surface);border-radius:12px;padding:12px;border:1px solid var(--border);}
-.stat-detail-val{font-size:22px;font-weight:900;color:var(--primary);}
-.stat-detail-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
-/* ══ DISTANCE IN-GAME ══ */
-.distance-pill{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(10,14,26,0.9);border:1px solid rgba(255,77,109,0.4);color:#ff4d6d;padding:5px 16px;border-radius:20px;font-size:13px;font-weight:800;display:none;white-space:nowrap;pointer-events:none;}
-.distance-pill.safe{border-color:rgba(6,214,160,0.4);color:#06d6a0;}
-.distance-pill.medium{border-color:rgba(255,190,11,0.4);color:#ffbe0b;}
+/* ══ THÈMES ══ */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;}
+.theme-card{border-radius:14px;height:80px;border:3px solid transparent;cursor:pointer;overflow:hidden;position:relative;transition:.2s;}
+.theme-card.active{border-color:#00e5ff;box-shadow:0 0 12px rgba(0,229,255,0.4);}
+.theme-card-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);font-size:10px;font-weight:800;color:#fff;text-align:center;padding:3px;}
+.theme-check{position:absolute;top:5px;right:5px;width:16px;height:16px;background:#00e5ff;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:9px;}
+.theme-card.active .theme-check{display:flex;}
+/* ══ BAN ══ */
+.ban-duration-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;}
+.ban-dur-btn{padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:"Nunito",sans-serif;}
+.ban-dur-btn.selected{background:rgba(255,77,109,0.2);border-color:#ff4d6d;color:#ff4d6d;}
 
 </style>
 </head>
@@ -687,7 +658,6 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
   </div>
   <div class="timer-bar"><div class="timer-pill" id="timer-display">00:00</div></div>
   <div class="zone-hint" id="zone-hint">📍 Clique pour placer des points — Double-clique pour terminer</div>
-  <div class="distance-pill" id="distance-pill">📍 —</div>
   <div class="proximity-alert" id="prox-alert" style="display:none;flex-direction:column;align-items:center;gap:2px;padding:10px 22px;border-radius:18px;max-width:85%;text-align:center;white-space:normal;">
     <div id="prox-alert-icon" style="font-size:22px;"></div>
     <div id="prox-alert-title" style="font-size:14px;font-weight:900;letter-spacing:.5px;"></div>
@@ -767,22 +737,10 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <div id="profile-email" style="font-size:12px;color:var(--muted);margin-bottom:4px;">—</div>
       <div id="profile-bio-display" class="profile-bio-empty" onclick="openBioModal()">Clique pour ajouter une description...</div>
     </div>
-    <!-- Niveau + XP sur le profil -->
-    <div style="background:var(--surface);border-radius:14px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--border);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-        <span id="profile-level-badge" class="level-badge">Niv. 1</span>
-        <span id="profile-title-badge" class="title-badge">Recrue</span>
-      </div>
-      <div class="xp-bar-wrap"><div class="xp-bar-fill" id="profile-xp-bar" style="width:0%"></div></div>
-      <div style="font-size:10px;color:var(--muted);margin-top:3px;text-align:right;"><span id="profile-xp-text">0 / 100 XP</span></div>
-    </div>
-    <div class="stat-detail-grid" style="margin-bottom:12px;">
-      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-parties">0</div><div class="stat-detail-lbl">🎮 Parties</div></div>
-      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-survived">0</div><div class="stat-detail-lbl">🙈 Survécus</div></div>
-      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-found">0</div><div class="stat-detail-lbl">🔍 Trouvés</div></div>
-      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-xp">0</div><div class="stat-detail-lbl">⭐ XP total</div></div>
-      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-distance">0km</div><div class="stat-detail-lbl">📍 Distance</div></div>
-      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-best-hide">—</div><div class="stat-detail-lbl">⏱️ Record caché</div></div>
+    <div class="stats-grid" style="margin-bottom:12px;">
+      <div class="stat-box"><div class="stat-num" id="stat-parties">0</div><div class="stat-label">Parties</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-survived">0</div><div class="stat-label">Survécus</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-found">0</div><div class="stat-label">Trouvés</div></div>
     </div>
     <div class="history-list">
       <h3>Historique</h3>
@@ -980,16 +938,23 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 
   <!-- Panel : Utilisateurs -->
   <div class="admin-panel" id="admin-panel-users">
-    <input type="text" class="admin-search" id="admin-user-search" placeholder="🔍 Rechercher un utilisateur..." oninput="filterAdminUsers()">
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input type="text" class="admin-search" id="admin-user-search" placeholder="🔍 Rechercher..." oninput="filterAdminUsers()" style="margin-bottom:0;flex:1;">
+      <button onclick="filterAdminUsers()" style="padding:10px 14px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🔍</button>
+    </div>
     <div id="admin-users-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 
   <!-- Panel : Parties -->
   <div class="admin-panel" id="admin-panel-parties">
-    <div class="stat-card" style="margin-bottom:0;">
-      <div style="font-weight:800;font-size:14px;margin-bottom:12px;">🎮 Parties récentes</div>
-      <div id="admin-parties-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <button onclick="adminFilterParties('all')" id="adm-pf-all" class="ban-dur-btn selected">Toutes</button>
+      <button onclick="adminFilterParties('waiting')" id="adm-pf-waiting" class="ban-dur-btn">⏳ Attente</button>
+      <button onclick="adminFilterParties('playing')" id="adm-pf-playing" class="ban-dur-btn">🎮 En cours</button>
+      <button onclick="adminFilterParties('ended')" id="adm-pf-ended" class="ban-dur-btn">✅ Terminées</button>
+      <button onclick="adminDeleteAllEnded()" style="margin-left:auto;padding:6px 12px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);color:#ff4d6d;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">🗑️ Purger terminées</button>
     </div>
+    <div id="admin-parties-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 
   <!-- Panel : Activité -->
@@ -1020,56 +985,33 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       </div>
     </div>
     <div id="modal-user-stats"></div>
-    <button id="modal-user-ban-btn" onclick="confirmDeleteUser()" style="width:100%;margin-top:14px;padding:12px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🗑️ Supprimer ce compte</button>
+    <button id="modal-user-ban-btn-temp" onclick="openBanModal(_adminSelectedUid)" style="width:100%;margin-top:14px;padding:12px;background:rgba(255,190,11,0.15);border:1px solid rgba(255,190,11,0.3);border-radius:10px;color:#ffbe0b;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🚫 Bannir temporairement</button>
+<button id="modal-user-ban-btn" onclick="confirmDeleteUser()" style="width:100%;margin-top:8px;padding:12px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🗑️ Supprimer ce compte</button>
     <button onclick="closeModal('modal-admin-user')" style="width:100%;margin-top:8px;padding:11px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Fermer</button>
   </div>
 </div>
 
 
-<!-- ══ SCREEN BATTLE PASS ══ -->
-<div id="screen-battlepass" class="screen">
-  <div class="bp-header">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <div class="bp-season">SAISON 1</div>
-        <div class="bp-title">🎖️ Battle Pass</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Cache Cache • Reyrieux</div>
-      </div>
-      <button onclick="showScreen('screen-lobby')" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--muted);font-size:12px;font-family:'Nunito',sans-serif;cursor:pointer;">← Retour</button>
+<!-- ══ MODAL BAN TEMPORAIRE ══ -->
+<div class="modal-overlay" id="modal-ban-user">
+  <div class="modal-box">
+    <h3>🚫 Bannir temporairement</h3>
+    <div id="ban-target-name" style="font-size:13px;color:var(--muted);margin-bottom:12px;"></div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Durée du ban :</div>
+    <div class="ban-duration-row">
+      <button class="ban-dur-btn" onclick="selectBanDuration(this,1)">1h</button>
+      <button class="ban-dur-btn" onclick="selectBanDuration(this,6)">6h</button>
+      <button class="ban-dur-btn" onclick="selectBanDuration(this,24)">24h</button>
+      <button class="ban-dur-btn" onclick="selectBanDuration(this,72)">3 jours</button>
+      <button class="ban-dur-btn" onclick="selectBanDuration(this,168)">1 semaine</button>
     </div>
-    <div class="bp-progress-row">
-      <div id="bp-level-badge" class="level-badge">Niv. 1</div>
-      <div style="flex:1;">
-        <div class="xp-bar-wrap"><div class="xp-bar-fill" id="bp-xp-bar" style="width:0%"></div></div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px;"><span id="bp-xp-current">0</span> / <span id="bp-xp-next">100</span> XP</div>
-      </div>
+    <div class="form-group" style="margin-top:10px;">
+      <label>Raison (optionnel)</label>
+      <input type="text" id="ban-reason-input" placeholder="Triche, comportement..." style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;box-sizing:border-box;">
     </div>
-    <div style="margin-top:8px;"><span id="bp-title-badge" class="title-badge">Recrue</span></div>
+    <button onclick="confirmBanUser()" style="width:100%;margin-top:12px;padding:12px;background:rgba(255,77,109,0.2);border:1px solid rgba(255,77,109,0.4);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🚫 Confirmer le ban</button>
+    <button onclick="closeModal('modal-ban-user')" class="btn-cancel" style="margin-top:8px;">Annuler</button>
   </div>
-  <div style="padding:12px 16px 0;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;">RÉCOMPENSES</div>
-  <div class="bp-track" id="bp-track"></div>
-  <div style="padding:16px;">
-    <div class="stat-card" style="margin-bottom:12px;">
-      <div style="font-weight:800;font-size:14px;margin-bottom:10px;">📊 Comment gagner de l'XP</div>
-      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);">
-        <div>🙈 <b style="color:var(--text)">Survivre</b> sans être trouvé — <b style="color:#7b7fff">+50 XP</b></div>
-        <div>🔍 <b style="color:var(--text)">Trouver quelqu'un</b> — <b style="color:#7b7fff">+30 XP</b></div>
-        <div>🎮 <b style="color:var(--text)">Participer</b> à une partie — <b style="color:#7b7fff">+10 XP</b></div>
-        <div>⏱️ <b style="color:var(--text)">Durer 5min+ cachée</b> — <b style="color:#7b7fff">+20 XP</b></div>
-        <div>🏆 <b style="color:var(--text)">Dernier survivant</b> — <b style="color:#7b7fff">+100 XP</b></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SCREEN SKINS ══ -->
-<div id="screen-skins" class="screen">
-  <div class="page-header">
-    <button class="back-btn" onclick="showScreen('screen-lobby')">←</button>
-    <div class="page-title">🎨 Skins</div>
-  </div>
-  <div style="padding:8px 16px;font-size:12px;color:var(--muted);">Sélectionne un skin pour ton marqueur sur la carte. Débloque-les en montant de niveau.</div>
-  <div class="skin-grid" id="skin-grid"></div>
 </div>
 
 <!-- ══ SETTINGS ══ -->
@@ -1148,6 +1090,13 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <button class="modal-btn" onclick="openModal('modal-change-password')">🔑 Changer le mot de passe</button>
       <button class="modal-btn" style="color:var(--seeker);border-color:rgba(255,159,28,0.3)" onclick="openModal('modal-switch-account')">🔄 Changer de compte</button>
       <button class="modal-btn" style="color:var(--accent2);border-color:rgba(255,77,109,0.3)" onclick="doLogout()">🚪 Se déconnecter</button>
+    </div>
+
+    <!-- Thèmes -->
+    <div class="section-card">
+      <h3>🎨 Fond d'écran</h3>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Personnalise l'apparence de l'app</div>
+      <div class="theme-grid" id="theme-grid"></div>
     </div>
 
     <div class="section-card">
@@ -1335,6 +1284,8 @@ waitForFirebase(()=>{
     if(user){
       S.user = user;
       // Email verification disabled
+      const isBanned = await checkBanStatus(user);
+      if(isBanned) return;
       await loadUserProfile(user);
       if(S._pendingAdminMode){
         S._pendingAdminMode = false;
@@ -1443,7 +1394,6 @@ function updateProfileUI(){
   document.getElementById('stat-parties').textContent=p.stats?.parties||0;
   document.getElementById('stat-survived').textContent=p.stats?.survived||0;
   document.getElementById('stat-found').textContent=p.stats?.found||0;
-  updateXPUI();
   // Avatar
   if(p.avatarUrl){
     document.getElementById('profile-avatar-img').src=p.avatarUrl;
@@ -2059,17 +2009,6 @@ function updateMyPosition(lat,lng){
     dbUpdate('parties/'+S.currentPartyId+'/players/'+S.user.uid,{lat,lng,lastSeen:now});
   }
   S.myPathCoords.push([lat,lng]);
-  // Accumuler distance parcourue dans les stats
-  if(S.myPathCoords.length >= 2){
-    const prev=S.myPathCoords[S.myPathCoords.length-2];
-    const dist=haversine(prev[0],prev[1],lat,lng);
-    const prevTotal=S.userProfile?.stats?.distance||0;
-    if(dist>0&&dist<500){ // ignorer les sauts GPS aberrants
-      S.userProfile.stats = S.userProfile.stats||{};
-      S.userProfile.stats.distance=(prevTotal+dist);
-      dbUpdate('users/'+S.user.uid+'/stats',{distance:S.userProfile.stats.distance});
-    }
-  }
   if(S.myPathCoords.length>200)S.myPathCoords.shift();
   if(!S.myPathLine)S.myPathLine=L.polyline(S.myPathCoords,{color:S.myColor,weight:3,opacity:0.4,dashArray:'4 4'}).addTo(S.map);
   else S.myPathLine.setLatLngs(S.myPathCoords);
@@ -2300,7 +2239,7 @@ async function togglePause(){
 }
 
 // ── LEAVE GAME (non-master) ──
-async function leaveGame(){ releaseWakeLock(); stopDistanceTracker();
+async function leaveGame(){ releaseWakeLock();
   if(!confirm('Quitter la partie en cours ?'))return;
   if(S.timerInterval)clearInterval(S.timerInterval);
   if(S.proximityInterval)clearInterval(S.proximityInterval);
@@ -3002,6 +2941,9 @@ async function loadAdminPanel(){
 
   // ── Liste utilisateurs ──
   renderAdminUsers(userList);
+  // Cache parties pour l'onglet parties
+  _adminPartiesCache = parties;
+  renderAdminParties();
 
   // ── Liste parties ──
   const recentParties = partyList
@@ -3090,6 +3032,7 @@ function renderAdminUsers(userList){
   document.getElementById('admin-users-list').innerHTML = filtered.length ?
     filtered.map(([uid,u]) => {
       const isOnline = u.lastSeen && now - u.lastSeen < onlineThreshold;
+      const isBanned = u.banned && u.bannedUntil > now;
       const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('fr') : '—';
       const lastSeen = u.lastSeen ? timeAgo(u.lastSeen) : 'jamais';
       return `<div class="user-row">
@@ -3098,10 +3041,11 @@ function renderAdminUsers(userList){
           <div class="user-row-name"><span class="activity-dot ${isOnline?'':'offline'}"></span>${u.pseudo||'Sans pseudo'}</div>
           <div class="user-row-meta">${u.email||'—'} • ${u.stats?.parties||0} parties • Inscrit le ${joined}</div>
           <div class="user-row-meta">Vu : ${lastSeen}</div>
+          ${isBanned?`<div style="font-size:10px;color:#ff4d6d;font-weight:700;">🚫 BANNI jusqu'au ${new Date(u.bannedUntil).toLocaleDateString('fr')}</div>`:''}
         </div>
         <div class="user-row-actions">
           <button class="admin-btn-info" onclick="openUserModal('${uid}')">👁️</button>
-          ${uid !== S.user?.uid ? `<button class="admin-btn-del" onclick="openUserModal('${uid}',true)">🗑️</button>` : ''}
+          ${uid !== S.user?.uid ? `<button class="admin-btn-del" onclick="openUserModal('${uid}',true)">🗑️</button>${isBanned?`<button class="admin-btn-info" onclick="unbanUser('${uid}')" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3);color:#06d6a0;">✅</button>`:``}` : ''}
         </div>
       </div>`;
     }).join('') :
@@ -3111,6 +3055,9 @@ function renderAdminUsers(userList){
 function filterAdminUsers(){
   const userList = Object.entries(_adminUsersCache);
   renderAdminUsers(userList);
+  // Cache parties pour l'onglet parties
+  _adminPartiesCache = parties;
+  renderAdminParties();
 }
 
 function openUserModal(uid, focusDelete=false){
@@ -3425,322 +3372,185 @@ async function leaveGroup(){
 
 
 // ═══════════════════════════════════════════
-// SYSTÈME XP & NIVEAUX (70 levels)
+// THÈMES / FONDS D'ÉCRAN
 // ═══════════════════════════════════════════
-
-// XP requis pour passer au niveau suivant (courbe progressive)
-function xpForLevel(lvl){
-  if(lvl <= 10) return lvl * 100;
-  if(lvl <= 30) return 1000 + (lvl-10) * 150;
-  if(lvl <= 60) return 4000 + (lvl-30) * 200;
-  return 10000 + (lvl-60) * 300;
-}
-
-function totalXpForLevel(lvl){
-  let total = 0;
-  for(let i=1;i<lvl;i++) total += xpForLevel(i);
-  return total;
-}
-
-function getLevelFromXP(xp){
-  let lvl = 1, total = 0;
-  while(lvl < 70){
-    const needed = xpForLevel(lvl);
-    if(total + needed > xp) break;
-    total += needed;
-    lvl++;
-  }
-  return { level: lvl, currentXP: xp - totalXpForLevel(lvl), neededXP: xpForLevel(lvl) };
-}
-
-const LEVEL_TITLES = {
-  1:'Recrue', 5:'Débutant', 10:'Apprenti', 15:'Explorateur',
-  20:'Chasseur', 25:'Traqueur', 30:'Fantôme', 35:'Ombre',
-  40:'Prédateur', 45:'Espion', 50:'Légende', 55:'Maître',
-  60:'Grand Maître', 65:'Élite', 70:'⚡ MYTHIQUE'
-};
-
-function getTitleForLevel(lvl){
-  let title = 'Recrue';
-  for(const [threshold, t] of Object.entries(LEVEL_TITLES)){
-    if(lvl >= parseInt(threshold)) title = t;
-  }
-  return title;
-}
-
-const XP_REWARDS = {
-  participate: 10,
-  survive: 50,
-  found_someone: 30,
-  lasted_5min: 20,
-  last_survivor: 100,
-};
-
-async function grantXP(type){
-  const amount = XP_REWARDS[type] || 0;
-  if(!amount || !S.user) return;
-  const prev = S.userProfile?.xp || 0;
-  const newXP = prev + amount;
-  const prevData = getLevelFromXP(prev);
-  const newData = getLevelFromXP(newXP);
-  await dbUpdate('users/'+S.user.uid, { xp: newXP });
-  S.userProfile.xp = newXP;
-  // Notif XP
-  showNotif('⭐', '+'+amount+' XP', XP_TYPE_LABELS[type]||'Bonne partie !', '#7b7fff');
-  // Level up ?
-  if(newData.level > prevData.level){
-    const title = getTitleForLevel(newData.level);
-    setTimeout(() => showLevelUpSplash(newData.level, title), 1500);
-    S.userProfile.level = newData.level;
-    await dbUpdate('users/'+S.user.uid, { level: newData.level, title });
-  }
-  updateXPUI();
-}
-
-const XP_TYPE_LABELS = {
-  participate: 'Participation à une partie',
-  survive: 'Survie complète !',
-  found_someone: 'Joueur trouvé',
-  lasted_5min: '5 minutes tenu caché',
-  last_survivor: 'Dernier survivant !',
-};
-
-function showLevelUpSplash(level, title){
-  let el = document.getElementById('levelup-splash');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'levelup-splash';
-    el.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);animation:fadeIn .3s ease;pointer-events:none;';
-    document.body.appendChild(el);
-  }
-  el.innerHTML = `
-    <div style="font-size:60px;margin-bottom:12px;animation:countPop .5s ease">⭐</div>
-    <div style="font-size:14px;color:#7b7fff;font-weight:800;letter-spacing:2px;margin-bottom:4px;">NIVEAU ATTEINT</div>
-    <div style="font-size:56px;font-family:'Bebas Neue',sans-serif;color:#fff;line-height:1;">${level}</div>
-    <div style="font-size:16px;color:#ffbe0b;font-weight:800;margin-top:4px;">${title}</div>
-  `;
-  el.style.display = 'flex';
-  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .5s'; setTimeout(()=>el.style.display='none',500); }, 3000);
-}
-
-function updateXPUI(){
-  const xp = S.userProfile?.xp || 0;
-  const { level, currentXP, neededXP } = getLevelFromXP(xp);
-  const title = getTitleForLevel(level);
-  const pct = Math.round(currentXP/neededXP*100);
-
-  // Profil
-  const plb = document.getElementById('profile-level-badge');
-  const ptb = document.getElementById('profile-title-badge');
-  const pxb = document.getElementById('profile-xp-bar');
-  const pxt = document.getElementById('profile-xp-text');
-  const sxp = document.getElementById('stat-xp');
-  if(plb) plb.textContent = 'Niv. '+level;
-  if(ptb) ptb.textContent = title;
-  if(pxb) pxb.style.width = pct+'%';
-  if(pxt) pxt.textContent = currentXP+' / '+neededXP+' XP';
-  if(sxp) sxp.textContent = xp;
-
-  // Battle Pass header
-  const blb = document.getElementById('bp-level-badge');
-  const btb = document.getElementById('bp-title-badge');
-  const bxb = document.getElementById('bp-xp-bar');
-  const bxc = document.getElementById('bp-xp-current');
-  const bxn = document.getElementById('bp-xp-next');
-  if(blb) blb.textContent = 'Niv. '+level;
-  if(btb) btb.textContent = title;
-  if(bxb) bxb.style.width = pct+'%';
-  if(bxc) bxc.textContent = currentXP;
-  if(bxn) bxn.textContent = neededXP;
-
-  // Stats
-  const sd = document.getElementById('stat-distance');
-  const sbh = document.getElementById('stat-best-hide');
-  if(sd) sd.textContent = ((S.userProfile?.stats?.distance||0)/1000).toFixed(1)+'km';
-  if(sbh){ const s=S.userProfile?.stats?.bestHide||0; sbh.textContent=s>0?Math.floor(s/60)+'min':'—'; }
-
-  // Lobby badge
-  let lobbyBadge = document.getElementById('lobby-level-badge');
-  if(!lobbyBadge){
-    const usernameEl = document.getElementById('lobby-username');
-    if(usernameEl){
-      lobbyBadge = document.createElement('span');
-      lobbyBadge.id = 'lobby-level-badge';
-      lobbyBadge.style.cssText = 'margin-left:6px;font-size:10px;vertical-align:middle;';
-      usernameEl.parentNode.insertBefore(lobbyBadge, usernameEl.nextSibling);
-    }
-  }
-  if(lobbyBadge) lobbyBadge.innerHTML = `<span class="level-badge" style="font-size:9px;padding:2px 7px;">Niv.${level}</span>`;
-}
-
-// ═══════════════════════════════════════════
-// BATTLE PASS — 70 nœuds
-// ═══════════════════════════════════════════
-const BP_REWARDS = [
-  {level:1, icon:'🎮', label:'Participant'}, {level:3, icon:'🟣', label:'Skin Violet'},
-  {level:5, icon:'⭐', label:'Titre: Débutant'}, {level:8, icon:'🔵', label:'Skin Bleu'},
-  {level:10, icon:'🏅', label:'Badge Bronze'}, {level:12, icon:'🟠', label:'Skin Orange'},
-  {level:15, icon:'🌟', label:'Titre: Explorateur'}, {level:18, icon:'🔴', label:'Skin Rouge'},
-  {level:20, icon:'🥈', label:'Badge Argent'}, {level:22, icon:'🟡', label:'Skin Doré'},
-  {level:25, icon:'👻', label:'Skin Fantôme'}, {level:28, icon:'💎', label:'Skin Diamant'},
-  {level:30, icon:'🏆', label:'Titre: Fantôme'}, {level:33, icon:'🌊', label:'Skin Océan'},
-  {level:35, icon:'⚡', label:'Skin Éclair'}, {level:38, icon:'🔥', label:'Skin Flamme'},
-  {level:40, icon:'🥇', label:'Badge Or'}, {level:43, icon:'🌙', label:'Skin Lune'},
-  {level:45, icon:'🎯', label:'Titre: Espion'}, {level:48, icon:'💜', label:'Skin Galaxie'},
-  {level:50, icon:'👑', label:'Titre: Légende'}, {level:53, icon:'🌈', label:'Skin Arc-en-ciel'},
-  {level:55, icon:'💫', label:'Skin Nova'}, {level:58, icon:'🦊', label:'Skin Renard'},
-  {level:60, icon:'🏅', label:'Badge Platine'}, {level:63, icon:'🐺', label:'Skin Loup'},
-  {level:65, icon:'⚔️', label:'Titre: Élite'}, {level:68, icon:'🌑', label:'Skin Obsidienne'},
-  {level:70, icon:'⚡', label:'TITRE MYTHIQUE'},
+const THEMES = [
+  { id:'dark', name:'Nuit', bg:'#0a0e1a', surface:'#111827', accent:'#00e5ff', gradient:'linear-gradient(135deg,#0a0e1a,#111827)' },
+  { id:'midnight', name:'Minuit', bg:'#05080f', surface:'#0d1117', accent:'#7b7fff', gradient:'linear-gradient(135deg,#05080f,#0d1117)' },
+  { id:'forest', name:'Forêt', bg:'#0a1a0f', surface:'#112218', accent:'#06d6a0', gradient:'linear-gradient(135deg,#0a1a0f,#112218)' },
+  { id:'ocean', name:'Océan', bg:'#050f1a', surface:'#0a1929', accent:'#0096c7', gradient:'linear-gradient(135deg,#050f1a,#0a1929)' },
+  { id:'sunset', name:'Coucher', bg:'#1a0a05', surface:'#291206', accent:'#ff9f1c', gradient:'linear-gradient(135deg,#1a0a05,#291206)' },
+  { id:'purple', name:'Violet', bg:'#0f0a1a', surface:'#180f29', accent:'#8338ec', gradient:'linear-gradient(135deg,#0f0a1a,#180f29)' },
+  { id:'rose', name:'Rose', bg:'#1a050f', surface:'#290a18', accent:'#f72585', gradient:'linear-gradient(135deg,#1a050f,#290a18)' },
+  { id:'slate', name:'Ardoise', bg:'#0d1117', surface:'#161b22', accent:'#58a6ff', gradient:'linear-gradient(135deg,#0d1117,#161b22)' },
+  { id:'emerald', name:'Émeraude', bg:'#051a12', surface:'#0a2918', accent:'#2ecc71', gradient:'linear-gradient(135deg,#051a12,#0a2918)' },
 ];
 
-function loadBattlePass(){
-  updateXPUI();
-  const xp = S.userProfile?.xp || 0;
-  const { level } = getLevelFromXP(xp);
-  const track = document.getElementById('bp-track');
-  if(!track) return;
-
-  // Afficher les nœuds de 5 en 5
-  const nodes = [];
-  for(let l=1;l<=70;l+=2){
-    const reward = BP_REWARDS.find(r=>r.level===l);
-    const unlocked = level >= l;
-    const isCurrent = level === l;
-    nodes.push(`
-      <div class="bp-node">
-        <div class="bp-node-circle ${isCurrent?'current':unlocked?'unlocked':'locked'}">
-          ${reward ? reward.icon : '🎮'}
-          ${unlocked?'<div style="position:absolute;bottom:-4px;right:-4px;width:14px;height:14px;background:#06d6a0;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;">✓</div>':''}
-        </div>
-        <div class="bp-node-level">Niv.${l}</div>
-        ${reward?`<div class="bp-node-label">${reward.label}</div>`:''}
-      </div>`);
-  }
-  track.innerHTML = nodes.join('');
-  // Scroll vers le niveau actuel
-  setTimeout(()=>{
-    const idx = Math.floor((level-1)/2);
-    track.scrollLeft = Math.max(0, idx*72 - 100);
-  }, 200);
-}
-
-// ═══════════════════════════════════════════
-// SKINS
-// ═══════════════════════════════════════════
-const SKINS = [
-  {id:'default', name:'Défaut', icon:'⚪', color:'#aaaaaa', req:1, emoji:'👤'},
-  {id:'violet', name:'Violet', icon:'🟣', color:'#8338ec', req:3, emoji:'💜'},
-  {id:'blue', name:'Bleu', icon:'🔵', color:'#3a86ff', req:8, emoji:'💙'},
-  {id:'orange', name:'Orange', icon:'🟠', color:'#ff9f1c', req:12, emoji:'🟠'},
-  {id:'red', name:'Rouge', icon:'🔴', color:'#ff4d6d', req:18, emoji:'❤️'},
-  {id:'gold', name:'Doré', icon:'🟡', color:'#ffbe0b', req:22, emoji:'⭐'},
-  {id:'ghost', name:'Fantôme', icon:'👻', color:'#e0e0e0', req:25, emoji:'👻'},
-  {id:'diamond', name:'Diamant', icon:'💎', color:'#00e5ff', req:28, emoji:'💎'},
-  {id:'ocean', name:'Océan', icon:'🌊', color:'#0077b6', req:33, emoji:'🌊'},
-  {id:'lightning', name:'Éclair', icon:'⚡', color:'#f9c74f', req:35, emoji:'⚡'},
-  {id:'fire', name:'Flamme', icon:'🔥', color:'#f72585', req:38, emoji:'🔥'},
-  {id:'moon', name:'Lune', icon:'🌙', color:'#7678ed', req:43, emoji:'🌙'},
-  {id:'galaxy', name:'Galaxie', icon:'💜', color:'#480ca8', req:48, emoji:'🌌'},
-  {id:'rainbow', name:'Arc-en-ciel', icon:'🌈', color:'#06d6a0', req:53, emoji:'🌈'},
-  {id:'nova', name:'Nova', icon:'💫', color:'#ff006e', req:55, emoji:'💫'},
-  {id:'fox', name:'Renard', icon:'🦊', color:'#fb5607', req:58, emoji:'🦊'},
-  {id:'wolf', name:'Loup', icon:'🐺', color:'#4361ee', req:63, emoji:'🐺'},
-  {id:'obsidian', name:'Obsidienne', icon:'🌑', color:'#212529', req:68, emoji:'⚫'},
-  {id:'mythic', name:'Mythique', icon:'⚡', color:'linear-gradient(135deg,#f72585,#7209b7,#3a0ca3,#4cc9f0)', req:70, emoji:'✨'},
-];
-
-function renderSkins(){
-  const level = getLevelFromXP(S.userProfile?.xp||0).level;
-  const equipped = S.userProfile?.equippedSkin || 'default';
-  const grid = document.getElementById('skin-grid');
+function renderThemeGrid(){
+  const grid = document.getElementById('theme-grid');
   if(!grid) return;
-  grid.innerHTML = SKINS.map(s => {
-    const owned = level >= s.req;
-    const isEquipped = equipped === s.id;
-    return `<div class="skin-card ${isEquipped?'equipped':owned?'owned':'locked'}" onclick="${owned?`equipSkin('${s.id}')`:''}">
-      <div class="skin-preview" style="background:${s.color.includes('gradient')?s.color:'rgba('+hexToRgb(s.color)+',0.2)'}">
-        <span style="font-size:24px;">${s.emoji}</span>
+  const current = localStorage.getItem('cc_theme') || 'dark';
+  grid.innerHTML = THEMES.map(t => `
+    <div class="theme-card ${t.id===current?'active':''}" onclick="applyTheme('${t.id}')" style="background:${t.gradient};">
+      <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;">
+        <div style="width:28px;height:6px;border-radius:3px;background:${t.accent};opacity:.8;"></div>
+        <div style="width:20px;height:4px;border-radius:2px;background:${t.accent};opacity:.5;"></div>
       </div>
-      <div class="skin-name">${s.name}</div>
-      <div class="skin-req">${isEquipped?'✅ Équipé':owned?'Possédé':'Niv. '+s.req}</div>
+      <div class="theme-card-label">${t.name}</div>
+      <div class="theme-check">✓</div>
+    </div>`).join('');
+}
+
+function applyTheme(id){
+  const t = THEMES.find(th=>th.id===id);
+  if(!t) return;
+  localStorage.setItem('cc_theme', id);
+  const root = document.documentElement;
+  root.style.setProperty('--bg', t.bg);
+  root.style.setProperty('--surface', t.surface);
+  root.style.setProperty('--primary', t.accent);
+  root.style.setProperty('--accent', t.accent);
+  document.body.style.background = t.bg;
+  renderThemeGrid();
+  toast('🎨 Thème '+t.name+' appliqué !');
+}
+
+function loadSavedTheme(){
+  const id = localStorage.getItem('cc_theme');
+  if(id && id !== 'dark') applyTheme(id);
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — BAN TEMPORAIRE
+// ═══════════════════════════════════════════
+let _banDurationHours = 24;
+
+function openBanModal(uid){
+  _adminSelectedUid = uid;
+  _banDurationHours = 24;
+  const u = _adminUsersCache[uid];
+  document.getElementById('ban-target-name').textContent = `Joueur : ${u?.pseudo||uid} (${u?.email||'—'})`;
+  document.querySelectorAll('.ban-dur-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.ban-dur-btn')[2]?.classList.add('selected'); // 24h par défaut
+  document.getElementById('ban-reason-input').value = '';
+  closeModal('modal-admin-user');
+  openModal('modal-ban-user');
+}
+
+function selectBanDuration(btn, hours){
+  document.querySelectorAll('.ban-dur-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  _banDurationHours = hours;
+}
+
+async function confirmBanUser(){
+  const uid = _adminSelectedUid;
+  if(!uid) return;
+  const u = _adminUsersCache[uid];
+  const reason = document.getElementById('ban-reason-input').value.trim();
+  const until = Date.now() + _banDurationHours * 3600000;
+  await dbUpdate('users/'+uid, {
+    banned: true,
+    bannedUntil: until,
+    banReason: reason || 'Décision admin',
+  });
+  closeModal('modal-ban-user');
+  toast(`🚫 ${u?.pseudo||uid} banni pour ${_banDurationHours}h`);
+  _adminUsersCache[uid] = {...(_adminUsersCache[uid]||{}), banned:true, bannedUntil:until};
+  renderAdminUsers(Object.entries(_adminUsersCache));
+}
+
+async function unbanUser(uid){
+  await dbUpdate('users/'+uid, { banned: false, bannedUntil: null, banReason: null });
+  _adminUsersCache[uid] = {...(_adminUsersCache[uid]||{}), banned:false};
+  renderAdminUsers(Object.entries(_adminUsersCache));
+  toast('✅ Joueur débanni.');
+}
+
+// Vérifier si l'utilisateur est banni au login
+async function checkBanStatus(user){
+  const snap = await dbGet('users/'+user.uid);
+  if(!snap.exists()) return false;
+  const data = snap.val();
+  if(data.banned && data.bannedUntil > Date.now()){
+    const remaining = Math.ceil((data.bannedUntil - Date.now()) / 3600000);
+    await window._authSignOut(window._auth);
+    document.getElementById('login-error').textContent = `🚫 Compte banni encore ${remaining}h. Raison : ${data.banReason||'Décision admin'}`;
+    document.getElementById('login-error').classList.add('show');
+    return true;
+  }
+  // Auto-unban si expiré
+  if(data.banned && data.bannedUntil <= Date.now()){
+    await dbUpdate('users/'+user.uid, {banned:false, bannedUntil:null});
+  }
+  return false;
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — GESTION PARTIES
+// ═══════════════════════════════════════════
+let _adminPartiesCache = {};
+let _adminPartiesFilter = 'all';
+
+function adminFilterParties(filter){
+  _adminPartiesFilter = filter;
+  document.querySelectorAll('[id^="adm-pf-"]').forEach(b => b.classList.remove('selected'));
+  document.getElementById('adm-pf-'+filter)?.classList.add('selected');
+  renderAdminParties();
+}
+
+function renderAdminParties(){
+  const parties = Object.entries(_adminPartiesCache);
+  const filtered = _adminPartiesFilter === 'all' ? parties :
+    parties.filter(([,p]) => p.status === _adminPartiesFilter);
+  const sorted = filtered.sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0)).slice(0,30);
+  const list = document.getElementById('admin-parties-list');
+  if(!list) return;
+  list.innerHTML = sorted.length ? sorted.map(([id,p]) => {
+    const playerCount = p.players ? Object.keys(p.players).length : 0;
+    const statusColor = p.status==='playing'?'#06d6a0':p.status==='ended'?'var(--muted)':'#ffbe0b';
+    const statusLabel = p.status==='playing'?'🎮 En cours':p.status==='ended'?'✅ Terminée':'⏳ Attente';
+    const date = p.createdAt ? new Date(p.createdAt).toLocaleString('fr',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<div style="padding:10px;background:var(--bg);border-radius:10px;border:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-weight:700;font-size:13px;">${p.name||id.slice(0,10)}</div>
+        <div style="font-size:11px;color:${statusColor};font-weight:700;">${statusLabel}</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">👥 ${playerCount} joueurs • 📅 ${date}</div>
+      <div style="display:flex;gap:6px;">
+        ${p.status!=='ended'?`<button onclick="adminForceEndParty('${id}')" style="flex:1;padding:6px;background:rgba(255,190,11,0.15);border:1px solid rgba(255,190,11,0.3);color:#ffbe0b;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">⏹ Forcer fin</button>`:''}
+        <button onclick="adminDeleteParty('${id}')" style="flex:1;padding:6px;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);color:#ff4d6d;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">🗑️ Supprimer</button>
+      </div>
     </div>`;
-  }).join('');
+  }).join('') : `<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px;">Aucune partie</div>`;
 }
 
-function hexToRgb(hex){
-  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
-  return isNaN(r)?'123,127,255':`${r},${g},${b}`;
+async function adminForceEndParty(id){
+  if(!confirm('Forcer la fin de cette partie ?')) return;
+  await dbUpdate('parties/'+id, {status:'ended', endedAt:Date.now()});
+  _adminPartiesCache[id] = {...(_adminPartiesCache[id]||{}), status:'ended'};
+  renderAdminParties();
+  toast('⏹ Partie terminée de force.');
 }
 
-async function equipSkin(id){
-  await dbUpdate('users/'+S.user.uid, {equippedSkin: id});
-  S.userProfile.equippedSkin = id;
-  renderSkins();
-  toast('🎨 Skin équipé !');
+async function adminDeleteParty(id){
+  if(!confirm('Supprimer définitivement cette partie ?')) return;
+  await window._dbRemove(dbRef('parties/'+id));
+  delete _adminPartiesCache[id];
+  renderAdminParties();
+  toast('🗑️ Partie supprimée.');
 }
 
-function getEquippedSkinColor(){
-  const id = S.userProfile?.equippedSkin || 'default';
-  const skin = SKINS.find(s=>s.id===id);
-  return skin?.color.includes('gradient') ? '#7b7fff' : (skin?.color || S.userProfile?.color || '#aaaaaa');
-}
-
-// ═══════════════════════════════════════════
-// DISTANCE EN TEMPS RÉEL + TIMER 10MIN
-// ═══════════════════════════════════════════
-let _distanceInterval = null;
-
-function startDistanceTracker(){
-  if(_distanceInterval) clearInterval(_distanceInterval);
-  _distanceInterval = setInterval(updateDistancePill, 3000);
-}
-
-function stopDistanceTracker(){
-  if(_distanceInterval){ clearInterval(_distanceInterval); _distanceInterval = null; }
-  const pill = document.getElementById('distance-pill');
-  if(pill) pill.style.display = 'none';
-}
-
-function updateDistancePill(){
-  const pill = document.getElementById('distance-pill');
-  if(!pill || !S.players || !S.userProfile) return;
-  const me = S.players[S.user?.uid];
-  if(!me?.lat) return;
-
-  let closestDist = Infinity;
-
-  for(const [uid, p] of Object.entries(S.players)){
-    if(uid === S.user.uid) continue;
-    // Cacheur : cherche le chercheur le plus proche
-    if(S.role === 'hider' && p.role === 'seeker' && p.lat){
-      const d = haversine(me.lat, me.lng, p.lat, p.lng);
-      if(d < closestDist) closestDist = d;
-    }
-    // Chercheur : cherche le cacheur non trouvé le plus proche
-    if(S.role === 'seeker' && p.role === 'hider' && !p.found && p.lat){
-      const d = haversine(me.lat, me.lng, p.lat, p.lng);
-      if(d < closestDist) closestDist = d;
-    }
+async function adminDeleteAllEnded(){
+  const ended = Object.entries(_adminPartiesCache).filter(([,p])=>p.status==='ended');
+  if(!ended.length){ toast('Aucune partie terminée.'); return; }
+  if(!confirm(`Supprimer les ${ended.length} parties terminées ?`)) return;
+  for(const [id] of ended){
+    await window._dbRemove(dbRef('parties/'+id));
+    delete _adminPartiesCache[id];
   }
-
-  if(closestDist === Infinity){ pill.style.display = 'none'; return; }
-
-  const dist = closestDist < 1000 ? Math.round(closestDist)+'m' : (closestDist/1000).toFixed(1)+'km';
-  const label = S.role === 'hider' ? '🔍 '+dist : '🙈 '+dist;
-  pill.textContent = label;
-  pill.style.display = 'block';
-
-  // Couleur selon la distance
-  pill.className = 'distance-pill';
-  if(closestDist < 30) pill.classList.add(''); // rouge par défaut
-  else if(closestDist < 100) pill.classList.add('medium');
-  else pill.classList.add('safe');
-
-  // Vibration si très proche (cacheur seulement)
-  if(S.role === 'hider' && closestDist < 30 && navigator.vibrate){
-    navigator.vibrate([100, 50, 100]);
-  }
+  renderAdminParties();
+  toast(`🗑️ ${ended.length} parties supprimées.`);
 }
 
 function stopMusicOnLogin() { pauseMusic(); }
@@ -4119,7 +3929,7 @@ function checkFriendRequestsBadge(){
 // Init on page load
 document.addEventListener('DOMContentLoaded', () => {
   loadSettings();
-  initParticles();
+  initParticles(); loadSavedTheme();
   setupReconnect();
   // Re-enable auth buttons once Firebase is ready
   waitForFirebase(() => {
