@@ -413,6 +413,121 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 .ban-dur-btn{padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:"Nunito",sans-serif;}
 .ban-dur-btn.selected{background:rgba(255,77,109,0.2);border-color:#ff4d6d;color:#ff4d6d;}
 
+
+/* ══ XP & NIVEAUX ══ */
+.xp-bar-wrap{background:var(--bg);border-radius:20px;height:8px;overflow:hidden;margin:6px 0;}
+.xp-bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#7b7fff,#00e5ff);transition:width .6s ease;}
+.level-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#7b7fff,#00e5ff);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:900;letter-spacing:.5px;}
+.title-badge{display:inline-block;background:rgba(255,190,11,0.15);border:1px solid rgba(255,190,11,0.4);color:#ffbe0b;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;letter-spacing:.5px;}
+/* ══ BATTLE PASS ══ */
+#screen-battlepass{overflow-y:auto;padding-bottom:24px;}
+.bp-header{background:linear-gradient(135deg,#1a0535,#0d1829);padding:20px 16px 16px;border-bottom:1px solid rgba(123,127,255,0.2);}
+.bp-season{font-size:11px;font-weight:800;color:#7b7fff;letter-spacing:2px;margin-bottom:4px;}
+.bp-title{font-size:22px;font-weight:900;color:#fff;}
+.bp-progress-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.bp-track{display:flex;padding:16px;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+.bp-node{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:72px;scroll-snap-align:start;position:relative;}
+.bp-node-circle{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bg);transition:.2s;position:relative;}
+.bp-node-circle.unlocked{border-color:#7b7fff;background:rgba(123,127,255,0.15);}
+.bp-node-circle.current{border-color:#00e5ff;background:rgba(0,229,255,0.15);box-shadow:0 0 12px rgba(0,229,255,0.3);}
+.bp-node-circle.locked{opacity:.4;}
+.bp-node-level{font-size:10px;font-weight:800;color:var(--muted);}
+.bp-node-label{font-size:9px;color:var(--muted);text-align:center;max-width:60px;}
+/* ══ SKINS ══ */
+#screen-skins{overflow-y:auto;padding-bottom:24px;}
+.skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;}
+.skin-card{background:var(--surface);border-radius:14px;border:2px solid var(--border);padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.2s;}
+.skin-card.owned{border-color:rgba(123,127,255,0.4);}
+.skin-card.equipped{border-color:#00e5ff;background:rgba(0,229,255,0.08);}
+.skin-card.locked{opacity:.5;cursor:default;}
+.skin-preview{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.skin-name{font-size:11px;font-weight:800;text-align:center;}
+.skin-req{font-size:9px;color:var(--muted);text-align:center;}
+/* ══ STATS DÉTAILLÉES ══ */
+.stat-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat-detail-box{background:var(--surface);border-radius:12px;padding:12px;border:1px solid var(--border);}
+.stat-detail-val{font-size:22px;font-weight:900;color:var(--primary);}
+.stat-detail-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+/* ══ DISTANCE IN-GAME ══ */
+.distance-pill{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(10,14,26,0.9);border:1px solid rgba(255,77,109,0.4);color:#ff4d6d;padding:5px 16px;border-radius:20px;font-size:13px;font-weight:800;display:none;white-space:nowrap;pointer-events:none;}
+.distance-pill.safe{border-color:rgba(6,214,160,0.4);color:#06d6a0;}
+.distance-pill.medium{border-color:rgba(255,190,11,0.4);color:#ffbe0b;}
+/* ══ LOGS ══ */
+#screen-logs{overflow-y:auto;padding-bottom:24px;}
+.log-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.log-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.log-text{flex:1;font-size:12px;line-height:1.5;}
+.log-time{font-size:10px;color:var(--muted);flex-shrink:0;}
+/* ══ QR CODE ══ */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px;}
+
+
+/* ══ MODES DE JEU ══ */
+.gamemode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;}
+.gamemode-card{background:var(--surface);border-radius:16px;border:2px solid var(--border);padding:14px;cursor:pointer;transition:.2s;text-align:center;}
+.gamemode-card.selected{border-color:#00e5ff;background:rgba(0,229,255,0.08);}
+.gamemode-card:active{transform:scale(0.97);}
+.gamemode-icon{font-size:32px;margin-bottom:6px;}
+.gamemode-name{font-size:13px;font-weight:800;margin-bottom:3px;}
+.gamemode-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+/* ══ BOMBE ══ */
+.bomb-hud{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:1000;display:none;flex-direction:column;align-items:center;gap:4px;pointer-events:all;}
+.bomb-timer{background:rgba(255,77,109,0.95);color:#fff;padding:8px 20px;border-radius:20px;font-size:22px;font-weight:900;font-family:"Bebas Neue",sans-serif;letter-spacing:2px;box-shadow:0 0 20px rgba(255,77,109,0.5);}
+.bomb-timer.pulsing{animation:bombPulse .5s ease-in-out infinite;}
+@keyframes bombPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);box-shadow:0 0 30px rgba(255,77,109,0.8);}}
+.bomb-pass-btn{background:linear-gradient(135deg,#ff4d6d,#c1121f);border:none;border-radius:12px;color:#fff;padding:10px 20px;font-family:"Nunito",sans-serif;font-weight:800;font-size:14px;cursor:pointer;}
+/* ══ INFECTION / COLLECTE ══ */
+.collect-hud{position:absolute;top:60px;right:12px;z-index:1000;display:none;background:rgba(10,14,26,0.9);border:1px solid rgba(123,127,255,0.4);border-radius:14px;padding:8px 12px;pointer-events:none;}
+.collect-hud-title{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;}
+.collect-hud-count{font-size:22px;font-weight:900;color:#7b7fff;}
+.zone-shrink-ring{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:500;}
+
+
+/* ══ MODE IMPOSTEUR ══ */
+.impostor-hud{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:1000;display:none;flex-direction:column;align-items:center;gap:6px;pointer-events:all;}
+.impostor-role-badge{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:900;letter-spacing:1px;}
+.impostor-role-badge.impostor{background:rgba(255,77,109,0.9);color:#fff;box-shadow:0 0 16px rgba(255,77,109,0.5);}
+.impostor-role-badge.innocent{background:rgba(6,214,160,0.9);color:#fff;box-shadow:0 0 16px rgba(6,214,160,0.4);}
+.impostor-vote-btn{background:rgba(255,190,11,0.9);border:none;border-radius:12px;color:#000;padding:8px 18px;font-family:"Nunito",sans-serif;font-weight:800;font-size:13px;cursor:pointer;}
+/* Vote modal */
+#modal-vote .modal-box{max-height:80vh;overflow-y:auto;}
+.vote-player-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:12px;border:2px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.15s;}
+.vote-player-row:active{transform:scale(0.98);}
+.vote-player-row.voted{border-color:#ff4d6d;background:rgba(255,77,109,0.1);}
+.vote-player-row.eliminated{opacity:.4;cursor:default;}
+.vote-count-badge{background:rgba(255,77,109,0.2);color:#ff4d6d;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:800;margin-left:auto;}
+
+
+/* ══ MODE SNIPER / BOUSSOLE ══ */
+#screen-sniper{background:#000;position:relative;overflow:hidden;}
+.sniper-compass{position:absolute;top:0;left:0;right:0;height:60px;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10;}
+.compass-strip{position:relative;width:100%;overflow:hidden;height:40px;}
+.compass-inner{display:flex;align-items:center;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;transition:transform .1s ease;}
+.compass-tick{display:inline-flex;flex-direction:column;align-items:center;width:20px;font-size:9px;color:rgba(255,255,255,0.5);}
+.compass-tick.major{color:#fff;font-size:10px;font-weight:800;}
+.compass-tick.target{color:#ff4d6d;}
+.compass-needle{position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:40px;background:#00e5ff;z-index:5;}
+.sniper-view{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.sniper-crosshair{position:relative;width:200px;height:200px;}
+.sniper-ring{position:absolute;inset:0;border:2px solid rgba(0,229,255,0.4);border-radius:50%;}
+.sniper-ring.inner{inset:30%;border-color:rgba(0,229,255,0.6);}
+.sniper-line-h{position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(0,229,255,0.5);}
+.sniper-line-v{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(0,229,255,0.5);}
+.sniper-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#00e5ff;border-radius:50%;box-shadow:0 0 8px #00e5ff;}
+.sniper-center.locked{background:#ff4d6d;box-shadow:0 0 16px #ff4d6d;width:10px;height:10px;}
+.sniper-target-label{position:absolute;top:calc(50% - 80px);left:50%;transform:translateX(-50%);background:rgba(255,77,109,0.9);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:800;display:none;white-space:nowrap;}
+.sniper-info{position:absolute;bottom:120px;left:0;right:0;text-align:center;color:rgba(255,255,255,0.7);font-size:12px;}
+.sniper-shoot-btn{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:80px;height:80px;border-radius:50%;background:rgba(255,77,109,0.2);border:3px solid rgba(255,77,109,0.6);cursor:pointer;font-size:32px;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.sniper-shoot-btn.ready{background:rgba(255,77,109,0.8);border-color:#ff4d6d;box-shadow:0 0 24px rgba(255,77,109,0.7);animation:shootPulse .8s ease-in-out infinite;}
+@keyframes shootPulse{0%,100%{transform:translateX(-50%) scale(1);}50%{transform:translateX(-50%) scale(1.08);}}
+.sniper-back{position:absolute;top:70px;left:16px;z-index:20;background:rgba(0,0,0,0.6);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:#fff;font-family:"Nunito",sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.sniper-ammo{position:absolute;top:70px;right:16px;z-index:20;background:rgba(0,0,0,0.6);border:1px solid rgba(255,77,109,0.4);border-radius:10px;padding:6px 12px;color:#ff4d6d;font-weight:800;font-size:13px;}
+.sniper-calibrating{position:absolute;inset:0;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;gap:12px;}
+.sniper-cal-bar-wrap{width:200px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+.sniper-cal-bar{height:100%;background:linear-gradient(90deg,#7b7fff,#00e5ff);border-radius:4px;transition:width .1s;}
+.shoot-flash{position:fixed;inset:0;background:rgba(255,77,109,0.5);z-index:99999;pointer-events:none;animation:flashOut .3s ease forwards;}
+@keyframes flashOut{from{opacity:1;}to{opacity:0;}}
+
 </style>
 </head>
 <body>
@@ -608,12 +723,41 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <div class="party-code-label">Code de la partie</div>
       <div class="party-code-val" id="party-code-display">——</div>
       <div class="party-code-copy" onclick="copyCode()">📋 Appuie pour copier</div>
+      <button onclick="openQRModal()" style="margin-top:8px;padding:8px 16px;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);border-radius:8px;color:#00e5ff;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;cursor:pointer;width:100%;">📲 QR Code / Inviter</button>
     </div>
     <div class="section-card">
       <h3>👥 Joueurs (<span id="players-count">0</span>)</h3>
       <div class="players-waiting" id="players-waiting-list"></div>
     </div>
     <div id="master-launch-section" style="display:none;flex-direction:column;gap:8px">
+      <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:4px;">MODE DE JEU</div>
+      <div class="gamemode-grid" style="padding:0;gap:8px;">
+        <div class="gamemode-card selected" id="gm-classic" onclick="selectGameMode('classic')">
+          <div class="gamemode-icon">🙈</div>
+          <div class="gamemode-name">Classique</div>
+          <div class="gamemode-desc">Cacheurs vs chercheurs</div>
+        </div>
+        <div class="gamemode-card" id="gm-bomb" onclick="selectGameMode('bomb')">
+          <div class="gamemode-icon">💣</div>
+          <div class="gamemode-name">Bombe</div>
+          <div class="gamemode-desc">Passe la bombe avant explosion</div>
+        </div>
+        <div class="gamemode-card" id="gm-infection" onclick="selectGameMode('infection')">
+          <div class="gamemode-icon">🦠</div>
+          <div class="gamemode-name">Infection</div>
+          <div class="gamemode-desc">Collecte des objets, la zone rétrécit</div>
+        </div>
+        <div class="gamemode-card" id="gm-royal" onclick="selectGameMode('royal')">
+          <div class="gamemode-icon">👑</div>
+          <div class="gamemode-name">Battle Royal</div>
+          <div class="gamemode-desc">Zone + dernier survivant</div>
+        </div>
+        <div class="gamemode-card" id="gm-impostor" onclick="selectGameMode('impostor')" style="grid-column:span 2;">
+          <div class="gamemode-icon">🕵️</div>
+          <div class="gamemode-name">Imposteur</div>
+          <div class="gamemode-desc">1 imposteur secret parmi les innocents — minimum 4 joueurs requis</div>
+        </div>
+      </div>
       <button class="btn-primary" onclick="launchWheel()">🎡 Lancer la partie</button>
       <button onclick="deleteParty()" style="background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.3);color:#ff4d6d;padding:11px;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%">🗑️ Supprimer la partie</button>
     </div>
@@ -658,6 +802,20 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
   </div>
   <div class="timer-bar"><div class="timer-pill" id="timer-display">00:00</div></div>
   <div class="zone-hint" id="zone-hint">📍 Clique pour placer des points — Double-clique pour terminer</div>
+  <div class="impostor-hud" id="impostor-hud">
+    <div class="impostor-role-badge innocent" id="impostor-role-badge">🟢 Innocent</div>
+    <button class="impostor-vote-btn" id="impostor-vote-btn" onclick="openVoteModal()">🗳️ Voter pour éliminer</button>
+  </div>
+  <div class="bomb-hud" id="bomb-hud">
+    <div class="bomb-timer" id="bomb-timer">2:00</div>
+    <div id="bomb-carrier-label" style="font-size:11px;color:rgba(255,255,255,0.7);text-align:center;"></div>
+    <button class="bomb-pass-btn" id="bomb-pass-btn" onclick="tryPassBomb()" style="display:none;">💣 Passer la bombe !</button>
+  </div>
+  <div class="collect-hud" id="collect-hud">
+    <div class="collect-hud-title">OBJETS</div>
+    <div class="collect-hud-count"><span id="collect-count">0</span>/<span id="collect-total">5</span></div>
+  </div>
+  <div class="distance-pill" id="distance-pill">📍 —</div>
   <div class="proximity-alert" id="prox-alert" style="display:none;flex-direction:column;align-items:center;gap:2px;padding:10px 22px;border-radius:18px;max-width:85%;text-align:center;white-space:normal;">
     <div id="prox-alert-icon" style="font-size:22px;"></div>
     <div id="prox-alert-title" style="font-size:14px;font-weight:900;letter-spacing:.5px;"></div>
@@ -682,10 +840,12 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <button class="btn-ctrl purple" onclick="openHintModal()">💡 Indice</button>
       <button class="btn-ctrl" onclick="togglePause()" id="btn-pause" style="background:rgba(255,190,11,0.12);border-color:rgba(255,190,11,0.25);color:#ffbe0b">⏸</button>
       <button class="btn-ctrl" id="btn-path-toggle-master" onclick="togglePathBtn()" style="background:rgba(6,214,160,0.12);border-color:rgba(6,214,160,0.3);color:#06d6a0">🏃</button>
+      <button class="btn-ctrl blue" onclick="openQRModal()" title="Inviter">📲</button>
       <button class="btn-ctrl red" onclick="endGame()">⏹</button>
     </div>
     <div class="map-controls-row" id="player-controls" style="display:none">
       <button class="btn-ctrl purple" onclick="openHintModal()">💡 Indice</button>
+      <button class="btn-ctrl red" id="btn-sniper" onclick="openSniperMode()" style="display:none">🔫</button>
       <button class="btn-ctrl" id="btn-path-toggle" onclick="togglePathBtn()" style="background:rgba(6,214,160,0.12);border-color:rgba(6,214,160,0.3);color:#06d6a0">🏃</button>
       <button class="btn-ctrl red" onclick="leaveGame()">🚪 Quitter</button>
     </div>
@@ -737,10 +897,21 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <div id="profile-email" style="font-size:12px;color:var(--muted);margin-bottom:4px;">—</div>
       <div id="profile-bio-display" class="profile-bio-empty" onclick="openBioModal()">Clique pour ajouter une description...</div>
     </div>
-    <div class="stats-grid" style="margin-bottom:12px;">
-      <div class="stat-box"><div class="stat-num" id="stat-parties">0</div><div class="stat-label">Parties</div></div>
-      <div class="stat-box"><div class="stat-num" id="stat-survived">0</div><div class="stat-label">Survécus</div></div>
-      <div class="stat-box"><div class="stat-num" id="stat-found">0</div><div class="stat-label">Trouvés</div></div>
+    <div style="background:var(--surface);border-radius:14px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span id="profile-level-badge" class="level-badge">Niv. 1</span>
+        <span id="profile-title-badge" class="title-badge">Recrue</span>
+      </div>
+      <div class="xp-bar-wrap"><div class="xp-bar-fill" id="profile-xp-bar" style="width:0%"></div></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:3px;text-align:right;"><span id="profile-xp-text">0 / 100 XP</span></div>
+    </div>
+    <div class="stat-detail-grid" style="margin-bottom:12px;">
+      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-parties">0</div><div class="stat-detail-lbl">🎮 Parties</div></div>
+      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-survived">0</div><div class="stat-detail-lbl">🙈 Survécus</div></div>
+      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-found">0</div><div class="stat-detail-lbl">🔍 Trouvés</div></div>
+      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-xp">0</div><div class="stat-detail-lbl">⭐ XP total</div></div>
+      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-distance">0km</div><div class="stat-detail-lbl">📍 Distance</div></div>
+      <div class="stat-detail-box"><div class="stat-detail-val" id="stat-best-hide">—</div><div class="stat-detail-lbl">⏱️ Record caché</div></div>
     </div>
     <div class="history-list">
       <h3>Historique</h3>
@@ -904,7 +1075,10 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
   <div class="admin-header">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <div class="admin-badge">🛡️ ADMIN</div>
-      <button onclick="showScreen('screen-lobby');loadLobby();" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--muted);font-size:12px;font-family:'Nunito',sans-serif;cursor:pointer;">← Quitter</button>
+      <div style="display:flex;gap:6px;">
+        <button onclick="showScreen('screen-logs');loadLogs()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--muted);font-size:12px;font-family:'Nunito',sans-serif;cursor:pointer;">📋 Logs</button>
+        <button onclick="showScreen('screen-lobby');loadLobby();" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--muted);font-size:12px;font-family:'Nunito',sans-serif;cursor:pointer;">← Quitter</button>
+      </div>
     </div>
     <div class="admin-title">Panneau Admin</div>
     <div class="admin-sub" id="admin-header-sub">Cache Cache • Reyrieux</div>
@@ -1012,6 +1186,137 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
     <button onclick="confirmBanUser()" style="width:100%;margin-top:12px;padding:12px;background:rgba(255,77,109,0.2);border:1px solid rgba(255,77,109,0.4);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🚫 Confirmer le ban</button>
     <button onclick="closeModal('modal-ban-user')" class="btn-cancel" style="margin-top:8px;">Annuler</button>
   </div>
+</div>
+
+
+<!-- ══ SCREEN BATTLE PASS ══ -->
+<div id="screen-battlepass" class="screen">
+  <div class="bp-header">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <div class="bp-season">SAISON 1</div>
+        <div class="bp-title">🎖️ Battle Pass</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Cache Cache • Reyrieux</div>
+      </div>
+      <button onclick="showScreen('screen-lobby')" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--muted);font-size:12px;font-family:'Nunito',sans-serif;cursor:pointer;">← Retour</button>
+    </div>
+    <div class="bp-progress-row">
+      <div id="bp-level-badge" class="level-badge">Niv. 1</div>
+      <div style="flex:1;">
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" id="bp-xp-bar" style="width:0%"></div></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;"><span id="bp-xp-current">0</span> / <span id="bp-xp-next">100</span> XP</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;"><span id="bp-title-badge" class="title-badge">Recrue</span></div>
+  </div>
+  <div style="padding:12px 16px 0;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;">RÉCOMPENSES</div>
+  <div class="bp-track" id="bp-track"></div>
+  <div style="padding:16px;">
+    <div class="stat-card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:10px;">📊 Comment gagner de l'XP</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);">
+        <div>🙈 <b style="color:var(--text)">Survivre</b> — <b style="color:#7b7fff">+50 XP</b></div>
+        <div>🔍 <b style="color:var(--text)">Trouver quelqu'un</b> — <b style="color:#7b7fff">+30 XP</b></div>
+        <div>🎮 <b style="color:var(--text)">Participer</b> — <b style="color:#7b7fff">+10 XP</b></div>
+        <div>⏱️ <b style="color:var(--text)">5min+ caché</b> — <b style="color:#7b7fff">+20 XP</b></div>
+        <div>🏆 <b style="color:var(--text)">Dernier survivant</b> — <b style="color:#7b7fff">+100 XP</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN SKINS ══ -->
+<div id="screen-skins" class="screen">
+  <div class="page-header">
+    <button class="back-btn" onclick="showScreen('screen-lobby')">←</button>
+    <div class="page-title">🎨 Skins</div>
+  </div>
+  <div style="padding:8px 16px;font-size:12px;color:var(--muted);">Débloque des skins en montant de niveau.</div>
+  <div class="skin-grid" id="skin-grid"></div>
+</div>
+
+<!-- ══ SCREEN LOGS ADMIN ══ -->
+<div id="screen-logs" class="screen">
+  <div class="page-header">
+    <button class="back-btn" onclick="showScreen('screen-admin')">←</button>
+    <div class="page-title">📋 Logs d'activité</div>
+    <button onclick="clearLogs()" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--muted);font-size:12px;cursor:pointer;">Vider</button>
+  </div>
+  <div style="padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;">
+    <button class="ban-dur-btn selected" onclick="filterLogs('all',this)">Tous</button>
+    <button class="ban-dur-btn" onclick="filterLogs('auth',this)">🔐 Auth</button>
+    <button class="ban-dur-btn" onclick="filterLogs('party',this)">🎮 Parties</button>
+    <button class="ban-dur-btn" onclick="filterLogs('chat',this)">💬 Chat</button>
+  </div>
+  <div id="logs-list" style="padding:0 16px;"></div>
+</div>
+
+<!-- ══ MODAL QR CODE / INVITATION ══ -->
+<div class="modal-overlay" id="modal-qr">
+  <div class="modal-box">
+    <h3>📲 Inviter des amis</h3>
+    <div class="qr-wrap">
+      <div id="qr-code-display" style="background:#fff;padding:12px;border-radius:12px;"></div>
+      <div style="font-size:13px;color:var(--muted);text-align:center;">Code : <b id="qr-party-code" style="color:var(--text);font-size:16px;letter-spacing:2px;"></b></div>
+      <button onclick="copyInviteLink()" style="width:100%;padding:11px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">🔗 Copier le lien</button>
+      <button onclick="shareInvite()" style="width:100%;padding:11px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">📤 Partager</button>
+    </div>
+    <button onclick="closeModal('modal-qr')" class="btn-cancel">Fermer</button>
+  </div>
+</div>
+
+
+<!-- ══ MODAL VOTE IMPOSTEUR ══ -->
+<div class="modal-overlay" id="modal-vote">
+  <div class="modal-box">
+    <h3>🗳️ Voter pour éliminer</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Vote pour le joueur que tu penses être l'imposteur. La majorité décide.</div>
+    <div id="vote-players-list"></div>
+    <div id="vote-status" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"></div>
+    <button onclick="closeModal('modal-vote')" class="btn-cancel" style="margin-top:10px;">Annuler</button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN SNIPER ══ -->
+<div id="screen-sniper" class="screen">
+  <button class="sniper-back" onclick="closeSniperMode()">← Retour</button>
+  <div class="sniper-ammo">🔫 <span id="sniper-ammo-count">3</span></div>
+
+  <!-- Boussole en haut -->
+  <div class="sniper-compass">
+    <div style="position:absolute;left:12px;color:rgba(255,255,255,0.5);font-size:11px;" id="sniper-heading-text">—°</div>
+    <div class="compass-strip">
+      <div class="compass-needle"></div>
+      <div class="compass-inner" id="compass-inner"></div>
+    </div>
+  </div>
+
+  <!-- Écran de calibration -->
+  <div class="sniper-calibrating" id="sniper-calibrating">
+    <div style="font-size:32px;">🧭</div>
+    <div style="color:#fff;font-weight:800;font-size:15px;">Calibration en cours...</div>
+    <div style="color:rgba(255,255,255,0.5);font-size:12px;text-align:center;padding:0 32px;">Tiens ton téléphone à plat puis fais un 8 dans l'air</div>
+    <div class="sniper-cal-bar-wrap"><div class="sniper-cal-bar" id="sniper-cal-bar" style="width:0%"></div></div>
+    <div style="color:rgba(255,255,255,0.4);font-size:11px;"><span id="sniper-cal-count">0</span>/5 mesures</div>
+  </div>
+
+  <!-- Viseur -->
+  <div class="sniper-view">
+    <div class="sniper-crosshair">
+      <div class="sniper-ring"></div>
+      <div class="sniper-ring inner"></div>
+      <div class="sniper-line-h"></div>
+      <div class="sniper-line-v"></div>
+      <div class="sniper-center" id="sniper-center"></div>
+      <div class="sniper-target-label" id="sniper-target-label">🎯 Cible !</div>
+    </div>
+  </div>
+
+  <div class="sniper-info" id="sniper-info">Pointe vers un joueur pour viser</div>
+
+  <!-- Bouton tir -->
+  <button class="sniper-shoot-btn" id="sniper-shoot-btn" onclick="shoot()">🔫</button>
 </div>
 
 <!-- ══ SETTINGS ══ -->
@@ -1214,6 +1519,8 @@ const REYRIEUX_CENTER = [45.934, 4.862];
 let S = {
   // Auth
   user: null, userProfile: null,
+  gameMode: "classic",
+  impostorRole: null,
   // Party
   currentPartyId: null, currentParty: null, isMaster: false,
   // Game
@@ -1294,6 +1601,7 @@ waitForFirebase(()=>{
       } else {
         showScreen('screen-lobby');
         loadLobby();
+        checkJoinParam();
       }
     } else {
       S.user = null;
@@ -1394,6 +1702,7 @@ function updateProfileUI(){
   document.getElementById('stat-parties').textContent=p.stats?.parties||0;
   document.getElementById('stat-survived').textContent=p.stats?.survived||0;
   document.getElementById('stat-found').textContent=p.stats?.found||0;
+  updateXPUI();
   // Avatar
   if(p.avatarUrl){
     document.getElementById('profile-avatar-img').src=p.avatarUrl;
@@ -1793,7 +2102,9 @@ async function launchWheel(){
     await dbUpdate('parties/'+S.currentPartyId+'/players/'+id,{role});
     if(S.players[id])S.players[id].role=role;
   }
-  await dbUpdate('parties/'+S.currentPartyId,{status:'wheel'});
+  const gameMode = _selectedGameMode || 'classic';
+  await dbUpdate('parties/'+S.currentPartyId,{status:'wheel', gameMode});
+  S.gameMode = gameMode;
   S.role=assignments[S.user.uid]||'hider';
   showScreen('screen-wheel');
   runWheel(S.currentParty);
@@ -1907,6 +2218,7 @@ function startMapScreen(){
   else{badge.textContent='🙈 Cacheur';badge.style.background='rgba(6,214,160,0.2)';badge.style.color='var(--hider)';}
   cb.textContent=badge.textContent;cb.style.background=badge.style.background;cb.style.color=badge.style.color;
   document.getElementById('master-controls').style.display=S.isMaster?'flex':'none';
+  const sniperBtn=document.getElementById('btn-sniper'); if(sniperBtn) sniperBtn.style.display=S.role==='seeker'?'block':'none';
   document.getElementById('player-controls').style.display=S.isMaster?'none':'flex';
 
   if(!S.map){
@@ -1969,6 +2281,12 @@ function clearZone(){
 
 // ── GPS ──
 function startGPS(){ requestWakeLock();
+  // Tick bombe pour le master
+  if(S.isMaster){
+    setInterval(()=>{
+      if(S.gameActive && S.gameMode==='bomb') tickBomb();
+    }, 1000);
+  } requestWakeLock();
   if(!navigator.geolocation){
     document.getElementById('gps-status').textContent='GPS indispo';
     toast('❌ GPS non disponible sur cet appareil');
@@ -2029,6 +2347,7 @@ function listenGamePlayers(){
     if(_renderDebounce)clearTimeout(_renderDebounce);
     _renderDebounce=setTimeout(()=>{
       renderMapMarkers();renderPlayersStrip();checkProximityNow();
+      if(S.gameMode==='infection') checkNearbyItems();
     },200);
   });
   dbListen('parties/'+S.currentPartyId,snap=>{
@@ -2040,11 +2359,10 @@ function listenGamePlayers(){
 }
 
 function canSee(targetId,target){
+  if(S.gameMode==='impostor') return canSeeImpostor(targetId,target);
   const myId=S.user?.uid;if(targetId===myId)return true;
   if(S.isMaster)return true;
-  // Chercheur : voit UNIQUEMENT les cacheurs déjà trouvés (pas les autres chercheurs)
   if(S.role==='seeker')return target.role==='hider'&&target.found;
-  // Cacheur : voit uniquement ses co-cacheurs non trouvés
   if(S.role==='hider')return target.role==='hider'&&!target.found;
   return false;
 }
@@ -2239,7 +2557,14 @@ async function togglePause(){
 }
 
 // ── LEAVE GAME (non-master) ──
-async function leaveGame(){ releaseWakeLock();
+async function leaveGame(){ releaseWakeLock(); stopDistanceTracker();
+  if(_bombInterval){clearInterval(_bombInterval);_bombInterval=null;}
+  if(_voteListener){_voteListener();_voteListener=null;}
+  _myVote=null; S.impostorRole=null;
+  const ih=document.getElementById("impostor-hud"); if(ih)ih.style.display="none";
+  if(_zoneShrinkInterval){clearInterval(_zoneShrinkInterval);_zoneShrinkInterval=null;}
+  if(_zoneShrinkCircle&&S.map){S.map.removeLayer(_zoneShrinkCircle);_zoneShrinkCircle=null;}
+  _infectionMarkers.forEach(m=>{if(S.map)S.map.removeLayer(m);}); _infectionMarkers=[];
   if(!confirm('Quitter la partie en cours ?'))return;
   if(S.timerInterval)clearInterval(S.timerInterval);
   if(S.proximityInterval)clearInterval(S.proximityInterval);
@@ -3456,6 +3781,7 @@ async function confirmBanUser(){
   });
   closeModal('modal-ban-user');
   toast(`🚫 ${u?.pseudo||uid} banni pour ${_banDurationHours}h`);
+  addLog('auth','🚫',`Ban : ${u?.pseudo||uid} pour ${_banDurationHours}h`);
   _adminUsersCache[uid] = {...(_adminUsersCache[uid]||{}), banned:true, bannedUntil:until};
   renderAdminUsers(Object.entries(_adminUsersCache));
 }
@@ -3551,6 +3877,947 @@ async function adminDeleteAllEnded(){
   }
   renderAdminParties();
   toast(`🗑️ ${ended.length} parties supprimées.`);
+}
+
+
+// ═══════════════════════════════════════════
+// XP & NIVEAUX (70 levels)
+// ═══════════════════════════════════════════
+function xpForLevel(lvl){ if(lvl<=10)return lvl*100; if(lvl<=30)return 1000+(lvl-10)*150; if(lvl<=60)return 4000+(lvl-30)*200; return 10000+(lvl-60)*300; }
+function totalXpForLevel(lvl){ let t=0; for(let i=1;i<lvl;i++) t+=xpForLevel(i); return t; }
+function getLevelFromXP(xp){ let lvl=1,total=0; while(lvl<70){ const n=xpForLevel(lvl); if(total+n>xp)break; total+=n; lvl++; } return {level:lvl,currentXP:xp-totalXpForLevel(lvl),neededXP:xpForLevel(lvl)}; }
+
+const LEVEL_TITLES={1:'Recrue',5:'Débutant',10:'Apprenti',15:'Explorateur',20:'Chasseur',25:'Traqueur',30:'Fantôme',35:'Ombre',40:'Prédateur',45:'Espion',50:'Légende',55:'Maître',60:'Grand Maître',65:'Élite',70:'⚡ MYTHIQUE'};
+function getTitleForLevel(lvl){ let t='Recrue'; for(const [th,tt] of Object.entries(LEVEL_TITLES)){ if(lvl>=parseInt(th)) t=tt; } return t; }
+
+const XP_REWARDS={participate:10,survive:50,found_someone:30,lasted_5min:20,last_survivor:100};
+const XP_LABELS={participate:'Participation',survive:'Survie complète !',found_someone:'Joueur trouvé',lasted_5min:'5min tenu caché',last_survivor:'Dernier survivant !'};
+
+async function grantXP(type){
+  const amount=XP_REWARDS[type]||0; if(!amount||!S.user)return;
+  const prev=S.userProfile?.xp||0; const newXP=prev+amount;
+  const prevLvl=getLevelFromXP(prev).level; const newLvl=getLevelFromXP(newXP).level;
+  await dbUpdate('users/'+S.user.uid,{xp:newXP}); S.userProfile.xp=newXP;
+  showNotif('⭐','+'+amount+' XP',XP_LABELS[type]||'','#7b7fff');
+  if(newLvl>prevLvl){ const title=getTitleForLevel(newLvl); setTimeout(()=>showLevelUpSplash(newLvl,title),1500); S.userProfile.level=newLvl; await dbUpdate('users/'+S.user.uid,{level:newLvl,title}); }
+  updateXPUI();
+}
+
+function showLevelUpSplash(level,title){
+  let el=document.getElementById('levelup-splash');
+  if(!el){ el=document.createElement('div'); el.id='levelup-splash'; el.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);pointer-events:none;'; document.body.appendChild(el); }
+  el.innerHTML=`<div style="font-size:60px;margin-bottom:12px;">⭐</div><div style="font-size:14px;color:#7b7fff;font-weight:800;letter-spacing:2px;margin-bottom:4px;">NIVEAU ATTEINT</div><div style="font-size:56px;font-weight:900;color:#fff;line-height:1;">${level}</div><div style="font-size:16px;color:#ffbe0b;font-weight:800;margin-top:4px;">${title}</div>`;
+  el.style.display='flex'; el.style.opacity='1'; el.style.transition='';
+  setTimeout(()=>{ el.style.transition='opacity .5s'; el.style.opacity='0'; setTimeout(()=>el.style.display='none',500); },3000);
+}
+
+function updateXPUI(){
+  const xp=S.userProfile?.xp||0;
+  const {level,currentXP,neededXP}=getLevelFromXP(xp);
+  const title=getTitleForLevel(level);
+  const pct=Math.round(currentXP/neededXP*100);
+  const ids=[['profile-level-badge','Niv. '+level],['bp-level-badge','Niv. '+level]];
+  ids.forEach(([id,v])=>{ const el=document.getElementById(id); if(el)el.textContent=v; });
+  ['profile-title-badge','bp-title-badge'].forEach(id=>{ const el=document.getElementById(id); if(el)el.textContent=title; });
+  ['profile-xp-bar','bp-xp-bar'].forEach(id=>{ const el=document.getElementById(id); if(el)el.style.width=pct+'%'; });
+  const pxt=document.getElementById('profile-xp-text'); if(pxt)pxt.textContent=currentXP+' / '+neededXP+' XP';
+  const bxc=document.getElementById('bp-xp-current'); if(bxc)bxc.textContent=currentXP;
+  const bxn=document.getElementById('bp-xp-next'); if(bxn)bxn.textContent=neededXP;
+  const sxp=document.getElementById('stat-xp'); if(sxp)sxp.textContent=xp;
+  const sd=document.getElementById('stat-distance'); if(sd)sd.textContent=((S.userProfile?.stats?.distance||0)/1000).toFixed(1)+'km';
+  const sbh=document.getElementById('stat-best-hide'); if(sbh){ const s=S.userProfile?.stats?.bestHide||0; sbh.textContent=s>0?Math.floor(s/60)+'min':'—'; }
+}
+
+// ═══════════════════════════════════════════
+// BATTLE PASS
+// ═══════════════════════════════════════════
+const BP_REWARDS=[
+  {level:1,icon:'🎮',label:'Participant'},{level:3,icon:'🟣',label:'Skin Violet'},
+  {level:5,icon:'⭐',label:'Titre: Débutant'},{level:8,icon:'🔵',label:'Skin Bleu'},
+  {level:10,icon:'🏅',label:'Badge Bronze'},{level:12,icon:'🟠',label:'Skin Orange'},
+  {level:15,icon:'🌟',label:'Titre: Explorateur'},{level:18,icon:'🔴',label:'Skin Rouge'},
+  {level:20,icon:'🥈',label:'Badge Argent'},{level:22,icon:'🟡',label:'Skin Doré'},
+  {level:25,icon:'👻',label:'Skin Fantôme'},{level:28,icon:'💎',label:'Skin Diamant'},
+  {level:30,icon:'🏆',label:'Titre: Fantôme'},{level:33,icon:'🌊',label:'Skin Océan'},
+  {level:35,icon:'⚡',label:'Skin Éclair'},{level:38,icon:'🔥',label:'Skin Flamme'},
+  {level:40,icon:'🥇',label:'Badge Or'},{level:43,icon:'🌙',label:'Skin Lune'},
+  {level:45,icon:'🎯',label:'Titre: Espion'},{level:48,icon:'💜',label:'Skin Galaxie'},
+  {level:50,icon:'👑',label:'Titre: Légende'},{level:53,icon:'🌈',label:'Arc-en-ciel'},
+  {level:55,icon:'💫',label:'Skin Nova'},{level:58,icon:'🦊',label:'Skin Renard'},
+  {level:60,icon:'🏅',label:'Badge Platine'},{level:63,icon:'🐺',label:'Skin Loup'},
+  {level:65,icon:'⚔️',label:'Titre: Élite'},{level:68,icon:'🌑',label:'Obsidienne'},
+  {level:70,icon:'⚡',label:'TITRE MYTHIQUE'},
+];
+
+function loadBattlePass(){
+  updateXPUI();
+  const xp=S.userProfile?.xp||0;
+  const {level}=getLevelFromXP(xp);
+  const track=document.getElementById('bp-track');
+  if(!track)return;
+  const nodes=[];
+  for(let l=1;l<=70;l+=2){
+    const reward=BP_REWARDS.find(r=>r.level===l);
+    const unlocked=level>=l; const isCurrent=level===l;
+    nodes.push(`<div class="bp-node">
+      <div class="bp-node-circle ${isCurrent?'current':unlocked?'unlocked':'locked'}">
+        ${reward?reward.icon:'🎮'}
+        ${unlocked?`<div style="position:absolute;bottom:-4px;right:-4px;width:14px;height:14px;background:#06d6a0;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;">✓</div>`:''}
+      </div>
+      <div class="bp-node-level">Niv.${l}</div>
+      ${reward?`<div class="bp-node-label">${reward.label}</div>`:''}
+    </div>`);
+  }
+  track.innerHTML=nodes.join('');
+  setTimeout(()=>{ const idx=Math.floor((level-1)/2); track.scrollLeft=Math.max(0,idx*72-100); },200);
+}
+
+// ═══════════════════════════════════════════
+// SKINS
+// ═══════════════════════════════════════════
+const SKINS=[
+  {id:'default',name:'Défaut',color:'#aaaaaa',req:1,emoji:'👤'},
+  {id:'violet',name:'Violet',color:'#8338ec',req:3,emoji:'💜'},
+  {id:'blue',name:'Bleu',color:'#3a86ff',req:8,emoji:'💙'},
+  {id:'orange',name:'Orange',color:'#ff9f1c',req:12,emoji:'🟠'},
+  {id:'red',name:'Rouge',color:'#ff4d6d',req:18,emoji:'❤️'},
+  {id:'gold',name:'Doré',color:'#ffbe0b',req:22,emoji:'⭐'},
+  {id:'ghost',name:'Fantôme',color:'#e0e0e0',req:25,emoji:'👻'},
+  {id:'diamond',name:'Diamant',color:'#00e5ff',req:28,emoji:'💎'},
+  {id:'ocean',name:'Océan',color:'#0077b6',req:33,emoji:'🌊'},
+  {id:'lightning',name:'Éclair',color:'#f9c74f',req:35,emoji:'⚡'},
+  {id:'fire',name:'Flamme',color:'#f72585',req:38,emoji:'🔥'},
+  {id:'moon',name:'Lune',color:'#7678ed',req:43,emoji:'🌙'},
+  {id:'galaxy',name:'Galaxie',color:'#480ca8',req:48,emoji:'🌌'},
+  {id:'rainbow',name:'Arc-en-ciel',color:'#06d6a0',req:53,emoji:'🌈'},
+  {id:'nova',name:'Nova',color:'#ff006e',req:55,emoji:'💫'},
+  {id:'fox',name:'Renard',color:'#fb5607',req:58,emoji:'🦊'},
+  {id:'wolf',name:'Loup',color:'#4361ee',req:63,emoji:'🐺'},
+  {id:'obsidian',name:'Obsidienne',color:'#212529',req:68,emoji:'⚫'},
+  {id:'mythic',name:'Mythique',color:'#7b7fff',req:70,emoji:'✨'},
+];
+
+function renderSkins(){
+  const level=getLevelFromXP(S.userProfile?.xp||0).level;
+  const equipped=S.userProfile?.equippedSkin||'default';
+  const grid=document.getElementById('skin-grid');
+  if(!grid)return;
+  grid.innerHTML=SKINS.map(s=>{
+    const owned=level>=s.req; const isEquipped=equipped===s.id;
+    return `<div class="skin-card ${isEquipped?'equipped':owned?'owned':'locked'}" onclick="${owned?`equipSkin('${s.id}')`:''}">
+      <div class="skin-preview" style="background:rgba(0,0,0,0.3);border:2px solid ${s.color}"><span style="font-size:24px;">${s.emoji}</span></div>
+      <div class="skin-name">${s.name}</div>
+      <div class="skin-req">${isEquipped?'✅ Équipé':owned?'Possédé':'Niv. '+s.req}</div>
+    </div>`;
+  }).join('');
+}
+
+async function equipSkin(id){
+  await dbUpdate('users/'+S.user.uid,{equippedSkin:id});
+  S.userProfile.equippedSkin=id;
+  renderSkins();
+  toast('🎨 Skin équipé !');
+}
+
+function getEquippedSkinColor(){ const id=S.userProfile?.equippedSkin||'default'; return SKINS.find(s=>s.id===id)?.color||'#aaaaaa'; }
+
+// ═══════════════════════════════════════════
+// DISTANCE EN TEMPS RÉEL
+// ═══════════════════════════════════════════
+let _distanceInterval=null;
+function startDistanceTracker(){ if(_distanceInterval)clearInterval(_distanceInterval); _distanceInterval=setInterval(updateDistancePill,3000); }
+function stopDistanceTracker(){ if(_distanceInterval){clearInterval(_distanceInterval);_distanceInterval=null;} const p=document.getElementById('distance-pill'); if(p)p.style.display='none'; }
+
+function updateDistancePill(){
+  const pill=document.getElementById('distance-pill');
+  if(!pill||!S.players)return;
+  const me=S.players[S.user?.uid]; if(!me?.lat)return;
+  let closest=Infinity;
+  for(const [uid,p] of Object.entries(S.players)){
+    if(uid===S.user.uid)continue;
+    if(S.role==='hider'&&p.role==='seeker'&&p.lat){ const d=haversine(me.lat,me.lng,p.lat,p.lng); if(d<closest)closest=d; }
+    if(S.role==='seeker'&&p.role==='hider'&&!p.found&&p.lat){ const d=haversine(me.lat,me.lng,p.lat,p.lng); if(d<closest)closest=d; }
+  }
+  if(closest===Infinity){pill.style.display='none';return;}
+  const dist=closest<1000?Math.round(closest)+'m':(closest/1000).toFixed(1)+'km';
+  pill.textContent=(S.role==='hider'?'🔍 ':'🙈 ')+dist;
+  pill.style.display='block';
+  pill.className='distance-pill'+(closest<30?'':closest<100?' medium':' safe');
+  if(S.role==='hider'&&closest<30&&navigator.vibrate)navigator.vibrate([100,50,100]);
+}
+
+// ═══════════════════════════════════════════
+// QR CODE & INVITATION
+// ═══════════════════════════════════════════
+function openQRModal(){
+  const code=S.currentPartyId||S.currentParty?.code||'—';
+  document.getElementById('qr-party-code').textContent=code;
+  // QR via API Google Charts
+  const link=encodeURIComponent(window.location.origin+window.location.pathname+'?join='+code);
+  document.getElementById('qr-code-display').innerHTML=`<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${link}&choe=UTF-8" width="200" height="200" style="display:block;border-radius:8px;">`;
+  openModal('modal-qr');
+}
+
+function copyInviteLink(){
+  const code=S.currentPartyId||'—';
+  const link=window.location.origin+window.location.pathname+'?join='+code;
+  navigator.clipboard?.writeText(link).then(()=>toast('🔗 Lien copié !')).catch(()=>toast('Code : '+code));
+}
+
+async function shareInvite(){
+  const code=S.currentPartyId||'—';
+  const link=window.location.origin+window.location.pathname+'?join='+code;
+  if(navigator.share){ try{ await navigator.share({title:'Cache Cache',text:'Rejoins ma partie !',url:link}); }catch(e){} }
+  else copyInviteLink();
+}
+
+// Auto-rejoindre via URL ?join=CODE
+function checkJoinParam(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('join');
+  if(code&&S.user){ document.getElementById('join-code').value=code; toast('🎮 Code détecté : '+code); }
+}
+
+// ═══════════════════════════════════════════
+// LOGS D'ACTIVITÉ (admin)
+// ═══════════════════════════════════════════
+let _logsFilter='all';
+
+function addLog(type,icon,text){
+  const ts=Date.now();
+  const log={type,icon,text,ts};
+  const logs=JSON.parse(localStorage.getItem('cc_logs')||'[]');
+  logs.unshift(log);
+  if(logs.length>200)logs.splice(200);
+  localStorage.setItem('cc_logs',JSON.stringify(logs));
+}
+
+function loadLogs(){
+  const logs=JSON.parse(localStorage.getItem('cc_logs')||'[]');
+  renderLogs(logs);
+}
+
+function filterLogs(filter,btn){
+  _logsFilter=filter;
+  document.querySelectorAll('#screen-logs .ban-dur-btn').forEach(b=>b.classList.remove('selected'));
+  btn?.classList.add('selected');
+  const logs=JSON.parse(localStorage.getItem('cc_logs')||'[]');
+  renderLogs(logs);
+}
+
+function renderLogs(logs){
+  const list=document.getElementById('logs-list');
+  if(!list)return;
+  const filtered=_logsFilter==='all'?logs:logs.filter(l=>l.type===_logsFilter);
+  if(!filtered.length){list.innerHTML=`<div style="text-align:center;color:var(--muted);font-size:13px;padding:24px;">Aucun log</div>`;return;}
+  list.innerHTML=filtered.map(l=>{
+    const t=new Date(l.ts).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const d=new Date(l.ts).toLocaleDateString('fr',{day:'2-digit',month:'2-digit'});
+    return `<div class="log-row">
+      <div class="log-icon">${l.icon}</div>
+      <div class="log-text">${l.text}</div>
+      <div class="log-time">${d} ${t}</div>
+    </div>`;
+  }).join('');
+}
+
+function clearLogs(){
+  if(!confirm('Vider tous les logs ?'))return;
+  localStorage.removeItem('cc_logs');
+  loadLogs();
+}
+
+
+// ═══════════════════════════════════════════
+// SÉLECTION MODE DE JEU
+// ═══════════════════════════════════════════
+let _selectedGameMode = 'classic';
+
+function selectGameMode(mode){
+  // Vérification min joueurs pour imposteur
+  if(mode === 'impostor'){
+    const playerCount = S.players ? Object.keys(S.players).length : 0;
+    if(playerCount < 4){
+      toast('❌ Minimum 4 joueurs pour le mode Imposteur !');
+      return;
+    }
+  }
+  _selectedGameMode = mode;
+  document.querySelectorAll('.gamemode-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('gm-'+mode)?.classList.add('selected');
+}
+
+// ═══════════════════════════════════════════
+// MODE BOMBE 💣
+// ═══════════════════════════════════════════
+let _bombInterval = null;
+let _bombSeconds = 120;
+let _bombCarrierUid = null;
+let _bombPrevCarrier = null;
+const BOMB_START_SECONDS = 120;
+const BOMB_PASS_DISTANCE = 15; // mètres
+
+function startBombMode(){
+  if(!S.isMaster) return;
+  // Choisir un porteur aléatoire
+  const uids = Object.keys(S.players);
+  _bombCarrierUid = uids[Math.floor(Math.random() * uids.length)];
+  _bombSeconds = BOMB_START_SECONDS;
+  dbUpdate('parties/'+S.currentPartyId, {
+    bomb: { carrier: _bombCarrierUid, seconds: _bombSeconds, startedAt: Date.now(), passCount: 0 }
+  });
+}
+
+function listenBombState(){
+  dbListen('parties/'+S.currentPartyId+'/bomb', snap => {
+    if(!snap.exists()) return;
+    const bomb = snap.val();
+    _bombCarrierUid = bomb.carrier;
+    _bombSeconds = bomb.seconds;
+    renderBombHUD(bomb);
+  });
+}
+
+function renderBombHUD(bomb){
+  const hud = document.getElementById('bomb-hud');
+  const timerEl = document.getElementById('bomb-timer');
+  const labelEl = document.getElementById('bomb-carrier-label');
+  const passBtn = document.getElementById('bomb-pass-btn');
+  if(!hud) return;
+
+  hud.style.display = 'flex';
+  const iAmCarrier = bomb.carrier === S.user?.uid;
+  const carrier = S.players[bomb.carrier];
+  const min = Math.floor(bomb.seconds/60);
+  const sec = String(bomb.seconds%60).padStart(2,'0');
+  timerEl.textContent = `💣 ${min}:${sec}`;
+
+  if(bomb.seconds <= 20){
+    timerEl.classList.add('pulsing');
+    if(bomb.seconds <= 10 && navigator.vibrate) navigator.vibrate(200);
+  } else {
+    timerEl.classList.remove('pulsing');
+  }
+
+  if(iAmCarrier){
+    labelEl.textContent = '💣 TU AS LA BOMBE !';
+    labelEl.style.color = '#ff4d6d';
+    passBtn.style.display = 'block';
+  } else {
+    labelEl.textContent = `Porteur : ${carrier?.name||'?'}`;
+    labelEl.style.color = 'rgba(255,255,255,0.6)';
+    passBtn.style.display = 'none';
+  }
+}
+
+function tryPassBomb(){
+  if(_bombCarrierUid !== S.user?.uid) return;
+  const me = S.players[S.user.uid];
+  if(!me?.lat) { toast('GPS requis pour passer la bombe !'); return; }
+
+  // Chercher les joueurs proches
+  let closest = null, closestDist = Infinity;
+  for(const [uid, p] of Object.entries(S.players)){
+    if(uid === S.user.uid) continue;
+    if(uid === _bombPrevCarrier) continue; // pas celui qui vient de te la passer
+    if(p.eliminated) continue;
+    if(!p.lat) continue;
+    const d = haversine(me.lat, me.lng, p.lat, p.lng);
+    if(d < closestDist){ closestDist = d; closest = {uid, ...p}; }
+  }
+
+  if(!closest || closestDist > BOMB_PASS_DISTANCE){
+    toast(`Approche-toi à moins de ${BOMB_PASS_DISTANCE}m d'un joueur ! (${Math.round(closestDist)}m)`);
+    return;
+  }
+
+  // Passer la bombe
+  _bombPrevCarrier = S.user.uid;
+  const snap_passCount = (S.currentParty?.bomb?.passCount || 0) + 1;
+  // Timer raccourcit de 10s à chaque passage (min 20s)
+  const newSeconds = Math.max(20, BOMB_START_SECONDS - snap_passCount * 10);
+  dbUpdate('parties/'+S.currentPartyId+'/bomb', {
+    carrier: closest.uid,
+    seconds: newSeconds,
+    passCount: snap_passCount,
+    lastPass: { from: S.user.uid, to: closest.uid, ts: Date.now() }
+  });
+  showNotif('💣', 'Bombe passée !', `À ${closest.name||'?'} — ${newSeconds}s`, '#ff4d6d');
+}
+
+function tickBomb(){
+  if(!S.isMaster) return;
+  const bomb = S.currentParty?.bomb;
+  if(!bomb) return;
+  const newSec = (bomb.seconds || 0) - 1;
+  if(newSec <= 0){
+    // Explosion !
+    const carrier = _bombCarrierUid;
+    dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds: 0, exploded: true});
+    dbUpdate('parties/'+S.currentPartyId+'/players/'+carrier, {eliminated: true, eliminatedBy: 'bomb'});
+    showNotif('💥', 'BOOM !', `${S.players[carrier]?.name||'?'} a explosé !`, '#ff4d6d');
+    // Vérifier s'il reste des joueurs
+    const alive = Object.entries(S.players).filter(([uid,p]) => !p.eliminated);
+    if(alive.length <= 1){
+      setTimeout(() => {
+        if(alive.length === 1) showNotif('🏆', 'Victoire !', `${alive[0][1].name} survit !`, '#06d6a0');
+        endGame();
+      }, 2000);
+      return;
+    }
+    // Choisir un nouveau porteur parmi les survivants
+    const aliveUids = alive.map(([uid]) => uid).filter(u => u !== carrier);
+    const newCarrier = aliveUids[Math.floor(Math.random() * aliveUids.length)];
+    dbUpdate('parties/'+S.currentPartyId+'/bomb', {
+      carrier: newCarrier, seconds: Math.max(20, BOMB_START_SECONDS - (bomb.passCount||0)*10),
+      exploded: false
+    });
+  } else {
+    dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds: newSec});
+  }
+}
+
+// ═══════════════════════════════════════════
+// MODE INFECTION / COLLECTE 🦠
+// ═══════════════════════════════════════════
+const INFECTION_ITEMS_COUNT = 5;
+const INFECTION_COLLECT_RADIUS = 20; // mètres
+const REYRIEUX_BOUNDS = { // Zone de jeu approximative
+  latMin: 45.920, latMax: 45.948,
+  lngMin: 4.845, lngMax: 4.878
+};
+
+let _infectionItems = [];
+let _infectionMarkers = [];
+let _infectionCollected = 0;
+let _zoneShrinkCircle = null;
+let _zoneShrinkInterval = null;
+
+function generateRandomPoint(){
+  const lat = REYRIEUX_BOUNDS.latMin + Math.random() * (REYRIEUX_BOUNDS.latMax - REYRIEUX_BOUNDS.latMin);
+  const lng = REYRIEUX_BOUNDS.lngMin + Math.random() * (REYRIEUX_BOUNDS.lngMax - REYRIEUX_BOUNDS.lngMin);
+  return {lat, lng};
+}
+
+async function startInfectionMode(){
+  if(!S.isMaster) return;
+  // Générer les objets
+  const items = {};
+  for(let i=0; i<INFECTION_ITEMS_COUNT; i++){
+    const pt = generateRandomPoint();
+    items['item_'+i] = {lat: pt.lat, lng: pt.lng, collected: false, id: i};
+  }
+  await dbUpdate('parties/'+S.currentPartyId, {
+    infectionItems: items,
+    infectionStartedAt: Date.now(),
+    infectionDuration: 15 * 60 * 1000 // 15 minutes
+  });
+}
+
+function listenInfectionState(){
+  dbListen('parties/'+S.currentPartyId+'/infectionItems', snap => {
+    if(!snap.exists()) return;
+    _infectionItems = Object.values(snap.val());
+    renderInfectionItems();
+    updateCollectHUD();
+    checkNearbyItems();
+  });
+}
+
+function renderInfectionItems(){
+  // Supprimer anciens marqueurs
+  _infectionMarkers.forEach(m => S.map.removeLayer(m));
+  _infectionMarkers = [];
+
+  _infectionItems.forEach(item => {
+    if(item.collected) return;
+    const icon = L.divIcon({
+      html: `<div style="font-size:24px;filter:drop-shadow(0 0 6px rgba(123,127,255,0.8));">📦</div>`,
+      iconSize: [30,30], iconAnchor: [15,15], className: ''
+    });
+    const marker = L.marker([item.lat, item.lng], {icon})
+      .addTo(S.map)
+      .bindTooltip('Objet à collecter', {permanent:false});
+    _infectionMarkers.push(marker);
+  });
+}
+
+function updateCollectHUD(){
+  const hud = document.getElementById('collect-hud');
+  const countEl = document.getElementById('collect-count');
+  const totalEl = document.getElementById('collect-total');
+  if(!hud) return;
+  hud.style.display = 'block';
+  const collected = _infectionItems.filter(i => i.collected).length;
+  const total = _infectionItems.length;
+  _infectionCollected = collected;
+  if(countEl) countEl.textContent = collected;
+  if(totalEl) totalEl.textContent = total;
+  if(collected === total){
+    hud.style.borderColor = 'rgba(6,214,160,0.5)';
+    document.getElementById('collect-count').style.color = '#06d6a0';
+  }
+}
+
+function checkNearbyItems(){
+  const me = S.players[S.user?.uid];
+  if(!me?.lat) return;
+  _infectionItems.forEach((item, idx) => {
+    if(item.collected) return;
+    const d = haversine(me.lat, me.lng, item.lat, item.lng);
+    if(d <= INFECTION_COLLECT_RADIUS){
+      // Collecter !
+      dbUpdate('parties/'+S.currentPartyId+'/infectionItems/item_'+item.id, {collected: true, collectedBy: S.user.uid, collectedAt: Date.now()});
+      showNotif('📦', 'Objet collecté !', `+1 objet trouvé (${_infectionCollected+1}/${_infectionItems.length})`, '#7b7fff');
+      if(navigator.vibrate) navigator.vibrate([100,50,200]);
+    }
+  });
+}
+
+function startZoneShrink(durationMs){
+  if(!S.map) return;
+  const center = [45.934, 4.862]; // Centre Reyrieux
+  let startRadius = 800; // mètres
+  let endRadius = 100;
+  const steps = 60;
+  let step = 0;
+
+  if(_zoneShrinkCircle) S.map.removeLayer(_zoneShrinkCircle);
+  _zoneShrinkCircle = L.circle(center, {
+    radius: startRadius,
+    color: '#ff4d6d', fillColor: '#ff4d6d', fillOpacity: 0.05,
+    weight: 2, dashArray: '6 4'
+  }).addTo(S.map);
+
+  _zoneShrinkInterval = setInterval(() => {
+    step++;
+    const pct = step / steps;
+    const radius = startRadius - (startRadius - endRadius) * pct;
+    _zoneShrinkCircle.setRadius(radius);
+    if(step >= steps){
+      clearInterval(_zoneShrinkInterval);
+      toast('⚠️ Zone minimale atteinte !');
+    }
+    // Vérifier si des joueurs sont hors zone
+    if(S.isMaster){
+      for(const [uid, p] of Object.entries(S.players)){
+        if(!p.lat || p.eliminated) continue;
+        const d = haversine(center[0], center[1], p.lat, p.lng);
+        if(d > radius + 20){
+          dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {eliminated: true, eliminatedBy: 'zone'});
+          showNotif('⚠️', 'Hors zone !', `${p.name} est éliminé`, '#ff4d6d');
+        }
+      }
+    }
+  }, durationMs / steps);
+}
+
+
+// ═══════════════════════════════════════════
+// MODE IMPOSTEUR 🕵️
+// ═══════════════════════════════════════════
+let _impostorListener = null;
+let _voteListener = null;
+let _myVote = null;
+
+function startImpostorMode(){
+  if(!S.isMaster) return;
+  const uids = Object.keys(S.players);
+  if(uids.length < 4){
+    toast('❌ Minimum 4 joueurs pour le mode Imposteur !');
+    return;
+  }
+  // Choisir 1 imposteur aléatoire (jamais le maître)
+  const candidates = uids.filter(u => u !== S.user.uid);
+  const impostorUid = candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Assigner les rôles imposteur en secret dans Firebase
+  for(const uid of uids){
+    const role = uid === impostorUid ? 'impostor' : 'innocent';
+    dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {impostorRole: role});
+    if(S.players[uid]) S.players[uid].impostorRole = role;
+  }
+  dbUpdate('parties/'+S.currentPartyId, {impostorStartedAt: Date.now()});
+}
+
+function listenImpostorState(){
+  // Mon rôle imposteur
+  const myRole = S.players[S.user?.uid]?.impostorRole || 'innocent';
+  S.impostorRole = myRole;
+  renderImpostorHUD();
+
+  // Listener votes en temps réel
+  if(_voteListener){ _voteListener(); _voteListener=null; }
+  _voteListener = dbListen('parties/'+S.currentPartyId+'/votes', snap => {
+    const votes = snap.exists() ? snap.val() : {};
+    checkVoteResult(votes);
+  });
+}
+
+function renderImpostorHUD(){
+  const hud = document.getElementById('impostor-hud');
+  const badge = document.getElementById('impostor-role-badge');
+  const voteBtn = document.getElementById('impostor-vote-btn');
+  if(!hud) return;
+
+  hud.style.display = 'flex';
+  const isImpostor = S.impostorRole === 'impostor';
+
+  badge.textContent = isImpostor ? '🔴 IMPOSTEUR' : '🟢 Innocent';
+  badge.className = 'impostor-role-badge ' + (isImpostor ? 'impostor' : 'innocent');
+
+  // Seuls les innocents votent (l'imposteur sait déjà qui il est)
+  voteBtn.style.display = isImpostor ? 'none' : 'block';
+}
+
+function openVoteModal(){
+  const list = document.getElementById('vote-players-list');
+  const status = document.getElementById('vote-status');
+  if(!list) return;
+
+  const alive = Object.entries(S.players).filter(([uid, p]) => !p.eliminated && uid !== S.user.uid);
+  list.innerHTML = alive.map(([uid, p]) => `
+    <div class="vote-player-row ${_myVote===uid?'voted':''}" onclick="castVote('${uid}')">
+      <div style="width:36px;height:36px;border-radius:50%;background:${p.color||'#aaa'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">
+        ${p.avatarUrl?`<img src="${p.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`:'👤'}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:14px;">${p.name||'?'}</div>
+        <div style="font-size:11px;color:var(--muted);">Joueur ${p.role||''}</div>
+      </div>
+      ${_myVote===uid?'<div class="vote-count-badge">✓ Mon vote</div>':''}
+    </div>`).join('');
+
+  status.textContent = _myVote ? 'Tu as déjà voté.' : 'Choisis le suspect.';
+  openModal('modal-vote');
+}
+
+async function castVote(targetUid){
+  if(_myVote){ toast('Tu as déjà voté !'); return; }
+  _myVote = targetUid;
+  await dbUpdate('parties/'+S.currentPartyId+'/votes/'+S.user.uid, {
+    target: targetUid, ts: Date.now(), voter: S.user.uid
+  });
+  closeModal('modal-vote');
+  showNotif('🗳️', 'Vote enregistré !', `Tu as voté contre ${S.players[targetUid]?.name||'?'}`, '#ffbe0b');
+}
+
+function checkVoteResult(votes){
+  const voteList = Object.values(votes);
+  const total = Object.keys(S.players).filter(u => !S.players[u]?.eliminated).length;
+  const majority = Math.floor(total/2) + 1;
+
+  // Compter les votes par cible
+  const counts = {};
+  voteList.forEach(v => { counts[v.target] = (counts[v.target]||0) + 1; });
+
+  // Vérifier si quelqu'un a la majorité
+  for(const [uid, count] of Object.entries(counts)){
+    if(count >= majority){
+      // Éliminer le joueur
+      if(S.isMaster){
+        const isRealImpostor = S.players[uid]?.impostorRole === 'impostor';
+        dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {eliminated:true, eliminatedBy:'vote'});
+        // Reset les votes
+        window._dbRemove(dbRef('parties/'+S.currentPartyId+'/votes'));
+
+        if(isRealImpostor){
+          showNotif('🎉', 'Bonne intuition !', `${S.players[uid]?.name||'?'} était l'imposteur !`, '#06d6a0');
+          setTimeout(() => {
+            toast('🎉 Les innocents ont gagné !');
+            endGame();
+          }, 3000);
+        } else {
+          showNotif('😱', 'Raté !', `${S.players[uid]?.name||'?'} était innocent...`, '#ff4d6d');
+          // L'imposteur gagne si les innocents s'éliminent entre eux
+          const innocentsLeft = Object.entries(S.players).filter(([u,p]) => !p.eliminated && p.impostorRole==='innocent').length;
+          if(innocentsLeft <= 1){
+            setTimeout(() => { toast(`🕵️ L'imposteur a gagné !`); endGame(); }, 2000);
+          }
+        }
+      }
+      // Reset mon vote
+      _myVote = null;
+      break;
+    }
+  }
+
+  // Afficher le compteur de votes
+  const voteBtn = document.getElementById('impostor-vote-btn');
+  if(voteBtn && voteList.length > 0){
+    voteBtn.textContent = `🗳️ Votes : ${voteList.length}/${total}`;
+  }
+}
+
+// canSee override pour le mode imposteur
+function canSeeImpostor(targetId, target){
+  const myId = S.user?.uid;
+  if(targetId === myId) return true;
+  if(S.isMaster) return true;
+  // Imposteur voit tout le monde
+  if(S.impostorRole === 'impostor') return true;
+  // Innocent voit les autres innocents seulement
+  return target.impostorRole === 'innocent' || target.eliminated;
+}
+
+
+// ═══════════════════════════════════════════
+// MODE SNIPER 🔫
+// ═══════════════════════════════════════════
+let _sniperActive = false;
+let _sniperHeading = 0;        // cap actuel moyenné
+let _sniperReadings = [];      // buffer 5 lectures
+let _sniperCalibrated = false;
+let _sniperAmmo = 3;
+let _sniperLockedTarget = null;
+let _sniperOrientHandler = null;
+let _sniperRafId = null;
+const SNIPER_CONE_DEG = 15;    // ±15° pour viser
+const SNIPER_MAX_DIST = 50;    // mètres max
+
+// ── Génère la bande de la boussole ──
+function buildCompassStrip(){
+  const inner = document.getElementById('compass-inner');
+  if(!inner) return;
+  const dirs = {0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SO',270:'O',315:'NO'};
+  let html = '';
+  for(let deg=0; deg<360; deg+=5){
+    const isMajor = deg%45===0;
+    html += `<div class="compass-tick${isMajor?' major':''}" data-deg="${deg}">
+      <div style="width:1px;height:${isMajor?14:8}px;background:${isMajor?'#fff':'rgba(255,255,255,0.3)'};margin:0 auto;"></div>
+      ${isMajor?`<span>${dirs[deg]||deg+'°'}</span>`:''}
+    </div>`;
+  }
+  // Doubler pour le scroll infini
+  inner.innerHTML = html + html;
+}
+
+// ── Moyenne sur N lectures ──
+function addHeadingReading(deg){
+  _sniperReadings.push(deg);
+  if(_sniperReadings.length > 5) _sniperReadings.shift();
+  // Moyenne circulaire (évite le saut 359°→0°)
+  let sinSum=0, cosSum=0;
+  _sniperReadings.forEach(d => {
+    const r = d * Math.PI / 180;
+    sinSum += Math.sin(r);
+    cosSum += Math.cos(r);
+  });
+  let avg = Math.atan2(sinSum/_sniperReadings.length, cosSum/_sniperReadings.length) * 180/Math.PI;
+  if(avg < 0) avg += 360;
+  _sniperHeading = avg;
+}
+
+// ── Mise à jour visuelle boussole ──
+function updateCompassUI(){
+  const inner = document.getElementById('compass-inner');
+  const headingText = document.getElementById('sniper-heading-text');
+  if(!inner) return;
+  // Décaler la bande selon le cap (20px par degré de large / 72 ticks sur 360°)
+  const tickWidth = 20;
+  const offset = (_sniperHeading / 360) * 72 * tickWidth;
+  inner.style.transform = `translateX(calc(-50% - ${offset}px + ${36*tickWidth}px))`;
+  if(headingText) headingText.textContent = Math.round(_sniperHeading)+'°';
+
+  // Colorier les ticks de cibles
+  document.querySelectorAll('.compass-tick').forEach(tick => {
+    const deg = parseInt(tick.dataset.deg);
+    tick.classList.remove('target');
+  });
+  if(_sniperLockedTarget){
+    const me = S.players[S.user?.uid];
+    if(me?.lat && _sniperLockedTarget.lat){
+      const bearing = getBearing(me.lat, me.lng, _sniperLockedTarget.lat, _sniperLockedTarget.lng);
+      // Trouver le tick le plus proche
+      document.querySelectorAll('.compass-tick').forEach(tick => {
+        const deg = parseInt(tick.dataset.deg);
+        if(Math.abs(deg-bearing)<8 || Math.abs(deg-bearing-360)<8 || Math.abs(deg-bearing+360)<8) tick.classList.add('target');
+      });
+    }
+  }
+}
+
+// ── Calcul du bearing GPS entre deux points ──
+function getBearing(lat1, lng1, lat2, lng2){
+  const dLng = (lng2-lng1)*Math.PI/180;
+  const lat1r = lat1*Math.PI/180, lat2r = lat2*Math.PI/180;
+  const y = Math.sin(dLng)*Math.cos(lat2r);
+  const x = Math.cos(lat1r)*Math.sin(lat2r) - Math.sin(lat1r)*Math.cos(lat2r)*Math.cos(dLng);
+  let bearing = Math.atan2(y,x)*180/Math.PI;
+  return (bearing+360)%360;
+}
+
+// ── Différence angulaire (plus court chemin) ──
+function angleDiff(a, b){
+  let d = Math.abs(a-b)%360;
+  return d > 180 ? 360-d : d;
+}
+
+// ── Ouverture du mode sniper ──
+function openSniperMode(){
+  if(_sniperAmmo <= 0){ toast('Plus de munitions !'); return; }
+  _sniperActive = true;
+  _sniperCalibrated = false;
+  _sniperReadings = [];
+  _sniperLockedTarget = null;
+  buildCompassStrip();
+  document.getElementById('sniper-calibrating').style.display='flex';
+  document.getElementById('sniper-cal-bar').style.width='0%';
+  document.getElementById('sniper-cal-count').textContent='0';
+  document.getElementById('sniper-shoot-btn').classList.remove('ready');
+  document.getElementById('sniper-target-label').style.display='none';
+  document.getElementById('sniper-center').classList.remove('locked');
+  document.getElementById('sniper-ammo-count').textContent=_sniperAmmo;
+  showScreen('screen-sniper');
+
+  // Demander permission orientation (iOS)
+  if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
+    DeviceOrientationEvent.requestPermission().then(state=>{
+      if(state==='granted') startOrientationListener();
+      else toast('Permission orientation refusée');
+    });
+  } else {
+    startOrientationListener();
+  }
+}
+
+function closeSniperMode(){
+  _sniperActive = false;
+  if(_sniperOrientHandler){ window.removeEventListener('deviceorientationabsolute', _sniperOrientHandler); window.removeEventListener('deviceorientation', _sniperOrientHandler); _sniperOrientHandler=null; }
+  if(_sniperRafId){ cancelAnimationFrame(_sniperRafId); _sniperRafId=null; }
+  showScreen('screen-map');
+}
+
+function startOrientationListener(){
+  let calCount = 0;
+  _sniperOrientHandler = (e) => {
+    let heading = null;
+    // Priorité : absolute, puis webkitCompassHeading (iOS), puis alpha
+    if(e.absolute && e.alpha != null) heading = (360-e.alpha)%360;
+    else if(e.webkitCompassHeading != null) heading = e.webkitCompassHeading;
+    else if(e.alpha != null) heading = (360-e.alpha)%360;
+    if(heading === null) return;
+
+    addHeadingReading(heading);
+
+    // Calibration : on attend 5 bonnes lectures
+    if(!_sniperCalibrated){
+      calCount = Math.min(5, _sniperReadings.length);
+      document.getElementById('sniper-cal-bar').style.width=(calCount/5*100)+'%';
+      document.getElementById('sniper-cal-count').textContent=calCount;
+      if(calCount >= 5){
+        _sniperCalibrated = true;
+        document.getElementById('sniper-calibrating').style.display='none';
+        toast('🧭 Calibré ! Vise ta cible.');
+      }
+    } else {
+      updateCompassUI();
+      checkSniperAim();
+    }
+  };
+
+  // Préférer absolute (Android) pour la précision
+  window.addEventListener('deviceorientationabsolute', _sniperOrientHandler, true);
+  window.addEventListener('deviceorientation', _sniperOrientHandler, true);
+
+  // RAF pour fluidité UI
+  function rafLoop(){
+    if(!_sniperActive) return;
+    if(_sniperCalibrated){ updateCompassUI(); checkSniperAim(); }
+    _sniperRafId = requestAnimationFrame(rafLoop);
+  }
+  _sniperRafId = requestAnimationFrame(rafLoop);
+}
+
+// ── Vérification si on vise quelqu'un ──
+function checkSniperAim(){
+  const me = S.players[S.user?.uid];
+  if(!me?.lat) return;
+  const center = document.getElementById('sniper-center');
+  const label = document.getElementById('sniper-target-label');
+  const shootBtn = document.getElementById('sniper-shoot-btn');
+  const infoEl = document.getElementById('sniper-info');
+
+  let bestTarget = null, bestDiff = 999;
+
+  for(const [uid, p] of Object.entries(S.players)){
+    if(uid === S.user.uid || p.eliminated) continue;
+    if(!p.lat) continue;
+    // En mode classique, le chercheur vise les cacheurs seulement
+    if(S.role==='seeker' && p.role!=='hider') continue;
+    const dist = haversine(me.lat, me.lng, p.lat, p.lng);
+    if(dist > SNIPER_MAX_DIST) continue;
+    const bearing = getBearing(me.lat, me.lng, p.lat, p.lng);
+    const diff = angleDiff(_sniperHeading, bearing);
+    if(diff < SNIPER_CONE_DEG && diff < bestDiff){
+      bestDiff = diff;
+      bestTarget = {uid, dist, bearing, name: p.name||'?'};
+    }
+  }
+
+  _sniperLockedTarget = bestTarget;
+
+  if(bestTarget){
+    center.classList.add('locked');
+    label.style.display = 'block';
+    label.textContent = `🎯 ${bestTarget.name} — ${Math.round(bestTarget.dist)}m`;
+    shootBtn.classList.add('ready');
+    infoEl.textContent = 'CIBLE VERROUILLÉE — Appuie pour tirer !';
+    if(navigator.vibrate) navigator.vibrate(40);
+  } else {
+    center.classList.remove('locked');
+    label.style.display = 'none';
+    shootBtn.classList.remove('ready');
+    infoEl.textContent = 'Pointe vers un joueur à moins de '+SNIPER_MAX_DIST+'m';
+  }
+}
+
+// ── TIR ──
+async function shoot(){
+  if(!_sniperLockedTarget){ toast('Pas de cible !'); return; }
+  if(_sniperAmmo <= 0){ toast('Plus de munitions !'); return; }
+
+  _sniperAmmo--;
+  document.getElementById('sniper-ammo-count').textContent = _sniperAmmo;
+
+  // Flash rouge
+  const flash = document.createElement('div');
+  flash.className = 'shoot-flash';
+  document.body.appendChild(flash);
+  setTimeout(()=>flash.remove(), 400);
+  if(navigator.vibrate) navigator.vibrate([80,30,80]);
+
+  const target = _sniperLockedTarget;
+  _sniperLockedTarget = null;
+  document.getElementById('sniper-center').classList.remove('locked');
+  document.getElementById('sniper-shoot-btn').classList.remove('ready');
+  document.getElementById('sniper-target-label').style.display='none';
+  document.getElementById('sniper-info').textContent = '💥 Tir effectué !';
+
+  // Écrire dans Firebase
+  await dbPush('parties/'+S.currentPartyId+'/shots', {
+    shooter: S.user.uid,
+    shooterName: S.userProfile?.pseudo||'?',
+    target: target.uid,
+    targetName: target.name,
+    dist: Math.round(target.dist),
+    ts: Date.now(),
+    heading: Math.round(_sniperHeading),
+  });
+
+  // Éliminer si mode le permet (chercheur tire sur cacheur, ou mode sniper activé)
+  if(S.role==='seeker' || S.gameMode==='sniper'){
+    await dbUpdate('parties/'+S.currentPartyId+'/players/'+target.uid, {found:true, foundBy:S.user.uid, foundAt:Date.now()});
+    showNotif('🎯','Touché !',`${target.name} éliminé à ${Math.round(target.dist)}m`,'#ff4d6d');
+    grantXP('found_someone');
+  } else {
+    showNotif('🔫','Tir envoyé !',`${target.name} à ${Math.round(target.dist)}m`,'#ffbe0b');
+  }
+
+  // Plus de munitions
+  if(_sniperAmmo <= 0){
+    setTimeout(()=>{ toast('🔫 Plus de munitions !'); closeSniperMode(); }, 1500);
+  }
 }
 
 function stopMusicOnLogin() { pauseMusic(); }
