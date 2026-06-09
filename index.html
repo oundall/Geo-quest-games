@@ -528,6 +528,23 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 .shoot-flash{position:fixed;inset:0;background:rgba(255,77,109,0.5);z-index:99999;pointer-events:none;animation:flashOut .3s ease forwards;}
 @keyframes flashOut{from{opacity:1;}to{opacity:0;}}
 
+
+/* ══ BATTLE ROYAL ══ */
+.br-hud{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:1000;display:none;align-items:center;gap:8px;pointer-events:none;}
+.br-alive-badge{background:rgba(10,14,26,0.9);border:1px solid rgba(255,190,11,0.4);color:#ffbe0b;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:800;}
+.br-zone-timer{background:rgba(255,77,109,0.9);color:#fff;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:800;}
+/* ══ IMPOSTEUR MISSIONS ══ */
+.mission-hud{position:absolute;bottom:100px;left:12px;right:12px;z-index:1000;display:none;background:rgba(10,14,26,0.92);border:1px solid rgba(123,127,255,0.4);border-radius:14px;padding:10px 14px;pointer-events:none;}
+.mission-title{font-size:10px;font-weight:800;color:#7b7fff;letter-spacing:1px;margin-bottom:4px;}
+.mission-text{font-size:13px;font-weight:700;color:var(--text);}
+.mission-dist{font-size:11px;color:var(--muted);margin-top:2px;}
+.mission-marker{font-size:28px;filter:drop-shadow(0 0 8px rgba(123,127,255,0.8));animation:missionPulse 1.5s ease-in-out infinite;}
+@keyframes missionPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+.sabotage-marker{font-size:28px;filter:drop-shadow(0 0 8px rgba(255,77,109,0.8));animation:missionPulse 1s ease-in-out infinite;}
+/* Vote imposteur timer */
+.vote-timer-bar{position:absolute;top:56px;left:0;right:0;height:3px;z-index:1001;background:rgba(255,190,11,0.3);}
+.vote-timer-fill{height:100%;background:#ffbe0b;transition:width 1s linear;}
+
 </style>
 </head>
 <body>
@@ -802,6 +819,16 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
   </div>
   <div class="timer-bar"><div class="timer-pill" id="timer-display">00:00</div></div>
   <div class="zone-hint" id="zone-hint">📍 Clique pour placer des points — Double-clique pour terminer</div>
+  <div class="br-hud" id="br-hud">
+    <div class="br-alive-badge">👥 <span id="br-alive-count">—</span> survivants</div>
+    <div class="br-zone-timer" id="br-zone-timer">⚠️ Zone OK</div>
+  </div>
+  <div class="mission-hud" id="mission-hud">
+    <div class="mission-title">🎯 MISSION EN COURS</div>
+    <div class="mission-text" id="mission-text">—</div>
+    <div class="mission-dist" id="mission-dist">—</div>
+  </div>
+  <div class="vote-timer-bar" id="vote-timer-bar" style="display:none"><div class="vote-timer-fill" id="vote-timer-fill" style="width:100%"></div></div>
   <div class="impostor-hud" id="impostor-hud">
     <div class="impostor-role-badge innocent" id="impostor-role-badge">🟢 Innocent</div>
     <button class="impostor-vote-btn" id="impostor-vote-btn" onclick="openVoteModal()">🗳️ Voter pour éliminer</button>
@@ -1521,6 +1548,7 @@ let S = {
   user: null, userProfile: null,
   gameMode: "classic",
   impostorRole: null,
+  infectionStatus: "healthy",
   // Party
   currentPartyId: null, currentParty: null, isMaster: false,
   // Game
@@ -2362,6 +2390,14 @@ function canSee(targetId,target){
   if(S.gameMode==='impostor') return canSeeImpostor(targetId,target);
   const myId=S.user?.uid;if(targetId===myId)return true;
   if(S.isMaster)return true;
+  // Mode infection : infectés voient tout le monde, sains voient uniquement les infectés
+  if(S.gameMode==='infection'){
+    if(S.infectionStatus==='infected') return true;
+    return target.infectionStatus==='infected'; // sain voit les infectés pour fuir
+  }
+  // Mode bombe + Battle Royal : tout le monde voit tout le monde
+  if(S.gameMode==='bomb'||S.gameMode==='royal') return true;
+  // Classique
   if(S.role==='seeker')return target.role==='hider'&&target.found;
   if(S.role==='hider')return target.role==='hider'&&!target.found;
   return false;
@@ -2392,7 +2428,11 @@ function renderMapMarkers(){
       }
     } else {
       // Nouveau marker : construire l'icône et binder le tooltip une seule fois
-      const icon=makeIcon(p.color||'#aaa',p.name,p.role,p.found,isMe,p.avatarUrl);
+      // Mode bombe : afficher 💣 sur le porteur
+    const isBombCarrier = S.gameMode==='bomb' && uid===_bombCarrierUid;
+    const displayName = isBombCarrier ? '💣 '+p.name : p.name;
+    const displayColor = isBombCarrier ? '#ff4d6d' : (p.color||'#aaa');
+    const icon=makeIcon(displayColor,displayName,p.role,p.found,isMe,p.avatarUrl);
       S.markers[id]=L.marker(ll,{icon}).addTo(S.map).bindPopup(`<b>${p.name}</b><br>${p.role==='hider'?'🙈':'🔍'}`);
       if(!isMe&&canSee(id,p)){
         const me=S.players[myId];
@@ -2560,6 +2600,15 @@ async function togglePause(){
 async function leaveGame(){ releaseWakeLock(); stopDistanceTracker();
   if(_bombInterval){clearInterval(_bombInterval);_bombInterval=null;}
   if(_voteListener){_voteListener();_voteListener=null;}
+  if(_bombTickInterval){clearInterval(_bombTickInterval);_bombTickInterval=null;}
+  if(_infectionSpreadInterval){clearInterval(_infectionSpreadInterval);_infectionSpreadInterval=null;}
+  if(_brZoneInterval){clearInterval(_brZoneInterval);_brZoneInterval=null;}
+  if(_missionCheckInterval){clearInterval(_missionCheckInterval);_missionCheckInterval=null;}
+  if(_voteCountdownInterval){clearInterval(_voteCountdownInterval);_voteCountdownInterval=null;}
+  _impostorMissionMarkers.forEach(m=>{if(S.map)S.map.removeLayer(m);}); _impostorMissionMarkers=[];
+  const mhud=document.getElementById('mission-hud'); if(mhud)mhud.style.display='none';
+  const brhud=document.getElementById('br-hud'); if(brhud)brhud.style.display='none';
+  const vtb=document.getElementById('vote-timer-bar'); if(vtb)vtb.style.display='none';
   _myVote=null; S.impostorRole=null;
   const ih=document.getElementById("impostor-hud"); if(ih)ih.style.display="none";
   if(_zoneShrinkInterval){clearInterval(_zoneShrinkInterval);_zoneShrinkInterval=null;}
@@ -4151,6 +4200,9 @@ function selectGameMode(mode){
 // MODE BOMBE 💣
 // ═══════════════════════════════════════════
 let _bombInterval = null;
+let _bombPassCount = 0;
+let _bombTickInterval = null;
+let _bombState = null;
 let _bombSeconds = 120;
 let _bombCarrierUid = null;
 let _bombPrevCarrier = null;
@@ -4159,23 +4211,47 @@ const BOMB_PASS_DISTANCE = 15; // mètres
 
 function startBombMode(){
   if(!S.isMaster) return;
-  // Choisir un porteur aléatoire
-  const uids = Object.keys(S.players);
-  _bombCarrierUid = uids[Math.floor(Math.random() * uids.length)];
+  const uids = Object.keys(S.players).filter(u => !S.players[u]?.eliminated);
+  const carrier = uids[Math.floor(Math.random() * uids.length)];
+  _bombCarrierUid = carrier;
   _bombSeconds = BOMB_START_SECONDS;
-  dbUpdate('parties/'+S.currentPartyId, {
-    bomb: { carrier: _bombCarrierUid, seconds: _bombSeconds, startedAt: Date.now(), passCount: 0 }
+  _bombPassCount = 0;
+  dbUpdate('parties/'+S.currentPartyId+'/bomb', {
+    carrier, seconds: BOMB_START_SECONDS, startedAt: Date.now(), passCount: 0, exploded: false
+  });
+  // Notifier le porteur
+  dbPush('parties/'+S.currentPartyId+'/chat/all', {
+    senderId:'system', senderName:'💣 BOMBE', senderColor:'#ff4d6d',
+    text:`💣 La bombe a été assignée à ${S.players[carrier]?.name||'?'} !`, ts:Date.now()
   });
 }
+
+// Le master lit l'état bombe depuis Firebase en temps réel et tick lui-même
 
 function listenBombState(){
   dbListen('parties/'+S.currentPartyId+'/bomb', snap => {
     if(!snap.exists()) return;
-    const bomb = snap.val();
-    _bombCarrierUid = bomb.carrier;
-    _bombSeconds = bomb.seconds;
-    renderBombHUD(bomb);
+    _bombState = snap.val();
+    _bombCarrierUid = _bombState.carrier;
+    _bombSeconds = _bombState.seconds;
+    renderBombHUD(_bombState);
+    renderBombMarkers();
   });
+
+  // Master : tick toutes les secondes basé sur l'état Firebase réel
+  if(S.isMaster){
+    if(_bombTickInterval) clearInterval(_bombTickInterval);
+    _bombTickInterval = setInterval(() => {
+      if(!_bombState || !S.gameActive) return;
+      const newSec = (_bombState.seconds||0) - 1;
+      if(newSec <= 0){
+        handleBombExplosion();
+      } else {
+        _bombState.seconds = newSec;
+        dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds: newSec});
+      }
+    }, 1000);
+  }
 }
 
 function renderBombHUD(bomb){
@@ -4192,187 +4268,240 @@ function renderBombHUD(bomb){
   const sec = String(bomb.seconds%60).padStart(2,'0');
   timerEl.textContent = `💣 ${min}:${sec}`;
 
-  if(bomb.seconds <= 20){
+  const urgent = bomb.seconds <= 20;
+  timerEl.style.background = urgent ? 'rgba(255,0,0,0.95)' : 'rgba(255,77,109,0.95)';
+  if(urgent){
     timerEl.classList.add('pulsing');
-    if(bomb.seconds <= 10 && navigator.vibrate) navigator.vibrate(200);
+    if(bomb.seconds % 5 === 0 && navigator.vibrate) navigator.vibrate(150);
   } else {
     timerEl.classList.remove('pulsing');
   }
 
   if(iAmCarrier){
-    labelEl.textContent = '💣 TU AS LA BOMBE !';
-    labelEl.style.color = '#ff4d6d';
+    labelEl.innerHTML = '<b style="color:#ff4d6d;font-size:14px;">💣 TU AS LA BOMBE !</b>';
     passBtn.style.display = 'block';
+    // Vibration continue pour le porteur
+    if(bomb.seconds <= 30 && bomb.seconds % 3 === 0 && navigator.vibrate) navigator.vibrate([100,100]);
   } else {
-    labelEl.textContent = `Porteur : ${carrier?.name||'?'}`;
-    labelEl.style.color = 'rgba(255,255,255,0.6)';
+    labelEl.innerHTML = `Porteur : <b>${carrier?.name||'?'}</b>`;
     passBtn.style.display = 'none';
   }
+}
+
+function renderBombMarkers(){
+  // Mettre une icône 💣 animée sur le porteur sur la carte
+  if(!S.map || !_bombCarrierUid) return;
+  const carrier = S.players[_bombCarrierUid];
+  if(!carrier?.lat) return;
+  // Forcer le re-render des markers pour afficher 💣 sur le porteur
+  renderMapMarkers();
 }
 
 function tryPassBomb(){
   if(_bombCarrierUid !== S.user?.uid) return;
   const me = S.players[S.user.uid];
-  if(!me?.lat) { toast('GPS requis pour passer la bombe !'); return; }
+  if(!me?.lat){ toast('GPS requis !'); return; }
 
-  // Chercher les joueurs proches
   let closest = null, closestDist = Infinity;
   for(const [uid, p] of Object.entries(S.players)){
-    if(uid === S.user.uid) continue;
-    if(uid === _bombPrevCarrier) continue; // pas celui qui vient de te la passer
-    if(p.eliminated) continue;
-    if(!p.lat) continue;
+    if(uid === S.user.uid || uid === _bombPrevCarrier || p.eliminated || !p.lat) continue;
     const d = haversine(me.lat, me.lng, p.lat, p.lng);
     if(d < closestDist){ closestDist = d; closest = {uid, ...p}; }
   }
 
   if(!closest || closestDist > BOMB_PASS_DISTANCE){
-    toast(`Approche-toi à moins de ${BOMB_PASS_DISTANCE}m d'un joueur ! (${Math.round(closestDist)}m)`);
+    const msg = closest
+      ? `Trop loin ! ${Math.round(closestDist)}m — faut être à moins de ${BOMB_PASS_DISTANCE}m`
+      : `Aucun joueur proche !`;
+    toast('💣 ' + msg);
     return;
   }
 
-  // Passer la bombe
   _bombPrevCarrier = S.user.uid;
-  const snap_passCount = (S.currentParty?.bomb?.passCount || 0) + 1;
-  // Timer raccourcit de 10s à chaque passage (min 20s)
-  const newSeconds = Math.max(20, BOMB_START_SECONDS - snap_passCount * 10);
+  const passCount = (_bombState?.passCount||0) + 1;
+  const newSeconds = Math.max(15, BOMB_START_SECONDS - passCount * 10);
   dbUpdate('parties/'+S.currentPartyId+'/bomb', {
-    carrier: closest.uid,
-    seconds: newSeconds,
-    passCount: snap_passCount,
-    lastPass: { from: S.user.uid, to: closest.uid, ts: Date.now() }
+    carrier: closest.uid, seconds: newSeconds, passCount,
+    lastPass:{ from: S.user.uid, to: closest.uid, ts: Date.now() }
   });
-  showNotif('💣', 'Bombe passée !', `À ${closest.name||'?'} — ${newSeconds}s`, '#ff4d6d');
+  showNotif('💣', 'Bombe passée !', `${closest.name||'?'} a la bombe — ${newSeconds}s !`, '#ff4d6d');
+  dbPush('parties/'+S.currentPartyId+'/chat/all', {
+    senderId:'system', senderName:'💣 BOMBE', senderColor:'#ff4d6d',
+    text:`💣 ${S.userProfile?.pseudo||'?'} a passé la bombe à ${closest.name||'?'} !`, ts:Date.now()
+  });
 }
 
-function tickBomb(){
-  if(!S.isMaster) return;
-  const bomb = S.currentParty?.bomb;
-  if(!bomb) return;
-  const newSec = (bomb.seconds || 0) - 1;
-  if(newSec <= 0){
-    // Explosion !
-    const carrier = _bombCarrierUid;
-    dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds: 0, exploded: true});
-    dbUpdate('parties/'+S.currentPartyId+'/players/'+carrier, {eliminated: true, eliminatedBy: 'bomb'});
-    showNotif('💥', 'BOOM !', `${S.players[carrier]?.name||'?'} a explosé !`, '#ff4d6d');
-    // Vérifier s'il reste des joueurs
-    const alive = Object.entries(S.players).filter(([uid,p]) => !p.eliminated);
-    if(alive.length <= 1){
-      setTimeout(() => {
-        if(alive.length === 1) showNotif('🏆', 'Victoire !', `${alive[0][1].name} survit !`, '#06d6a0');
-        endGame();
-      }, 2000);
-      return;
-    }
-    // Choisir un nouveau porteur parmi les survivants
-    const aliveUids = alive.map(([uid]) => uid).filter(u => u !== carrier);
-    const newCarrier = aliveUids[Math.floor(Math.random() * aliveUids.length)];
-    dbUpdate('parties/'+S.currentPartyId+'/bomb', {
-      carrier: newCarrier, seconds: Math.max(20, BOMB_START_SECONDS - (bomb.passCount||0)*10),
-      exploded: false
-    });
-  } else {
-    dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds: newSec});
+async function handleBombExplosion(){
+  const carrier = _bombCarrierUid;
+  if(!carrier) return;
+  dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds:0, exploded:true});
+  dbUpdate('parties/'+S.currentPartyId+'/players/'+carrier, {eliminated:true, eliminatedBy:'bomb'});
+  if(_bombState) _bombState.seconds = 0;
+
+  dbPush('parties/'+S.currentPartyId+'/chat/all', {
+    senderId:'system', senderName:'💥 EXPLOSION', senderColor:'#ff4d6d',
+    text:`💥 BOOM ! ${S.players[carrier]?.name||'?'} a explosé !`, ts:Date.now()
+  });
+
+  const alive = Object.entries(S.players).filter(([uid,p])=>!p.eliminated&&uid!==carrier);
+  if(alive.length <= 1){
+    if(alive.length===1) showNotif('🏆','Victoire !',`${alive[0][1].name} survit !`,'#06d6a0');
+    setTimeout(()=>endGame(), 2500);
+    return;
   }
+
+  await new Promise(r=>setTimeout(r, 2000));
+  const newCarrier = alive[Math.floor(Math.random()*alive.length)][0];
+  const newSec = Math.max(15, BOMB_START_SECONDS - ((_bombState?.passCount||0))*10);
+  dbUpdate('parties/'+S.currentPartyId+'/bomb', {
+    carrier:newCarrier, seconds:newSec, exploded:false
+  });
+  dbPush('parties/'+S.currentPartyId+'/chat/all', {
+    senderId:'system', senderName:'💣 BOMBE', senderColor:'#ff4d6d',
+    text:`💣 Nouvelle bombe pour ${S.players[newCarrier]?.name||'?'} !`, ts:Date.now()
+  });
 }
 
+function tickBomb(){ /* géré par _bombTickInterval dans listenBombState */ }
+
 // ═══════════════════════════════════════════
-// MODE INFECTION / COLLECTE 🦠
+// MODE INFECTION 🦠 — VRAI SYSTÈME
 // ═══════════════════════════════════════════
-const INFECTION_ITEMS_COUNT = 5;
-const INFECTION_COLLECT_RADIUS = 20; // mètres
-const REYRIEUX_BOUNDS = { // Zone de jeu approximative
+// Mécanique : 1 infecté au départ, contamine par proximité
+// Infectés voient tout le monde, sains voient uniquement les infectés
+// Zone rétrécit, derniers sains gagnent
+
+const INFECTION_SPREAD_RADIUS = 10; // mètres pour contaminer
+const REYRIEUX_BOUNDS = {
   latMin: 45.920, latMax: 45.948,
   lngMin: 4.845, lngMax: 4.878
 };
 
-let _infectionItems = [];
+let _infectionItems = []; // gardé pour compatibilité
 let _infectionMarkers = [];
 let _infectionCollected = 0;
 let _zoneShrinkCircle = null;
 let _zoneShrinkInterval = null;
+let _infectionSpreadInterval = null;
 
 function generateRandomPoint(){
-  const lat = REYRIEUX_BOUNDS.latMin + Math.random() * (REYRIEUX_BOUNDS.latMax - REYRIEUX_BOUNDS.latMin);
-  const lng = REYRIEUX_BOUNDS.lngMin + Math.random() * (REYRIEUX_BOUNDS.lngMax - REYRIEUX_BOUNDS.lngMin);
+  const lat = REYRIEUX_BOUNDS.latMin + Math.random()*(REYRIEUX_BOUNDS.latMax-REYRIEUX_BOUNDS.latMin);
+  const lng = REYRIEUX_BOUNDS.lngMin + Math.random()*(REYRIEUX_BOUNDS.lngMax-REYRIEUX_BOUNDS.lngMin);
   return {lat, lng};
 }
 
 async function startInfectionMode(){
   if(!S.isMaster) return;
-  // Générer les objets
-  const items = {};
-  for(let i=0; i<INFECTION_ITEMS_COUNT; i++){
-    const pt = generateRandomPoint();
-    items['item_'+i] = {lat: pt.lat, lng: pt.lng, collected: false, id: i};
+  const uids = Object.keys(S.players).filter(u=>!S.players[u]?.eliminated);
+  // Choisir 1 infecté aléatoire
+  const infected = uids[Math.floor(Math.random()*uids.length)];
+  await dbUpdate('parties/'+S.currentPartyId+'/players/'+infected, {
+    infectionStatus: 'infected', infectedAt: Date.now()
+  });
+  // Tous les autres sont sains
+  for(const uid of uids){
+    if(uid !== infected){
+      await dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {infectionStatus:'healthy'});
+    }
   }
   await dbUpdate('parties/'+S.currentPartyId, {
-    infectionItems: items,
     infectionStartedAt: Date.now(),
-    infectionDuration: 15 * 60 * 1000 // 15 minutes
+    infectionDuration: 10*60*1000 // 10 minutes
+  });
+  dbPush('parties/'+S.currentPartyId+'/chat/all', {
+    senderId:'system', senderName:'🦠 INFECTION', senderColor:'#ff4d6d',
+    text:`🦠 ${S.players[infected]?.name||'?'} est infecté ! Fuyez !`, ts:Date.now()
   });
 }
 
 function listenInfectionState(){
-  dbListen('parties/'+S.currentPartyId+'/infectionItems', snap => {
+  // Listener sur les joueurs pour détecter les changements de statut
+  dbListen('parties/'+S.currentPartyId+'/players', snap=>{
     if(!snap.exists()) return;
-    _infectionItems = Object.values(snap.val());
-    renderInfectionItems();
-    updateCollectHUD();
-    checkNearbyItems();
+    // Déjà géré par listenGamePlayers — on update juste le HUD
+    updateInfectionHUD();
   });
+
+  // Master : vérifier contaminations toutes les 2s
+  if(S.isMaster){
+    if(_infectionSpreadInterval) clearInterval(_infectionSpreadInterval);
+    _infectionSpreadInterval = setInterval(()=>{
+      if(!S.gameActive) return;
+      checkInfectionSpread();
+      checkInfectionWin();
+    }, 2000);
+  }
+
+  // Zone qui rétrécit sur la durée de la partie
+  startZoneShrink(10*60*1000);
 }
 
-function renderInfectionItems(){
-  // Supprimer anciens marqueurs
-  _infectionMarkers.forEach(m => S.map.removeLayer(m));
-  _infectionMarkers = [];
-
-  _infectionItems.forEach(item => {
-    if(item.collected) return;
-    const icon = L.divIcon({
-      html: `<div style="font-size:24px;filter:drop-shadow(0 0 6px rgba(123,127,255,0.8));">📦</div>`,
-      iconSize: [30,30], iconAnchor: [15,15], className: ''
-    });
-    const marker = L.marker([item.lat, item.lng], {icon})
-      .addTo(S.map)
-      .bindTooltip('Objet à collecter', {permanent:false});
-    _infectionMarkers.push(marker);
-  });
-}
-
-function updateCollectHUD(){
+function updateInfectionHUD(){
   const hud = document.getElementById('collect-hud');
+  if(!hud || S.gameMode!=='infection') return;
+  hud.style.display = 'block';
+  const all = Object.values(S.players||{});
+  const infected = all.filter(p=>p.infectionStatus==='infected'&&!p.eliminated).length;
+  const healthy = all.filter(p=>p.infectionStatus==='healthy'&&!p.eliminated).length;
+  const titleEl = document.querySelector('.collect-hud-title');
+  if(titleEl) titleEl.textContent = 'INFECTÉS';
   const countEl = document.getElementById('collect-count');
   const totalEl = document.getElementById('collect-total');
-  if(!hud) return;
-  hud.style.display = 'block';
-  const collected = _infectionItems.filter(i => i.collected).length;
-  const total = _infectionItems.length;
-  _infectionCollected = collected;
-  if(countEl) countEl.textContent = collected;
-  if(totalEl) totalEl.textContent = total;
-  if(collected === total){
-    hud.style.borderColor = 'rgba(6,214,160,0.5)';
-    document.getElementById('collect-count').style.color = '#06d6a0';
+  if(countEl){ countEl.textContent=infected; countEl.style.color='#ff4d6d'; }
+  if(totalEl) totalEl.textContent = infected+healthy;
+
+  // Afficher mon statut
+  const me = S.players[S.user?.uid];
+  const myStatus = me?.infectionStatus || 'healthy';
+  S.infectionStatus = myStatus;
+  hud.style.borderColor = myStatus==='infected'?'rgba(255,77,109,0.6)':'rgba(6,214,160,0.4)';
+}
+
+function checkInfectionSpread(){
+  // Seul le master vérifie et propage
+  const players = S.players;
+  if(!players) return;
+  for(const [infUid, inf] of Object.entries(players)){
+    if(inf.infectionStatus!=='infected'||inf.eliminated||!inf.lat) continue;
+    for(const [sUid, s] of Object.entries(players)){
+      if(s.infectionStatus!=='healthy'||s.eliminated||!s.lat) continue;
+      const d = haversine(inf.lat, inf.lng, s.lat, s.lng);
+      if(d <= INFECTION_SPREAD_RADIUS){
+        dbUpdate('parties/'+S.currentPartyId+'/players/'+sUid, {
+          infectionStatus:'infected', infectedAt:Date.now(), infectedBy:infUid
+        });
+        dbPush('parties/'+S.currentPartyId+'/chat/all', {
+          senderId:'system', senderName:'🦠 INFECTION', senderColor:'#ff4d6d',
+          text:`🦠 ${s.name||'?'} a été infecté par ${inf.name||'?'} !`, ts:Date.now()
+        });
+        showNotif('🦠','Contamination !',`${s.name||'?'} est infecté !`,'#ff4d6d');
+      }
+    }
   }
 }
 
-function checkNearbyItems(){
-  const me = S.players[S.user?.uid];
-  if(!me?.lat) return;
-  _infectionItems.forEach((item, idx) => {
-    if(item.collected) return;
-    const d = haversine(me.lat, me.lng, item.lat, item.lng);
-    if(d <= INFECTION_COLLECT_RADIUS){
-      // Collecter !
-      dbUpdate('parties/'+S.currentPartyId+'/infectionItems/item_'+item.id, {collected: true, collectedBy: S.user.uid, collectedAt: Date.now()});
-      showNotif('📦', 'Objet collecté !', `+1 objet trouvé (${_infectionCollected+1}/${_infectionItems.length})`, '#7b7fff');
-      if(navigator.vibrate) navigator.vibrate([100,50,200]);
-    }
-  });
+function checkInfectionWin(){
+  const all = Object.values(S.players||{}).filter(p=>!p.eliminated);
+  const healthy = all.filter(p=>p.infectionStatus==='healthy');
+  const infected = all.filter(p=>p.infectionStatus==='infected');
+  if(healthy.length===0){
+    dbPush('parties/'+S.currentPartyId+'/chat/all', {
+      senderId:'system', senderName:'🦠 GAME OVER', senderColor:'#ff4d6d',
+      text:`🦠 Tous infectés ! L'infection a gagné !`, ts:Date.now()
+    });
+    setTimeout(()=>endGame(), 2000);
+  } else if(infected.length===0){
+    dbPush('parties/'+S.currentPartyId+'/chat/all', {
+      senderId:'system', senderName:'✅ VICTOIRE', senderColor:'#06d6a0',
+      text:`✅ Les sains ont survécu ! Victoire !`, ts:Date.now()
+    });
+    setTimeout(()=>endGame(), 2000);
+  }
 }
+
+function checkNearbyItems(){ /* remplacé par checkInfectionSpread */ }
+function updateCollectHUD(){ updateInfectionHUD(); }
+function renderInfectionItems(){ /* plus utilisé */ }
 
 function startZoneShrink(durationMs){
   if(!S.map) return;
@@ -4818,6 +4947,346 @@ async function shoot(){
   if(_sniperAmmo <= 0){
     setTimeout(()=>{ toast('🔫 Plus de munitions !'); closeSniperMode(); }, 1500);
   }
+}
+
+
+// ═══════════════════════════════════════════
+// MODE BATTLE ROYAL 👑
+// ═══════════════════════════════════════════
+// Tout le monde vs tout le monde — zone rétrécit — sniper GPS — dernier survivant
+
+let _brZoneInterval = null;
+let _brZoneRadius = 600;
+const BR_ZONE_START = 600;
+const BR_ZONE_END = 50;
+const BR_DURATION_MS = 12 * 60 * 1000; // 12 minutes
+
+function startBattleRoyal(){
+  if(!S.isMaster) return;
+  // Pas de rôles — tout le monde est "fighter"
+  for(const uid of Object.keys(S.players)){
+    dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {role:'fighter', brAlive: true});
+  }
+  dbUpdate('parties/'+S.currentPartyId, {
+    brStartedAt: Date.now(), brDuration: BR_DURATION_MS
+  });
+  dbPush('parties/'+S.currentPartyId+'/chat/all', {
+    senderId:'system', senderName:'👑 BATTLE ROYAL', senderColor:'#ffbe0b',
+    text:`👑 Battle Royal lancé ! La zone rétrécit — dernier survivant gagne !`, ts:Date.now()
+  });
+  // Donner des munitions à tout le monde
+  for(const uid of Object.keys(S.players)){
+    dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {sniperAmmo:3});
+  }
+}
+
+function listenBattleRoyal(){
+  // HUD alive count
+  document.getElementById('br-hud').style.display='flex';
+  // Activer le sniper pour tout le monde
+  const sniperBtn = document.getElementById('btn-sniper');
+  if(sniperBtn){ sniperBtn.style.display='inline-flex'; _sniperAmmo=3; }
+  // Zone qui rétrécit
+  startZoneShrinkBR();
+  // Update HUD en temps réel
+  setInterval(()=>{
+    if(!S.gameActive||S.gameMode!=='royal') return;
+    const alive = Object.values(S.players||{}).filter(p=>!p.eliminated).length;
+    const el = document.getElementById('br-alive-count');
+    if(el) el.textContent = alive;
+    if(alive<=1 && S.isMaster){
+      const winner = Object.entries(S.players||{}).find(([,p])=>!p.eliminated);
+      if(winner) showNotif('🏆','VICTOIRE !',`${winner[1].name||'?'} remporte le Battle Royal !`,'#ffbe0b');
+      setTimeout(()=>endGame(),3000);
+    }
+  }, 2000);
+}
+
+function startZoneShrinkBR(){
+  if(!S.map) return;
+  const center = [45.934, 4.862];
+  let radius = BR_ZONE_START;
+  const steps = 120;
+  const intervalMs = BR_DURATION_MS / steps;
+  let step = 0;
+
+  if(_zoneShrinkCircle) S.map.removeLayer(_zoneShrinkCircle);
+  _zoneShrinkCircle = L.circle(center, {
+    radius, color:'#ffbe0b', fillColor:'#ffbe0b', fillOpacity:0.04, weight:3, dashArray:'8 4'
+  }).addTo(S.map);
+
+  _brZoneInterval = setInterval(()=>{
+    step++;
+    const pct = step/steps;
+    radius = BR_ZONE_START - (BR_ZONE_START - BR_ZONE_END)*pct;
+    _zoneShrinkCircle.setRadius(radius);
+    _brZoneRadius = radius;
+
+    // Update timer badge
+    const remaining = Math.round((steps-step)*intervalMs/1000);
+    const min=Math.floor(remaining/60), sec=String(remaining%60).padStart(2,'0');
+    const timerEl=document.getElementById('br-zone-timer');
+    if(timerEl) timerEl.textContent=`⚠️ Zone : ${min}:${sec}`;
+
+    if(step>=steps){ clearInterval(_brZoneInterval); toast('⚠️ Zone minimale !'); }
+
+    // Éliminer hors zone (master seulement)
+    if(S.isMaster){
+      for(const [uid,p] of Object.entries(S.players||{})){
+        if(!p.lat||p.eliminated) continue;
+        const d=haversine(center[0],center[1],p.lat,p.lng);
+        if(d>radius+25){
+          dbUpdate('parties/'+S.currentPartyId+'/players/'+uid,{eliminated:true,eliminatedBy:'zone'});
+          dbPush('parties/'+S.currentPartyId+'/chat/all',{
+            senderId:'system',senderName:'⚠️ ZONE',senderColor:'#ffbe0b',
+            text:`⚠️ ${p.name||'?'} est sorti de la zone et éliminé !`,ts:Date.now()
+          });
+        }
+      }
+    }
+
+    // Avertir le joueur s'il est près du bord
+    const me = S.players[S.user?.uid];
+    if(me?.lat){
+      const myDist=haversine(center[0],center[1],me.lat,me.lng);
+      if(myDist > radius*0.85 && navigator.vibrate) navigator.vibrate([200,100,200]);
+    }
+  }, intervalMs);
+}
+
+// canSee BR : tout le monde voit tout le monde
+// (géré dans canSee via gameMode==='royal')
+
+// ═══════════════════════════════════════════
+// MODE IMPOSTEUR 🕵️ — VRAI SYSTÈME
+// ═══════════════════════════════════════════
+// Innocents : accomplir des missions GPS
+// Imposteur : saboter les missions, éliminer discrètement
+// Votes toutes les 2min — majorité élimine quelqu'un
+
+const IMPOSTOR_MISSIONS = [
+  {id:'m1', name:'Fontaine du parc', emoji:'⛲', lat:45.9335, lng:4.8615},
+  {id:'m2', name:'Terrain de sport', emoji:'⚽', lat:45.9320, lng:4.8640},
+  {id:'m3', name:`Entrée de l'église`, emoji:'⛪', lat:45.9340, lng:4.8625},
+  {id:'m4', name:'Parking principal', emoji:'🅿️', lat:45.9310, lng:4.8610},
+  {id:'m5', name:'Place du village', emoji:'🏘️', lat:45.9345, lng:4.8630},
+  {id:'m6', name:'Boulangerie', emoji:'🥖', lat:45.9325, lng:4.8650},
+  {id:'m7', name:'École', emoji:'🏫', lat:45.9355, lng:4.8620},
+  {id:'m8', name:'Mairie', emoji:'🏛️', lat:45.9330, lng:4.8605},
+];
+
+const MISSION_COMPLETE_RADIUS = 15; // mètres
+const VOTE_INTERVAL_MS = 2 * 60 * 1000; // vote toutes les 2 minutes
+
+let _impostorMissionMarkers = [];
+let _currentMissions = {}; // uid → missionId
+let _missionCheckInterval = null;
+let _voteCountdownInterval = null;
+let _voteSecondsLeft = VOTE_INTERVAL_MS/1000;
+let _impostorUid = null;
+
+async function startImpostorModeReal(){
+  if(!S.isMaster) return;
+  const uids = Object.keys(S.players).filter(u=>!S.players[u]?.eliminated);
+  if(uids.length < 4){ toast('❌ Minimum 4 joueurs !'); return; }
+
+  // Choisir 1 imposteur
+  const candidates = uids.filter(u=>u!==S.user.uid);
+  const impostorUid = candidates[Math.floor(Math.random()*candidates.length)];
+  _impostorUid = impostorUid;
+
+  // Assigner rôles + missions aux innocents
+  const shuffled = [...IMPOSTOR_MISSIONS].sort(()=>Math.random()-0.5);
+  let mIdx = 0;
+  for(const uid of uids){
+    const role = uid===impostorUid ? 'impostor' : 'innocent';
+    const missionId = role==='innocent' ? shuffled[mIdx++ % shuffled.length].id : null;
+    await dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {
+      impostorRole: role, currentMission: missionId, missionsCompleted: 0
+    });
+  }
+
+  await dbUpdate('parties/'+S.currentPartyId, {
+    impostorStartedAt: Date.now(),
+    nextVoteAt: Date.now() + VOTE_INTERVAL_MS,
+    totalMissions: (uids.length-1) * 3 // chaque innocent doit faire 3 missions
+  });
+
+  dbPush('parties/'+S.currentPartyId+'/chat/all',{
+    senderId:'system',senderName:'🕵️ IMPOSTEUR',senderColor:'#7b7fff',
+    text:`🕵️ Partie démarrée ! Les innocents doivent accomplir leurs missions. Un imposteur se cache parmi vous...`,ts:Date.now()
+  });
+}
+
+function listenImpostorStateReal(){
+  // Récupérer mon rôle
+  setTimeout(()=>{
+    const me = S.players[S.user?.uid];
+    S.impostorRole = me?.impostorRole || 'innocent';
+    _impostorUid = Object.keys(S.players||{}).find(u=>S.players[u]?.impostorRole==='impostor');
+    renderImpostorHUD();
+    renderMissionHUD();
+    renderImpostorMissionMarkers();
+    startMissionCheck();
+    startVoteCountdown();
+  }, 3500);
+
+  // Listener votes
+  if(_voteListener){ _voteListener(); _voteListener=null; }
+  _voteListener = dbListen('parties/'+S.currentPartyId+'/votes', snap=>{
+    const votes = snap.exists() ? snap.val() : {};
+    checkVoteResult(votes);
+  });
+}
+
+function renderMissionHUD(){
+  const hud = document.getElementById('mission-hud');
+  if(!hud || S.gameMode!=='impostor') return;
+  const me = S.players[S.user?.uid];
+  if(!me) return;
+
+  if(S.impostorRole==='impostor'){
+    hud.style.display='block';
+    hud.style.borderColor='rgba(255,77,109,0.5)';
+    document.querySelector('.mission-title').textContent='🔴 IMPOSTEUR';
+    document.getElementById('mission-text').textContent='Sabote les missions et élimine les innocents';
+    document.getElementById('mission-dist').textContent='Approche les innocents pour les éliminer';
+  } else {
+    const mission = IMPOSTOR_MISSIONS.find(m=>m.id===me.currentMission);
+    if(!mission){ hud.style.display='none'; return; }
+    hud.style.display='block';
+    hud.style.borderColor='rgba(123,127,255,0.4)';
+    document.querySelector('.mission-title').textContent='🎯 MISSION EN COURS';
+    document.getElementById('mission-text').textContent=`${mission.emoji} ${mission.name}`;
+    // Calculer distance
+    const myPos = S.players[S.user?.uid];
+    if(myPos?.lat){
+      const d=haversine(myPos.lat,myPos.lng,mission.lat,mission.lng);
+      document.getElementById('mission-dist').textContent=d<1000?Math.round(d)+'m au point de mission':(d/1000).toFixed(1)+'km';
+    }
+  }
+}
+
+function renderImpostorMissionMarkers(){
+  if(!S.map) return;
+  _impostorMissionMarkers.forEach(m=>S.map.removeLayer(m));
+  _impostorMissionMarkers=[];
+
+  if(S.impostorRole==='innocent'){
+    // Afficher uniquement MA mission
+    const me = S.players[S.user?.uid];
+    const mission = IMPOSTOR_MISSIONS.find(m=>m.id===me?.currentMission);
+    if(mission){
+      const icon=L.divIcon({html:`<div class="mission-marker">${mission.emoji}</div>`,iconSize:[36,36],iconAnchor:[18,18],className:''});
+      const m=L.marker([mission.lat,mission.lng],{icon}).addTo(S.map).bindTooltip(`Mission : ${mission.name}`,{permanent:true,direction:'top'});
+      _impostorMissionMarkers.push(m);
+    }
+  } else if(S.impostorRole==='impostor'){
+    // L'imposteur voit TOUTES les missions actives
+    for(const [uid,p] of Object.entries(S.players||{})){
+      if(!p.currentMission||p.eliminated) continue;
+      const mission=IMPOSTOR_MISSIONS.find(m=>m.id===p.currentMission);
+      if(!mission) continue;
+      const icon=L.divIcon({html:`<div class="sabotage-marker">💀</div>`,iconSize:[36,36],iconAnchor:[18,18],className:''});
+      const m=L.marker([mission.lat,mission.lng],{icon}).addTo(S.map).bindTooltip(`Mission de ${p.name||'?'}`,{permanent:false});
+      _impostorMissionMarkers.push(m);
+    }
+  }
+}
+
+function startMissionCheck(){
+  if(_missionCheckInterval) clearInterval(_missionCheckInterval);
+  _missionCheckInterval = setInterval(async()=>{
+    if(!S.gameActive||S.gameMode!=='impostor') return;
+    const me = S.players[S.user?.uid];
+    if(!me?.lat) return;
+    renderMissionHUD();
+
+    // Innocent : vérifier si mission complétée
+    if(S.impostorRole==='innocent'&&me.currentMission){
+      const mission=IMPOSTOR_MISSIONS.find(m=>m.id===me.currentMission);
+      if(mission){
+        const d=haversine(me.lat,me.lng,mission.lat,mission.lng);
+        if(d<=MISSION_COMPLETE_RADIUS){
+          // Mission accomplie !
+          const done=(me.missionsCompleted||0)+1;
+          const missions=[...IMPOSTOR_MISSIONS].sort(()=>Math.random()-0.5);
+          const nextMission=missions.find(m=>m.id!==me.currentMission)?.id||null;
+          await dbUpdate('parties/'+S.currentPartyId+'/players/'+S.user.uid,{
+            missionsCompleted:done, currentMission:nextMission
+          });
+          showNotif('✅',`Mission accomplie !`,`${mission.emoji} ${mission.name} terminée !`,'#06d6a0');
+          if(navigator.vibrate)navigator.vibrate([100,50,200]);
+          renderImpostorMissionMarkers();
+          // Vérifier victoire innocents
+          if(S.isMaster) checkImpostorWin();
+        }
+      }
+    }
+
+    // Imposteur : éliminer par proximité
+    if(S.impostorRole==='impostor'&&S.isMaster){
+      for(const [uid,p] of Object.entries(S.players||{})){
+        if(uid===S.user.uid||p.eliminated||p.impostorRole==='impostor'||!p.lat) continue;
+        const d=haversine(me.lat,me.lng,p.lat,p.lng);
+        if(d<=8){ // 8m pour éliminer
+          dbUpdate('parties/'+S.currentPartyId+'/players/'+uid,{eliminated:true,eliminatedBy:'impostor'});
+          dbPush('parties/'+S.currentPartyId+'/chat/all',{
+            senderId:'system',senderName:'💀 ÉLIMINATION',senderColor:'#ff4d6d',
+            text:`💀 ${p.name||'?'} a été éliminé ! L'imposteur frappe...`,ts:Date.now()
+          });
+          showNotif('💀','Joueur éliminé !',`${p.name||'?'} a été éliminé`,'#ff4d6d');
+          if(S.isMaster) checkImpostorWin();
+        }
+      }
+    }
+  }, 2000);
+}
+
+function checkImpostorWin(){
+  const all=Object.values(S.players||{});
+  const innocents=all.filter(p=>p.impostorRole==='innocent'&&!p.eliminated);
+  const impostor=all.find(p=>p.impostorRole==='impostor'&&!p.eliminated);
+  const totalMissions=S.currentParty?.totalMissions||9;
+  const completedMissions=all.reduce((s,p)=>s+(p.missionsCompleted||0),0);
+
+  if(!impostor){
+    dbPush('parties/'+S.currentPartyId+'/chat/all',{senderId:'system',senderName:'🎉 VICTOIRE',senderColor:'#06d6a0',text:`🎉 Les innocents ont éliminé l'imposteur ! Victoire !`,ts:Date.now()});
+    setTimeout(()=>endGame(),2000);
+  } else if(innocents.length<=1){
+    dbPush('parties/'+S.currentPartyId+'/chat/all',{senderId:'system',senderName:'🕵️ VICTOIRE',senderColor:'#7b7fff',text:`🕵️ L'imposteur a gagné !`,ts:Date.now()});
+    setTimeout(()=>endGame(),2000);
+  } else if(completedMissions>=totalMissions){
+    dbPush('parties/'+S.currentPartyId+'/chat/all',{senderId:'system',senderName:'✅ VICTOIRE',senderColor:'#06d6a0',text:`✅ Toutes les missions accomplies ! Les innocents gagnent !`,ts:Date.now()});
+    setTimeout(()=>endGame(),2000);
+  }
+}
+
+function startVoteCountdown(){
+  _voteSecondsLeft = VOTE_INTERVAL_MS/1000;
+  const bar=document.getElementById('vote-timer-bar');
+  const fill=document.getElementById('vote-timer-fill');
+  if(bar)bar.style.display='block';
+
+  if(_voteCountdownInterval)clearInterval(_voteCountdownInterval);
+  _voteCountdownInterval=setInterval(()=>{
+    if(!S.gameActive||S.gameMode!=='impostor'){clearInterval(_voteCountdownInterval);return;}
+    _voteSecondsLeft--;
+    const pct=(_voteSecondsLeft/(VOTE_INTERVAL_MS/1000))*100;
+    if(fill)fill.style.width=pct+'%';
+    if(fill)fill.style.background=pct<20?'#ff4d6d':'#ffbe0b';
+
+    if(_voteSecondsLeft<=10&&_voteSecondsLeft>0){
+      if(_voteSecondsLeft===10) toast('⚠️ Vote dans 10 secondes !');
+      if(navigator.vibrate&&_voteSecondsLeft%2===0)navigator.vibrate(100);
+    }
+    if(_voteSecondsLeft<=0){
+      // Déclencher le vote
+      openVoteModal();
+      _voteSecondsLeft=VOTE_INTERVAL_MS/1000;
+      if(fill)fill.style.width='100%';
+    }
+  },1000);
 }
 
 function stopMusicOnLogin() { pauseMusic(); }
