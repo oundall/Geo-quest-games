@@ -545,6 +545,31 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 .vote-timer-bar{position:absolute;top:56px;left:0;right:0;height:3px;z-index:1001;background:rgba(255,190,11,0.3);}
 .vote-timer-fill{height:100%;background:#ffbe0b;transition:width 1s linear;}
 
+
+/* ══ MODES AMÉLIORÉS ══ */
+/* Infection */
+.infection-status-bar{position:absolute;top:60px;left:12px;right:12px;z-index:1000;background:rgba(10,14,26,0.92);border-radius:14px;padding:10px 14px;display:none;pointer-events:none;}
+.infection-team-row{display:flex;justify-content:space-between;align-items:center;}
+.infection-team{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;}
+.infection-bar-track{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin-top:6px;overflow:hidden;}
+.infection-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#ff4d6d,#7b7fff);transition:width .5s ease;}
+/* Battle Royal */
+.br-status{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:1000;display:none;flex-direction:column;align-items:center;gap:6px;pointer-events:none;}
+.br-alive-pill{background:rgba(10,14,26,0.92);border:1px solid rgba(255,190,11,0.5);color:#ffbe0b;padding:6px 16px;border-radius:20px;font-size:14px;font-weight:900;}
+.br-zone-pill{background:rgba(255,77,109,0.85);color:#fff;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:800;}
+.br-zone-safe{background:rgba(6,214,160,0.85);}
+/* Imposteur */
+.impostor-status{position:absolute;top:60px;left:12px;right:12px;z-index:1000;display:none;pointer-events:none;}
+.impostor-role-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:900;display:inline-block;margin-bottom:6px;}
+.impostor-role-pill.imp{background:rgba(255,77,109,0.9);color:#fff;}
+.impostor-role-pill.inn{background:rgba(6,214,160,0.9);color:#fff;}
+.mission-card{background:rgba(10,14,26,0.92);border:1px solid rgba(123,127,255,0.4);border-radius:14px;padding:10px 14px;}
+.mission-card-title{font-size:10px;color:#7b7fff;font-weight:800;letter-spacing:1px;margin-bottom:3px;}
+.mission-card-name{font-size:14px;font-weight:800;}
+.mission-card-dist{font-size:11px;color:var(--muted);margin-top:2px;}
+.mission-progress{font-size:10px;color:var(--muted);text-align:right;margin-top:4px;}
+.vote-urgency{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);z-index:1001;background:rgba(255,190,11,0.95);color:#000;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:900;display:none;cursor:pointer;pointer-events:all;}
+
 </style>
 </head>
 <body>
@@ -838,10 +863,31 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
     <div id="bomb-carrier-label" style="font-size:11px;color:rgba(255,255,255,0.7);text-align:center;"></div>
     <button class="bomb-pass-btn" id="bomb-pass-btn" onclick="tryPassBomb()" style="display:none;">💣 Passer la bombe !</button>
   </div>
-  <div class="collect-hud" id="collect-hud">
-    <div class="collect-hud-title">OBJETS</div>
-    <div class="collect-hud-count"><span id="collect-count">0</span>/<span id="collect-total">5</span></div>
+  <!-- HUD Infection -->
+  <div class="infection-status-bar" id="infection-status-bar">
+    <div class="infection-team-row">
+      <div class="infection-team" style="color:#06d6a0">🟢 Sains : <span id="inf-healthy-count">0</span></div>
+      <div id="inf-my-status" style="font-size:11px;font-weight:800;color:#ffbe0b;">—</div>
+      <div class="infection-team" style="color:#ff4d6d">🦠 Infectés : <span id="inf-infected-count">0</span></div>
+    </div>
+    <div class="infection-bar-track"><div class="infection-bar-fill" id="infection-bar-fill" style="width:0%"></div></div>
   </div>
+  <!-- HUD Battle Royal -->
+  <div class="br-status" id="br-status">
+    <div class="br-alive-pill">👥 <span id="br-alive-count">—</span> survivants</div>
+    <div class="br-zone-pill br-zone-safe" id="br-zone-pill">✅ Zone sûre</div>
+  </div>
+  <!-- HUD Imposteur -->
+  <div class="impostor-status" id="impostor-status">
+    <div id="imp-role-pill" class="impostor-role-pill inn">🟢 Innocent</div>
+    <div class="mission-card" id="mission-card" style="display:none">
+      <div class="mission-card-title" id="mission-card-title">🎯 MISSION</div>
+      <div class="mission-card-name" id="mission-card-name">—</div>
+      <div class="mission-card-dist" id="mission-card-dist">—</div>
+      <div class="mission-progress" id="mission-progress">—</div>
+    </div>
+  </div>
+  <div class="vote-urgency" id="vote-urgency" onclick="openVoteModal()">🗳️ VOTE EN COURS !</div>
   <div class="distance-pill" id="distance-pill">📍 —</div>
   <div class="proximity-alert" id="prox-alert" style="display:none;flex-direction:column;align-items:center;gap:2px;padding:10px 22px;border-radius:18px;max-width:85%;text-align:center;white-space:normal;">
     <div id="prox-alert-icon" style="font-size:22px;"></div>
@@ -1582,6 +1628,9 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
   if(id==='screen-map'&&S.map)setTimeout(()=>S.map.invalidateSize(),100);
   if(id==='screen-friends'){ loadFriends(); loadFriendRequests(); loadGroups(); }
+  if(id==='screen-settings'){ renderThemeGrid(); }
+  if(id==='screen-battlepass'){ loadBattlePass(); }
+  if(id==='screen-skins'){ renderSkins(); }
 }
 function toast(msg,dur=3000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 function openModal(id){document.getElementById(id).classList.add('show');}
@@ -2264,6 +2313,23 @@ function startMapScreen(){
   startGPS();listenGamePlayers();listenForChat();listenForHints();startTimerDisplay();
   setTimeout(()=>initWalkie(), 1500);
   startZoneLimitCheck();
+  // ── MODES DE JEU ──
+  S.gameMode = S.currentParty?.gameMode || 'classic';
+  grantXP('participate');
+  startDistanceTracker();
+  if(S.gameMode==='bomb'){
+    if(S.isMaster) setTimeout(()=>startBombMode(), 2000);
+    listenBombState();
+  } else if(S.gameMode==='infection'){
+    if(S.isMaster) setTimeout(()=>startInfectionMode(), 2000);
+    listenInfectionState();
+  } else if(S.gameMode==='royal'){
+    if(S.isMaster) setTimeout(()=>startBattleRoyal(), 2000);
+    listenBattleRoyal();
+  } else if(S.gameMode==='impostor'){
+    if(S.isMaster) setTimeout(()=>startImpostorModeReal(), 2000);
+    setTimeout(()=>listenImpostorStateReal(), 3500);
+  }
   stopMusicOnLogin();
   if(S.proximityInterval) clearInterval(S.proximityInterval);
   S.proximityInterval = setInterval(()=>{
@@ -4415,11 +4481,24 @@ async function startInfectionMode(){
 }
 
 function listenInfectionState(){
-  // Listener sur les joueurs pour détecter les changements de statut
+  // Listener sur les joueurs pour détecter les changements de statut + activer arme
   dbListen('parties/'+S.currentPartyId+'/players', snap=>{
     if(!snap.exists()) return;
-    // Déjà géré par listenGamePlayers — on update juste le HUD
     updateInfectionHUD();
+    // Activer/désactiver le sniper selon le statut infection
+    const me = S.players[S.user?.uid];
+    const myStatus = me?.infectionStatus || 'healthy';
+    const sniperBtn = document.getElementById('btn-sniper');
+    if(sniperBtn && myStatus === 'healthy'){
+      _sniperAmmo = 2; // sains ont 2 tirs pour soigner
+      sniperBtn.style.display = 'inline-flex';
+      sniperBtn.style.background = 'rgba(6,214,160,0.2)';
+      sniperBtn.style.borderColor = 'rgba(6,214,160,0.4)';
+      sniperBtn.style.color = '#06d6a0';
+      sniperBtn.title = '💉 Soigner un infecté';
+    } else if(sniperBtn && myStatus === 'infected'){
+      sniperBtn.style.display = 'none'; // infecté contamine par proximité
+    }
   });
 
   // Master : vérifier contaminations toutes les 2s
@@ -4437,24 +4516,35 @@ function listenInfectionState(){
 }
 
 function updateInfectionHUD(){
-  const hud = document.getElementById('collect-hud');
-  if(!hud || S.gameMode!=='infection') return;
-  hud.style.display = 'block';
+  if(S.gameMode!=='infection') return;
+  const bar = document.getElementById('infection-status-bar');
+  if(!bar) return;
+  bar.style.display = 'block';
   const all = Object.values(S.players||{});
   const infected = all.filter(p=>p.infectionStatus==='infected'&&!p.eliminated).length;
   const healthy = all.filter(p=>p.infectionStatus==='healthy'&&!p.eliminated).length;
-  const titleEl = document.querySelector('.collect-hud-title');
-  if(titleEl) titleEl.textContent = 'INFECTÉS';
-  const countEl = document.getElementById('collect-count');
-  const totalEl = document.getElementById('collect-total');
-  if(countEl){ countEl.textContent=infected; countEl.style.color='#ff4d6d'; }
-  if(totalEl) totalEl.textContent = infected+healthy;
+  const total = infected + healthy || 1;
+  const infPct = Math.round(infected/total*100);
 
-  // Afficher mon statut
+  const hc = document.getElementById('inf-healthy-count');
+  const ic = document.getElementById('inf-infected-count');
+  const fill = document.getElementById('infection-bar-fill');
+  const status = document.getElementById('inf-my-status');
+  if(hc) hc.textContent = healthy;
+  if(ic) ic.textContent = infected;
+  if(fill) fill.style.width = infPct+'%';
+
   const me = S.players[S.user?.uid];
-  const myStatus = me?.infectionStatus || 'healthy';
-  S.infectionStatus = myStatus;
-  hud.style.borderColor = myStatus==='infected'?'rgba(255,77,109,0.6)':'rgba(6,214,160,0.4)';
+  S.infectionStatus = me?.infectionStatus || 'healthy';
+  if(status){
+    if(S.infectionStatus==='infected'){
+      status.textContent = '🦠 TU ES INFECTÉ';
+      status.style.color = '#ff4d6d';
+    } else {
+      status.textContent = '🟢 Tu es sain';
+      status.style.color = '#06d6a0';
+    }
+  }
 }
 
 function checkInfectionSpread(){
@@ -4628,6 +4718,7 @@ async function castVote(targetUid){
     target: targetUid, ts: Date.now(), voter: S.user.uid
   });
   closeModal('modal-vote');
+  const vu=document.getElementById('vote-urgency'); if(vu)vu.style.display='none';
   showNotif('🗳️', 'Vote enregistré !', `Tu as voté contre ${S.players[targetUid]?.name||'?'}`, '#ffbe0b');
 }
 
@@ -4872,8 +4963,17 @@ function checkSniperAim(){
   for(const [uid, p] of Object.entries(S.players)){
     if(uid === S.user.uid || p.eliminated) continue;
     if(!p.lat) continue;
-    // En mode classique, le chercheur vise les cacheurs seulement
-    if(S.role==='seeker' && p.role!=='hider') continue;
+    // Filtres selon le mode
+    if(S.gameMode==='royal') { /* tout le monde est une cible */ }
+    else if(S.gameMode==='infection'){
+      // Sain vise uniquement les infectés pour les soigner
+      if(S.infectionStatus!=='healthy') continue;
+      if(p.infectionStatus!=='infected') continue;
+    } else {
+      // Mode classique : chercheur vise cacheurs seulement
+      if(S.role==='seeker' && p.role!=='hider') continue;
+      if(S.role!=='seeker') continue; // seul le chercheur peut viser
+    }
     const dist = haversine(me.lat, me.lng, p.lat, p.lng);
     if(dist > SNIPER_MAX_DIST) continue;
     const bearing = getBearing(me.lat, me.lng, p.lat, p.lng);
@@ -4897,7 +4997,10 @@ function checkSniperAim(){
     center.classList.remove('locked');
     label.style.display = 'none';
     shootBtn.classList.remove('ready');
-    infoEl.textContent = 'Pointe vers un joueur à moins de '+SNIPER_MAX_DIST+'m';
+    const modeLabel = S.gameMode==='royal'?'Pointe vers un joueur pour viser':
+      S.gameMode==='infection'?'Pointe vers un infecté pour le soigner 💉':
+      'Pointe vers un cacheur à moins de '+SNIPER_MAX_DIST+'m';
+    infoEl.textContent = modeLabel;
   }
 }
 
@@ -4934,10 +5037,31 @@ async function shoot(){
     heading: Math.round(_sniperHeading),
   });
 
-  // Éliminer si mode le permet (chercheur tire sur cacheur, ou mode sniper activé)
-  if(S.role==='seeker' || S.gameMode==='sniper'){
+  // Logique selon le mode de jeu
+  if(S.gameMode === 'royal'){
+    // Battle Royal : tir élimine directement
+    await dbUpdate('parties/'+S.currentPartyId+'/players/'+target.uid, {eliminated:true, eliminatedBy:'shot', eliminatedByName: S.userProfile?.pseudo||'?'});
+    showNotif('🎯','Cible abattue !',`${target.name} éliminé à ${Math.round(target.dist)}m`,'#ff4d6d');
+    dbPush('parties/'+S.currentPartyId+'/chat/all',{senderId:'system',senderName:'🔫 TIR',senderColor:'#ff4d6d',text:`🔫 ${S.userProfile?.pseudo||'?'} a éliminé ${target.name} à ${Math.round(target.dist)}m !`,ts:Date.now()});
+    grantXP('found_someone');
+  } else if(S.gameMode === 'infection'){
+    // Infection : le sain soigne l'infecté (retire l'infection)
+    if(S.infectionStatus === 'healthy'){
+      const targetPlayer = S.players[target.uid];
+      if(targetPlayer?.infectionStatus === 'infected'){
+        await dbUpdate('parties/'+S.currentPartyId+'/players/'+target.uid, {infectionStatus:'healthy', infectedAt:null, healedBy:S.user.uid});
+        showNotif('💉','Soigné !',`${target.name} a été soigné à ${Math.round(target.dist)}m !`,'#06d6a0');
+        dbPush('parties/'+S.currentPartyId+'/chat/all',{senderId:'system',senderName:'💉 SOIN',senderColor:'#06d6a0',text:`💉 ${S.userProfile?.pseudo||'?'} a soigné ${target.name} !`,ts:Date.now()});
+        if(navigator.vibrate) navigator.vibrate([100,50,200]);
+      } else {
+        showNotif('❌','Raté !','Cette personne est déjà saine !','#ffbe0b');
+        _sniperAmmo++; // rembourser la munition
+      }
+    }
+  } else if(S.role==='seeker' || S.gameMode==='sniper'){
+    // Mode classique chercheur
     await dbUpdate('parties/'+S.currentPartyId+'/players/'+target.uid, {found:true, foundBy:S.user.uid, foundAt:Date.now()});
-    showNotif('🎯','Touché !',`${target.name} éliminé à ${Math.round(target.dist)}m`,'#ff4d6d');
+    showNotif('🎯','Touché !',`${target.name} trouvé à ${Math.round(target.dist)}m`,'#ff4d6d');
     grantXP('found_someone');
   } else {
     showNotif('🔫','Tir envoyé !',`${target.name} à ${Math.round(target.dist)}m`,'#ffbe0b');
@@ -4981,11 +5105,12 @@ function startBattleRoyal(){
 }
 
 function listenBattleRoyal(){
-  // HUD alive count
-  document.getElementById('br-hud').style.display='flex';
-  // Activer le sniper pour tout le monde
+  document.getElementById('br-status').style.display='flex';
+  // Sniper activé pour TOUT le monde en Battle Royal
+  _sniperAmmo = 5;
   const sniperBtn = document.getElementById('btn-sniper');
-  if(sniperBtn){ sniperBtn.style.display='inline-flex'; _sniperAmmo=3; }
+  if(sniperBtn) sniperBtn.style.display='inline-flex';
+  document.getElementById('sniper-ammo-count').textContent = _sniperAmmo;
   // Zone qui rétrécit
   startZoneShrinkBR();
   // Update HUD en temps réel
@@ -5045,11 +5170,20 @@ function startZoneShrinkBR(){
       }
     }
 
-    // Avertir le joueur s'il est près du bord
+    // Avertir le joueur selon sa distance à la zone
     const me = S.players[S.user?.uid];
     if(me?.lat){
       const myDist=haversine(center[0],center[1],me.lat,me.lng);
-      if(myDist > radius*0.85 && navigator.vibrate) navigator.vibrate([200,100,200]);
+      const zonePill=document.getElementById('br-zone-pill');
+      if(myDist > radius){
+        if(zonePill){zonePill.textContent='☠️ HORS ZONE !';zonePill.className='br-zone-pill';}
+        if(navigator.vibrate) navigator.vibrate([300,100,300]);
+      } else if(myDist > radius*0.80){
+        if(zonePill){zonePill.textContent='⚠️ Approche du bord !';zonePill.className='br-zone-pill';}
+        if(navigator.vibrate&&step%5===0) navigator.vibrate(150);
+      } else {
+        if(zonePill){zonePill.textContent=`✅ Zone — ${Math.round(radius)}m`;zonePill.className='br-zone-pill br-zone-safe';}
+      }
     }
   }, intervalMs);
 }
@@ -5140,29 +5274,43 @@ function listenImpostorStateReal(){
 }
 
 function renderMissionHUD(){
-  const hud = document.getElementById('mission-hud');
-  if(!hud || S.gameMode!=='impostor') return;
+  const status = document.getElementById('impostor-status');
+  if(!status || S.gameMode!=='impostor') return;
+  status.style.display = 'block';
   const me = S.players[S.user?.uid];
   if(!me) return;
 
+  const rolePill = document.getElementById('imp-role-pill');
+  const missionCard = document.getElementById('mission-card');
+
   if(S.impostorRole==='impostor'){
-    hud.style.display='block';
-    hud.style.borderColor='rgba(255,77,109,0.5)';
-    document.querySelector('.mission-title').textContent='🔴 IMPOSTEUR';
-    document.getElementById('mission-text').textContent='Sabote les missions et élimine les innocents';
-    document.getElementById('mission-dist').textContent='Approche les innocents pour les éliminer';
+    if(rolePill){ rolePill.textContent='🔴 IMPOSTEUR'; rolePill.className='impostor-role-pill imp'; }
+    if(missionCard){
+      missionCard.style.display='block';
+      document.getElementById('mission-card-title').textContent='⚡ OBJECTIF';
+      document.getElementById('mission-card-name').textContent='Élimine les innocents discrètement';
+      document.getElementById('mission-card-dist').textContent='Approche à 8m pour éliminer';
+      // Compter les innocents restants
+      const innocentsLeft = Object.values(S.players||{}).filter(p=>p.impostorRole==='innocent'&&!p.eliminated).length;
+      document.getElementById('mission-progress').textContent=`${innocentsLeft} innocent${innocentsLeft>1?'s':''} restant${innocentsLeft>1?'s':''}`;
+    }
   } else {
+    if(rolePill){ rolePill.textContent='🟢 Innocent'; rolePill.className='impostor-role-pill inn'; }
     const mission = IMPOSTOR_MISSIONS.find(m=>m.id===me.currentMission);
-    if(!mission){ hud.style.display='none'; return; }
-    hud.style.display='block';
-    hud.style.borderColor='rgba(123,127,255,0.4)';
-    document.querySelector('.mission-title').textContent='🎯 MISSION EN COURS';
-    document.getElementById('mission-text').textContent=`${mission.emoji} ${mission.name}`;
-    // Calculer distance
-    const myPos = S.players[S.user?.uid];
-    if(myPos?.lat){
-      const d=haversine(myPos.lat,myPos.lng,mission.lat,mission.lng);
-      document.getElementById('mission-dist').textContent=d<1000?Math.round(d)+'m au point de mission':(d/1000).toFixed(1)+'km';
+    if(!mission||me.eliminated){ if(missionCard)missionCard.style.display='none'; return; }
+    if(missionCard){
+      missionCard.style.display='block';
+      document.getElementById('mission-card-title').textContent='🎯 MISSION EN COURS';
+      document.getElementById('mission-card-name').textContent=`${mission.emoji} ${mission.name}`;
+      if(me.lat){
+        const d=haversine(me.lat,me.lng,mission.lat,mission.lng);
+        document.getElementById('mission-card-dist').textContent=d<1000?Math.round(d)+'m du point de mission':(d/1000).toFixed(1)+'km';
+      }
+      // Progression collective
+      const allInnocents=Object.values(S.players||{}).filter(p=>p.impostorRole==='innocent');
+      const totalDone=allInnocents.reduce((s,p)=>s+(p.missionsCompleted||0),0);
+      const totalNeeded=S.currentParty?.totalMissions||(allInnocents.length*3);
+      document.getElementById('mission-progress').textContent=`Progression équipe : ${totalDone}/${totalNeeded}`;
     }
   }
 }
@@ -5277,11 +5425,11 @@ function startVoteCountdown(){
     if(fill)fill.style.background=pct<20?'#ff4d6d':'#ffbe0b';
 
     if(_voteSecondsLeft<=10&&_voteSecondsLeft>0){
-      if(_voteSecondsLeft===10) toast('⚠️ Vote dans 10 secondes !');
+      if(_voteSecondsLeft===10){ toast('⚠️ Vote dans 10 secondes !'); const vu=document.getElementById('vote-urgency'); if(vu)vu.style.display='block'; }
       if(navigator.vibrate&&_voteSecondsLeft%2===0)navigator.vibrate(100);
     }
     if(_voteSecondsLeft<=0){
-      // Déclencher le vote
+      const vu=document.getElementById('vote-urgency'); if(vu)vu.style.display='block';
       openVoteModal();
       _voteSecondsLeft=VOTE_INTERVAL_MS/1000;
       if(fill)fill.style.width='100%';
