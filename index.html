@@ -2328,7 +2328,7 @@ function startMapScreen(){
     listenBattleRoyal();
   } else if(S.gameMode==='impostor'){
     if(S.isMaster) setTimeout(()=>startImpostorModeReal(), 2000);
-    setTimeout(()=>listenImpostorStateReal(), 3500);
+    listenImpostorStateReal(); // plus de setTimeout(3500) — on utilise dbListen maintenant
   }
   stopMusicOnLogin();
   if(S.proximityInterval) clearInterval(S.proximityInterval);
@@ -2664,22 +2664,7 @@ async function togglePause(){
 
 // ── LEAVE GAME (non-master) ──
 async function leaveGame(){ releaseWakeLock(); stopDistanceTracker();
-  if(_bombInterval){clearInterval(_bombInterval);_bombInterval=null;}
-  if(_voteListener){_voteListener();_voteListener=null;}
-  if(_bombTickInterval){clearInterval(_bombTickInterval);_bombTickInterval=null;}
-  if(_infectionSpreadInterval){clearInterval(_infectionSpreadInterval);_infectionSpreadInterval=null;}
-  if(_brZoneInterval){clearInterval(_brZoneInterval);_brZoneInterval=null;}
-  if(_missionCheckInterval){clearInterval(_missionCheckInterval);_missionCheckInterval=null;}
-  if(_voteCountdownInterval){clearInterval(_voteCountdownInterval);_voteCountdownInterval=null;}
-  _impostorMissionMarkers.forEach(m=>{if(S.map)S.map.removeLayer(m);}); _impostorMissionMarkers=[];
-  const mhud=document.getElementById('mission-hud'); if(mhud)mhud.style.display='none';
-  const brhud=document.getElementById('br-hud'); if(brhud)brhud.style.display='none';
-  const vtb=document.getElementById('vote-timer-bar'); if(vtb)vtb.style.display='none';
-  _myVote=null; S.impostorRole=null;
-  const ih=document.getElementById("impostor-hud"); if(ih)ih.style.display="none";
-  if(_zoneShrinkInterval){clearInterval(_zoneShrinkInterval);_zoneShrinkInterval=null;}
-  if(_zoneShrinkCircle&&S.map){S.map.removeLayer(_zoneShrinkCircle);_zoneShrinkCircle=null;}
-  _infectionMarkers.forEach(m=>{if(S.map)S.map.removeLayer(m);}); _infectionMarkers=[];
+  cleanupGameMode();
   if(!confirm('Quitter la partie en cours ?'))return;
   if(S.timerInterval)clearInterval(S.timerInterval);
   if(S.proximityInterval)clearInterval(S.proximityInterval);
@@ -2751,6 +2736,7 @@ function listenForHints(){
 }
 async function endGame(){
   if(!confirm('Terminer la partie ?'))return;
+  cleanupGameMode();
   if(S.timerInterval)clearInterval(S.timerInterval);
   if(S.proximityInterval)clearInterval(S.proximityInterval);
   if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
@@ -2796,7 +2782,57 @@ function showEndScreen(party){
   });
 }
 
+// ════════════════════════════════════════════════════
+//  CLEANUP MODES DE JEU — reset complet entre les parties
+// ════════════════════════════════════════════════════
+function cleanupGameMode(){
+  // ── BOMBE ──
+  if(_bombTickInterval){ clearInterval(_bombTickInterval); _bombTickInterval=null; }
+  if(_bombInterval){ clearInterval(_bombInterval); _bombInterval=null; }
+  _bombState=null; _bombSeconds=120; _bombCarrierUid=null; _bombPrevCarrier=null;
+  _bombPassCount=0; _bombExploding=false;
+  const bombHud=document.getElementById('bomb-hud'); if(bombHud) bombHud.style.display='none';
+
+  // ── INFECTION ──
+  if(_infectionSpreadInterval){ clearInterval(_infectionSpreadInterval); _infectionSpreadInterval=null; }
+  if(_zoneShrinkInterval){ clearInterval(_zoneShrinkInterval); _zoneShrinkInterval=null; }
+  if(_zoneShrinkCircle && S.map){ S.map.removeLayer(_zoneShrinkCircle); _zoneShrinkCircle=null; }
+  _infectionItems=[]; _infectionCollected=0;
+  _infectionMarkers.forEach(m=>{ if(S.map) S.map.removeLayer(m); }); _infectionMarkers=[];
+  S.infectionStatus='healthy';
+  const infBar=document.getElementById('infection-status-bar'); if(infBar) infBar.style.display='none';
+
+  // ── BATTLE ROYAL ──
+  if(_brZoneInterval){ clearInterval(_brZoneInterval); _brZoneInterval=null; }
+  _brZoneRadius=BR_ZONE_START;
+  const brStatus=document.getElementById('br-status'); if(brStatus) brStatus.style.display='none';
+  const brHud=document.getElementById('br-hud'); if(brHud) brHud.style.display='none';
+
+  // ── IMPOSTEUR ──
+  if(_missionCheckInterval){ clearInterval(_missionCheckInterval); _missionCheckInterval=null; }
+  if(_voteCountdownInterval){ clearInterval(_voteCountdownInterval); _voteCountdownInterval=null; }
+  if(_voteListener){ _voteListener(); _voteListener=null; }
+  if(_impostorListener){ _impostorListener(); _impostorListener=null; }
+  _impostorMissionMarkers.forEach(m=>{ if(S.map) S.map.removeLayer(m); }); _impostorMissionMarkers=[];
+  _currentMissions={}; _myVote=null; _impostorUid=null; _voteSecondsLeft=VOTE_INTERVAL_MS/1000;
+  S.impostorRole=null; S.gameMode='classic';
+  const impostorStatus=document.getElementById('impostor-status'); if(impostorStatus) impostorStatus.style.display='none';
+  const impostorHud=document.getElementById('impostor-hud'); if(impostorHud) impostorHud.style.display='none';
+  const missionCard=document.getElementById('mission-card'); if(missionCard) missionCard.style.display='none';
+  const voteBar=document.getElementById('vote-timer-bar'); if(voteBar) voteBar.style.display='none';
+  const voteUrgency=document.getElementById('vote-urgency'); if(voteUrgency) voteUrgency.style.display='none';
+
+  // ── SNIPER (partagé BR + classique) ──
+  if(_sniperActive) closeSniperMode();
+  _sniperAmmo=3; _sniperLockedTarget=null; _sniperReadings=[];
+
+  // ── ZONE SHRINK (partagé infection + BR) ──
+  if(_zoneShrinkCircle && S.map){ S.map.removeLayer(_zoneShrinkCircle); _zoneShrinkCircle=null; }
+}
+
+
 function backToLobby(){
+  cleanupGameMode();
   cleanupWalkie();
   if(S.map){
     if(S.myPathLine){S.map.removeLayer(S.myPathLine);}
@@ -4397,9 +4433,16 @@ function tryPassBomb(){
   });
 }
 
+let _bombExploding = false; // flag anti-double-explosion
 async function handleBombExplosion(){
+  // Guard : si déjà en cours d'explosion, on ignore l'appel concurrent
+  if(_bombExploding) return;
   const carrier = _bombCarrierUid;
   if(!carrier) return;
+  // Vérifier que la bombe n'a pas déjà explosé dans Firebase (protection réseau)
+  const bombSnap = await window._dbGet(dbRef('parties/'+S.currentPartyId+'/bomb'));
+  if(bombSnap.exists() && bombSnap.val().exploded) return;
+  _bombExploding = true;
   dbUpdate('parties/'+S.currentPartyId+'/bomb', {seconds:0, exploded:true});
   dbUpdate('parties/'+S.currentPartyId+'/players/'+carrier, {eliminated:true, eliminatedBy:'bomb'});
   if(_bombState) _bombState.seconds = 0;
@@ -4426,6 +4469,7 @@ async function handleBombExplosion(){
     senderId:'system', senderName:'💣 BOMBE', senderColor:'#ff4d6d',
     text:`💣 Nouvelle bombe pour ${S.players[newCarrier]?.name||'?'} !`, ts:Date.now()
   });
+  _bombExploding = false; // reset pour la prochaine explosion
 }
 
 function tickBomb(){ /* géré par _bombTickInterval dans listenBombState */ }
@@ -4437,7 +4481,7 @@ function tickBomb(){ /* géré par _bombTickInterval dans listenBombState */ }
 // Infectés voient tout le monde, sains voient uniquement les infectés
 // Zone rétrécit, derniers sains gagnent
 
-const INFECTION_SPREAD_RADIUS = 10; // mètres pour contaminer
+const INFECTION_SPREAD_RADIUS = 15; // mètres — 15m pour absorber l'imprécision GPS mobile (±5-10m)
 const REYRIEUX_BOUNDS = {
   latMin: 45.920, latMax: 45.948,
   lngMin: 4.845, lngMax: 4.878
@@ -4593,9 +4637,22 @@ function checkNearbyItems(){ /* remplacé par checkInfectionSpread */ }
 function updateCollectHUD(){ updateInfectionHUD(); }
 function renderInfectionItems(){ /* plus utilisé */ }
 
+function getZoneCenter(){
+  // Si une zone personnalisée est définie, utiliser son centroïde
+  if(S.zonePoints && S.zonePoints.length >= 3){
+    const lat = S.zonePoints.reduce((s,p)=>s+p[0],0) / S.zonePoints.length;
+    const lng = S.zonePoints.reduce((s,p)=>s+p[1],0) / S.zonePoints.length;
+    return [lat, lng];
+  }
+  return [45.934, 4.862]; // fallback Reyrieux
+}
+
 function startZoneShrink(durationMs){
   if(!S.map) return;
-  const center = [45.934, 4.862]; // Centre Reyrieux
+  // Guard : ne pas lancer deux shrinks en parallèle (partagé entre Infection et BR)
+  if(_zoneShrinkInterval){ clearInterval(_zoneShrinkInterval); _zoneShrinkInterval=null; }
+  if(_zoneShrinkCircle){ S.map.removeLayer(_zoneShrinkCircle); _zoneShrinkCircle=null; }
+  const center = getZoneCenter();
   let startRadius = 800; // mètres
   let endRadius = 100;
   const steps = 60;
@@ -5106,8 +5163,9 @@ function startBattleRoyal(){
 
 function listenBattleRoyal(){
   document.getElementById('br-status').style.display='flex';
-  // Sniper activé pour TOUT le monde en Battle Royal
-  _sniperAmmo = 5;
+  // Lire les munitions depuis Firebase (écrites par le master dans startBattleRoyal)
+  const myAmmoSnap = S.players[S.user?.uid]?.sniperAmmo;
+  _sniperAmmo = (typeof myAmmoSnap === 'number') ? myAmmoSnap : 3;
   const sniperBtn = document.getElementById('btn-sniper');
   if(sniperBtn) sniperBtn.style.display='inline-flex';
   document.getElementById('sniper-ammo-count').textContent = _sniperAmmo;
@@ -5129,7 +5187,10 @@ function listenBattleRoyal(){
 
 function startZoneShrinkBR(){
   if(!S.map) return;
-  const center = [45.934, 4.862];
+  // Guard : idem, nettoyer un éventuel shrink Infection résiduel
+  if(_brZoneInterval){ clearInterval(_brZoneInterval); _brZoneInterval=null; }
+  if(_zoneShrinkCircle){ S.map.removeLayer(_zoneShrinkCircle); _zoneShrinkCircle=null; }
+  const center = getZoneCenter();
   let radius = BR_ZONE_START;
   const steps = 120;
   const intervalMs = BR_DURATION_MS / steps;
@@ -5224,9 +5285,8 @@ async function startImpostorModeReal(){
   const uids = Object.keys(S.players).filter(u=>!S.players[u]?.eliminated);
   if(uids.length < 4){ toast('❌ Minimum 4 joueurs !'); return; }
 
-  // Choisir 1 imposteur
-  const candidates = uids.filter(u=>u!==S.user.uid);
-  const impostorUid = candidates[Math.floor(Math.random()*candidates.length)];
+  // L'imposteur peut être n'importe qui, y compris le master
+  const impostorUid = uids[Math.floor(Math.random()*uids.length)];
   _impostorUid = impostorUid;
 
   // Assigner rôles + missions aux innocents
@@ -5253,19 +5313,28 @@ async function startImpostorModeReal(){
 }
 
 function listenImpostorStateReal(){
-  // Récupérer mon rôle
-  setTimeout(()=>{
-    const me = S.players[S.user?.uid];
-    S.impostorRole = me?.impostorRole || 'innocent';
-    _impostorUid = Object.keys(S.players||{}).find(u=>S.players[u]?.impostorRole==='impostor');
+  // Attendre la confirmation Firebase du rôle plutôt qu'un timeout fixe
+  const myUid = S.user?.uid;
+  if(!myUid) return;
+
+  // Listener sur mon propre noeud joueur — se déclenche dès que le master a écrit le rôle
+  const unsubRole = dbListen('parties/'+S.currentPartyId+'/players/'+myUid, snap => {
+    if(!snap.exists()) return;
+    const me = snap.val();
+    if(!me.impostorRole) return; // rôle pas encore assigné, on attend
+    // Rôle reçu : on initialise
+    S.impostorRole = me.impostorRole;
+    _impostorUid = Object.keys(S.players||{}).find(u => S.players[u]?.impostorRole === 'impostor');
     renderImpostorHUD();
     renderMissionHUD();
     renderImpostorMissionMarkers();
     startMissionCheck();
     startVoteCountdown();
-  }, 3500);
+    // Se désabonner après la première réception valide
+    unsubRole();
+  });
 
-  // Listener votes
+  // Listener votes en temps réel
   if(_voteListener){ _voteListener(); _voteListener=null; }
   _voteListener = dbListen('parties/'+S.currentPartyId+'/votes', snap=>{
     const votes = snap.exists() ? snap.val() : {};
