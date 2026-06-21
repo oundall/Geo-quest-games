@@ -570,6 +570,17 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
 .mission-progress{font-size:10px;color:var(--muted);text-align:right;margin-top:4px;}
 .vote-urgency{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);z-index:1001;background:rgba(255,190,11,0.95);color:#000;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:900;display:none;cursor:pointer;pointer-events:all;}
 
+/* ── BOT PANEL ── */
+.bot-role-btn{padding:6px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#7a8aaa;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.bot-role-btn.active{background:rgba(123,127,255,0.2);border-color:rgba(123,127,255,0.5);color:#7b7fff;}
+.bot-count-btn{width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#7a8aaa;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;}
+.bot-count-btn.active{background:rgba(0,229,255,0.15);border-color:rgba(0,229,255,0.4);color:#00e5ff;}
+.bot-status-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;}
+.bot-status-name{font-size:12px;font-weight:700;color:#f0f4ff;}
+.bot-status-role{font-size:11px;color:#7a8aaa;}
+.bot-status-pos{font-size:10px;color:#00e5ff;font-family:monospace;}
+.bot-elim-btn{background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);border-radius:6px;color:#ff4d6d;font-size:10px;padding:3px 7px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;}
+
 </style>
 </head>
 <body>
@@ -915,12 +926,83 @@ html,body{margin:0;padding:0;height:100%;max-height:100dvh;overflow:hidden;backg
       <button class="btn-ctrl" id="btn-path-toggle-master" onclick="togglePathBtn()" style="background:rgba(6,214,160,0.12);border-color:rgba(6,214,160,0.3);color:#06d6a0">🏃</button>
       <button class="btn-ctrl blue" onclick="openQRModal()" title="Inviter">📲</button>
       <button class="btn-ctrl red" onclick="endGame()">⏹</button>
+      <button class="btn-ctrl" onclick="openBotPanel()" style="background:rgba(123,127,255,0.15);border-color:rgba(123,127,255,0.4);color:#7b7fff" title="Mode Test Bots">🤖</button>
     </div>
     <div class="map-controls-row" id="player-controls" style="display:none">
       <button class="btn-ctrl purple" onclick="openHintModal()">💡 Indice</button>
       <button class="btn-ctrl red" id="btn-sniper" onclick="openSniperMode()" style="display:none">🔫</button>
       <button class="btn-ctrl" id="btn-path-toggle" onclick="togglePathBtn()" style="background:rgba(6,214,160,0.12);border-color:rgba(6,214,160,0.3);color:#06d6a0">🏃</button>
       <button class="btn-ctrl red" onclick="leaveGame()">🚪 Quitter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOT PANEL ══ -->
+<div id="bot-panel" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);overflow-y:auto;padding:16px;">
+  <div style="background:#111827;border:1px solid rgba(123,127,255,0.4);border-radius:18px;padding:20px;max-width:480px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#7b7fff;">🤖 MODE TEST</div>
+      <button onclick="closeBotPanel()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;padding:6px 12px;cursor:pointer;font-size:13px;">✕ Fermer</button>
+    </div>
+
+    <!-- Mon rôle -->
+    <div style="background:#1a2235;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:800;color:#7a8aaa;letter-spacing:1px;margin-bottom:8px;">MON RÔLE</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="my-role-selector">
+        <button class="bot-role-btn active" onclick="selectMyTestRole('hider')" id="myrole-hider">🙈 Cacheur</button>
+        <button class="bot-role-btn" onclick="selectMyTestRole('seeker')" id="myrole-seeker">🔍 Chercheur</button>
+        <button class="bot-role-btn" onclick="selectMyTestRole('infected')" id="myrole-infected">🦠 Infecté</button>
+        <button class="bot-role-btn" onclick="selectMyTestRole('impostor')" id="myrole-impostor">🕵️ Imposteur</button>
+      </div>
+    </div>
+
+    <!-- Config bots -->
+    <div style="background:#1a2235;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:800;color:#7a8aaa;letter-spacing:1px;margin-bottom:10px;">CONFIGURATION BOTS</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="font-size:13px;color:#f0f4ff;">Nombre de bots :</span>
+        <div style="display:flex;gap:4px;">
+          <button onclick="setBotCount(1)" class="bot-count-btn" id="bc-1">1</button>
+          <button onclick="setBotCount(2)" class="bot-count-btn active" id="bc-2">2</button>
+          <button onclick="setBotCount(3)" class="bot-count-btn" id="bc-3">3</button>
+          <button onclick="setBotCount(4)" class="bot-count-btn" id="bc-4">4</button>
+          <button onclick="setBotCount(6)" class="bot-count-btn" id="bc-6">6</button>
+          <button onclick="setBotCount(8)" class="bot-count-btn" id="bc-8">8</button>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:800;color:#7a8aaa;letter-spacing:1px;margin-bottom:6px;">RÔLE DES BOTS</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="bot-role-selector">
+        <button class="bot-role-btn active" onclick="selectBotRole('hider')" id="botrole-hider">🙈 Cacheurs</button>
+        <button class="bot-role-btn" onclick="selectBotRole('seeker')" id="botrole-seeker">🔍 Chercheurs</button>
+        <button class="bot-role-btn" onclick="selectBotRole('infected')" id="botrole-infected">🦠 Infectés</button>
+        <button class="bot-role-btn" onclick="selectBotRole('mixed')" id="botrole-mixed">🎲 Mixte</button>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:11px;font-weight:800;color:#7a8aaa;letter-spacing:1px;margin-bottom:6px;">VITESSE DE DÉPLACEMENT</div>
+        <div style="display:flex;gap:6px;">
+          <button class="bot-role-btn" onclick="setBotSpeed('slow')" id="bspeed-slow">🐢 Lent</button>
+          <button class="bot-role-btn active" onclick="setBotSpeed('normal')" id="bspeed-normal">🚶 Normal</button>
+          <button class="bot-role-btn" onclick="setBotSpeed('fast')" id="bspeed-fast">🏃 Rapide</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+      <button onclick="spawnBots()" style="padding:13px;background:linear-gradient(135deg,#7b7fff,#00e5ff);border:none;border-radius:10px;color:#000;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;">🤖 Spawner les bots</button>
+      <div style="display:flex;gap:8px;">
+        <button onclick="toggleBotsMovement()" id="btn-toggle-bots" style="flex:1;padding:11px;background:rgba(6,214,160,0.12);border:1px solid rgba(6,214,160,0.3);border-radius:10px;color:#06d6a0;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">▶ Activer mouvement</button>
+        <button onclick="removeAllBots()" style="flex:1;padding:11px;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.3);border-radius:10px;color:#ff4d6d;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🗑️ Supprimer bots</button>
+      </div>
+      <button onclick="teleportBotMode()" id="btn-teleport" style="padding:11px;background:rgba(255,190,11,0.12);border:1px solid rgba(255,190,11,0.3);border-radius:10px;color:#ffbe0b;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📍 Téléporter un bot (tap carte)</button>
+    </div>
+
+    <!-- État des bots en temps réel -->
+    <div style="background:#1a2235;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;">
+      <div style="font-size:11px;font-weight:800;color:#7a8aaa;letter-spacing:1px;margin-bottom:8px;">ÉTAT DES BOTS</div>
+      <div id="bot-status-list" style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:12px;color:#7a8aaa;text-align:center;padding:8px;">Aucun bot spawné</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2345,6 +2427,8 @@ function toggleZoneMode(){
   document.getElementById('zone-hint').style.display=S.zoneMode?'block':'none';
 }
 function onMapClick(e){
+  // Mode téléportation bot prioritaire
+  if(_botTeleportMode){ handleBotTeleport(e.latlng.lat, e.latlng.lng); return; }
   if(!S.isMaster||!S.zoneMode)return;
   S.zonePoints.push([e.latlng.lat,e.latlng.lng]);redrawZone();
 }
@@ -2783,8 +2867,335 @@ function showEndScreen(party){
 }
 
 // ════════════════════════════════════════════════════
-//  CLEANUP MODES DE JEU — reset complet entre les parties
+//  SYSTÈME DE BOTS (MODE TEST ADMIN)
 // ════════════════════════════════════════════════════
+
+const BOT_NAMES = ['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot','Golf','Hotel'];
+const BOT_COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6bcd','#c77dff','#00e5ff','#ffbe0b'];
+const BOT_ZONE_CENTER = () => getZoneCenter ? getZoneCenter() : [45.934, 4.862];
+const BOT_SPEED = { slow: 0.0003, normal: 0.0006, fast: 0.0013 };
+
+let _bots = {}; // uid -> {uid, name, color, role, lat, lng, personality}
+let _botMovementInterval = null;
+let _botMoving = false;
+let _botCount = 2;
+let _botRole = 'hider';
+let _myTestRole = 'hider';
+let _botSpeed = 'normal';
+let _botTeleportMode = false;
+let _botTeleportTarget = null; // uid du bot à téléporter
+let _botStatusInterval = null;
+
+function openBotPanel(){
+  document.getElementById('bot-panel').style.display = 'block';
+  refreshBotStatusList();
+}
+function closeBotPanel(){
+  document.getElementById('bot-panel').style.display = 'none';
+  if(_botTeleportMode) disableTeleportMode();
+}
+
+function setBotCount(n){
+  _botCount = n;
+  document.querySelectorAll('.bot-count-btn').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('bc-'+n);
+  if(btn) btn.classList.add('active');
+}
+
+function selectMyTestRole(role){
+  _myTestRole = role;
+  document.querySelectorAll('#my-role-selector .bot-role-btn').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('myrole-'+role);
+  if(btn) btn.classList.add('active');
+  // Appliquer immédiatement mon rôle dans Firebase
+  if(S.user && S.currentPartyId){
+    const mappedRole = role === 'infected' ? 'infected' : role === 'impostor' ? 'impostor' : role;
+    dbUpdate('parties/'+S.currentPartyId+'/players/'+S.user.uid, {
+      role: ['infected','impostor'].includes(role) ? 'hider' : role,
+      infectionStatus: role === 'infected' ? 'infected' : 'healthy',
+      impostorRole: role === 'impostor' ? 'impostor' : 'innocent'
+    });
+    toast('🎭 Ton rôle → '+role);
+  }
+}
+
+function selectBotRole(role){
+  _botRole = role;
+  document.querySelectorAll('#bot-role-selector .bot-role-btn').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('botrole-'+role);
+  if(btn) btn.classList.add('active');
+}
+
+function setBotSpeed(speed){
+  _botSpeed = speed;
+  document.querySelectorAll('[id^="bspeed-"]').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('bspeed-'+speed);
+  if(btn) btn.classList.add('active');
+  // Si les bots bougent déjà, relancer avec la nouvelle vitesse
+  if(_botMoving){ stopBotMovement(); startBotMovement(); }
+}
+
+async function spawnBots(){
+  if(!S.currentPartyId || !S.user){ toast('❌ Pas de partie active'); return; }
+  // Supprimer les anciens bots d'abord
+  await removeAllBots();
+
+  const center = BOT_ZONE_CENTER();
+  _bots = {};
+
+  for(let i = 0; i < _botCount; i++){
+    const uid = 'bot_'+Date.now()+'_'+i;
+    const name = '🤖 '+BOT_NAMES[i % BOT_NAMES.length];
+    const color = BOT_COLORS[i % BOT_COLORS.length];
+
+    // Déterminer le rôle
+    let role = _botRole;
+    if(_botRole === 'mixed'){
+      const roles = ['hider','seeker','infected','hider'];
+      role = roles[i % roles.length];
+    }
+
+    // Position initiale aléatoire autour du centre
+    const lat = center[0] + (Math.random()-0.5)*0.006;
+    const lng = center[1] + (Math.random()-0.5)*0.008;
+
+    // Personnalité de déplacement (direction préférée + erraticité)
+    const personality = {
+      dirLat: (Math.random()-0.5)*2,
+      dirLng: (Math.random()-0.5)*2,
+      erratic: Math.random() * 0.5 + 0.3,
+      changeTimer: Math.floor(Math.random()*10)+5
+    };
+
+    const botData = {
+      uid, name, color, role, lat, lng, personality,
+      isBot: true,
+      connected: true,
+      eliminated: false,
+      found: false,
+      infectionStatus: role === 'infected' ? 'infected' : 'healthy',
+      impostorRole: role === 'impostor' ? 'impostor' : 'innocent',
+      survivalTime: 0,
+      lastSeen: Date.now()
+    };
+
+    _bots[uid] = botData;
+
+    // Écrire dans Firebase comme un vrai joueur
+    await dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {
+      name, color,
+      role: ['infected','impostor'].includes(role) ? 'hider' : role,
+      isBot: true,
+      connected: true,
+      eliminated: false,
+      found: false,
+      lat, lng,
+      infectionStatus: botData.infectionStatus,
+      impostorRole: botData.impostorRole,
+      survivalTime: 0,
+      lastSeen: Date.now()
+    });
+  }
+
+  toast('🤖 '+_botCount+' bots spawnés !');
+  refreshBotStatusList();
+
+  // Auto-démarrer le mouvement
+  startBotMovement();
+}
+
+function startBotMovement(){
+  if(_botMovementInterval) clearInterval(_botMovementInterval);
+  _botMoving = true;
+  document.getElementById('btn-toggle-bots').textContent = '⏸ Pause mouvement';
+  document.getElementById('btn-toggle-bots').style.color = '#ffbe0b';
+  document.getElementById('btn-toggle-bots').style.borderColor = 'rgba(255,190,11,0.3)';
+
+  const speed = BOT_SPEED[_botSpeed] || BOT_SPEED.normal;
+  const center = BOT_ZONE_CENTER();
+  const maxRadius = 0.004; // ~400m
+
+  _botMovementInterval = setInterval(async ()=>{
+    if(!S.currentPartyId) return;
+    const updates = {};
+
+    for(const [uid, bot] of Object.entries(_bots)){
+      if(bot.eliminated) continue;
+
+      // Changer de direction périodiquement
+      bot.personality.changeTimer--;
+      if(bot.personality.changeTimer <= 0){
+        bot.personality.dirLat = (Math.random()-0.5)*2;
+        bot.personality.dirLng = (Math.random()-0.5)*2;
+        bot.personality.changeTimer = Math.floor(Math.random()*12)+5;
+      }
+
+      // Comportement intelligent selon le mode
+      let targetLat = null, targetLng = null;
+      const gameMode = S.gameMode || 'classic';
+
+      if(gameMode === 'bomb' && bot.role === 'hider'){
+        // Porteur de bombe : essaie de s'approcher des autres joueurs pour passer
+        const others = Object.entries(S.players).filter(([id,p])=>id!==uid&&!p.eliminated&&!p.isBot);
+        if(others.length){
+          const [tid,tp] = others[Math.floor(Math.random()*others.length)];
+          if(tp.lat) { targetLat=tp.lat; targetLng=tp.lng; }
+        }
+      } else if(gameMode === 'infection' && bot.infectionStatus === 'infected'){
+        // Infecté : chasse les sains
+        const healthy = Object.entries(S.players).filter(([id,p])=>id!==uid&&p.infectionStatus==='healthy'&&!p.eliminated);
+        if(healthy.length){
+          const [tid,tp] = healthy[Math.floor(Math.random()*healthy.length)];
+          if(tp.lat){ targetLat=tp.lat; targetLng=tp.lng; }
+        }
+      } else if(bot.role === 'seeker'){
+        // Chercheur : se dirige vers les cacheurs
+        const hiders = Object.entries(S.players).filter(([id,p])=>id!==uid&&p.role==='hider'&&!p.found&&!p.eliminated);
+        if(hiders.length){
+          const [tid,tp] = hiders[Math.floor(Math.random()*hiders.length)];
+          if(tp.lat){ targetLat=tp.lat*0.3+center[0]*0.7; targetLng=tp.lng*0.3+center[1]*0.7; }
+        }
+      }
+
+      // Calculer le mouvement
+      let dLat, dLng;
+      if(targetLat !== null){
+        // Se diriger vers la cible avec un peu d'aléatoire
+        dLat = (targetLat - bot.lat) * 0.15 + (Math.random()-0.5)*speed*bot.personality.erratic*10;
+        dLng = (targetLng - bot.lng) * 0.15 + (Math.random()-0.5)*speed*bot.personality.erratic*10;
+        const dist = Math.sqrt(dLat*dLat+dLng*dLng);
+        if(dist > speed*3){ dLat = (dLat/dist)*speed*3; dLng = (dLng/dist)*speed*3; }
+      } else {
+        // Mouvement brownien avec direction préférée
+        dLat = bot.personality.dirLat * speed + (Math.random()-0.5)*speed*bot.personality.erratic;
+        dLng = bot.personality.dirLng * speed + (Math.random()-0.5)*speed*bot.personality.erratic;
+      }
+
+      // Rester dans la zone
+      const newLat = bot.lat + dLat;
+      const newLng = bot.lng + dLng;
+      const distFromCenter = Math.sqrt(Math.pow(newLat-center[0],2)+Math.pow(newLng-center[1],2));
+      if(distFromCenter > maxRadius){
+        // Rebondir vers le centre
+        bot.personality.dirLat = (center[0]-bot.lat)*5;
+        bot.personality.dirLng = (center[1]-bot.lng)*5;
+      } else {
+        bot.lat = newLat;
+        bot.lng = newLng;
+      }
+
+      updates['parties/'+S.currentPartyId+'/players/'+uid+'/lat'] = bot.lat;
+      updates['parties/'+S.currentPartyId+'/players/'+uid+'/lng'] = bot.lng;
+      updates['parties/'+S.currentPartyId+'/players/'+uid+'/lastSeen'] = Date.now();
+    }
+
+    // Batch update Firebase
+    if(Object.keys(updates).length){
+      try{ await window._dbUpdate(window._dbRef(window._db, '/'), updates); } catch(e){}
+    }
+
+    refreshBotStatusList();
+  }, 3000);
+}
+
+function stopBotMovement(){
+  if(_botMovementInterval){ clearInterval(_botMovementInterval); _botMovementInterval=null; }
+  _botMoving = false;
+  const btn = document.getElementById('btn-toggle-bots');
+  if(btn){ btn.textContent='▶ Activer mouvement'; btn.style.color='#06d6a0'; btn.style.borderColor='rgba(6,214,160,0.3)'; }
+}
+
+function toggleBotsMovement(){
+  if(_botMoving) stopBotMovement();
+  else startBotMovement();
+}
+
+async function removeAllBots(){
+  stopBotMovement();
+  if(S.currentPartyId){
+    for(const uid of Object.keys(_bots)){
+      try{ await window._dbRemove(window._dbRef(window._db,'parties/'+S.currentPartyId+'/players/'+uid)); } catch(e){}
+    }
+  }
+  _bots = {};
+  refreshBotStatusList();
+  toast('🗑️ Bots supprimés');
+}
+
+function eliminateBot(uid){
+  if(!_bots[uid]) return;
+  _bots[uid].eliminated = true;
+  dbUpdate('parties/'+S.currentPartyId+'/players/'+uid, {eliminated:true, connected:false});
+  refreshBotStatusList();
+  toast('💀 Bot éliminé');
+}
+
+function teleportBotMode(){
+  if(_botTeleportMode){ disableTeleportMode(); return; }
+  const uids = Object.keys(_bots);
+  if(!uids.length){ toast('❌ Aucun bot spawné'); return; }
+  // Choisir le premier bot non éliminé
+  _botTeleportTarget = uids.find(u=>!_bots[u].eliminated) || uids[0];
+  _botTeleportMode = true;
+  const btn = document.getElementById('btn-teleport');
+  if(btn){ btn.textContent='📍 Tap sur la carte → '+(_bots[_botTeleportTarget]?.name||'?'); btn.style.background='rgba(255,190,11,0.25)'; }
+  toast('📍 Tape sur la carte pour téléporter '+(_bots[_botTeleportTarget]?.name||'le bot'));
+  closeBotPanel();
+}
+
+function disableTeleportMode(){
+  _botTeleportMode = false;
+  _botTeleportTarget = null;
+  const btn = document.getElementById('btn-teleport');
+  if(btn){ btn.textContent='📍 Téléporter un bot (tap carte)'; btn.style.background='rgba(255,190,11,0.12)'; }
+}
+
+function handleBotTeleport(lat, lng){
+  if(!_botTeleportMode || !_botTeleportTarget) return false;
+  const bot = _bots[_botTeleportTarget];
+  if(!bot) return false;
+  bot.lat = lat; bot.lng = lng;
+  dbUpdate('parties/'+S.currentPartyId+'/players/'+_botTeleportTarget, {lat, lng, lastSeen:Date.now()});
+  toast('📍 '+bot.name+' téléporté !');
+  disableTeleportMode();
+  return true;
+}
+
+function refreshBotStatusList(){
+  const list = document.getElementById('bot-status-list');
+  if(!list) return;
+  const uids = Object.keys(_bots);
+  if(!uids.length){
+    list.innerHTML = '<div style="font-size:12px;color:#7a8aaa;text-align:center;padding:8px;">Aucun bot spawné</div>';
+    return;
+  }
+  list.innerHTML = uids.map(uid=>{
+    const b = _bots[uid];
+    const roleEmoji = b.role==='seeker'?'🔍':b.infectionStatus==='infected'?'🦠':b.impostorRole==='impostor'?'🕵️':'🙈';
+    const statusColor = b.eliminated ? '#ff4d6d' : '#06d6a0';
+    return `<div class="bot-status-row">
+      <div>
+        <div class="bot-status-name" style="color:${b.color}">${b.name}</div>
+        <div class="bot-status-role">${roleEmoji} ${b.role} ${b.eliminated?'· <span style="color:#ff4d6d">Éliminé</span>':''}</div>
+        <div class="bot-status-pos">${b.lat.toFixed(5)}, ${b.lng.toFixed(5)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+        <div style="width:8px;height:8px;border-radius:50%;background:${statusColor};"></div>
+        ${!b.eliminated?`<button class="bot-elim-btn" onclick="eliminateBot('${uid}')">💀 Élim</button>`:''}
+        ${!b.eliminated?`<button class="bot-elim-btn" style="color:#7b7fff;border-color:rgba(123,127,255,0.3)" onclick="selectTeleportTarget('${uid}')">📍</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectTeleportTarget(uid){
+  _botTeleportTarget = uid;
+  _botTeleportMode = true;
+  toast('📍 Tape sur la carte pour téléporter '+(_bots[uid]?.name||''));
+  closeBotPanel();
+}
+
+
 function cleanupGameMode(){
   // ── BOMBE ──
   if(_bombTickInterval){ clearInterval(_bombTickInterval); _bombTickInterval=null; }
@@ -2828,6 +3239,12 @@ function cleanupGameMode(){
 
   // ── ZONE SHRINK (partagé infection + BR) ──
   if(_zoneShrinkCircle && S.map){ S.map.removeLayer(_zoneShrinkCircle); _zoneShrinkCircle=null; }
+
+  // ── BOTS TEST ──
+  stopBotMovement();
+  _bots={};
+  _botTeleportMode=false;
+  _botTeleportTarget=null;
 }
 
 
